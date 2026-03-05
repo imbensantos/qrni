@@ -10,7 +10,6 @@
   font-size: 3rem;
   font-weight: 800;
   color: #fff;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
 }
 
 .tagline {
@@ -20,17 +19,64 @@
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 1.5rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.card-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #f5f5f5;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.dot-close {
+  background: #ff5f57;
+}
+
+.dot-minimize {
+  background: #febc2e;
+}
+
+.dot-maximize {
+  background: #28c840;
+}
+
+.card-body {
   padding: 2rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
 .footer {
-  margin-top: 1.5rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.85rem;
+  margin-top: 2rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+}
+
+.powered-by {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.imbento-logo {
+  height: 4rem;
+  vertical-align: middle;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.imbento-logo:hover {
+  opacity: 1;
 }
 
 @media (max-width: 480px) {
@@ -42,8 +88,7 @@
     font-size: 0.95rem;
   }
 
-  .card {
+  .card-body {
     padding: 1.5rem;
-    border-radius: 1.25rem;
   }
 }
