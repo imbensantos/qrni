@@ -1,0 +1,8 @@
+[
+  {"id": 1, "subject": "Initialize Astro project", "status": "completed", "lastUpdated": "2026-03-05T13:02:00Z"},
+  {"id": 2, "subject": "Create Layout.astro with global styles and SEO", "status": "completed", "lastUpdated": "2026-03-05T13:02:30Z"},
+  {"id": 3, "subject": "Build Hero section", "status": "completed", "lastUpdated": "2026-03-05T13:03:00Z"},
+  {"id": 4, "subject": "Build How It Works section", "status": "completed", "lastUpdated": "2026-03-05T13:03:00Z"},
+  {"id": 5, "subject": "Build Features section", "status": "completed", "lastUpdated": "2026-03-05T13:03:00Z"},
+  {"id": 6, "subject": "Build Footer and final verification", "status": "completed", "lastUpdated": "2026-03-05T13:03:30Z"}
+]
