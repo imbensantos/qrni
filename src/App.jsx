@@ -1,3 +1,4 @@
+import QrGenerator from './components/QrGenerator'
 import './App.css'
 
 function App() {
@@ -9,8 +10,7 @@ function App() {
       </header>
 
       <main className="card">
-        {/* Generator will go here */}
-        <p>Generator placeholder</p>
+        <QrGenerator />
       </main>
 
       <footer className="footer">
