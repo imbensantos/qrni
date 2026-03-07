@@ -16,8 +16,8 @@ function PreviewPanel({
     height: 200,
     type: 'svg',
     data: '',
-    dotsOptions: { color: fgColor, type: dotStyle },
-    backgroundOptions: { color: bgColor },
+    dotsOptions: {},
+    backgroundOptions: {},
     cornersSquareOptions: { type: 'extra-rounded' },
     imageOptions: { crossOrigin: 'anonymous', margin: 6, imageSize: 0.35 },
     qrOptions: { errorCorrectionLevel: 'H' },
@@ -39,14 +39,10 @@ function PreviewPanel({
     })
   }, [url, isValidUrl, fgColor, bgColor, logo, dotStyle, qrCode])
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     qrCode.update({ width: size, height: size })
-    setTimeout(() => {
-      qrCode.download({ name: 'qrni-code', extension: format })
-      setTimeout(() => {
-        qrCode.update({ width: 200, height: 200 })
-      }, 100)
-    }, 50)
+    await qrCode.download({ name: 'qrni-code', extension: format })
+    qrCode.update({ width: 200, height: 200 })
   }
 
   return (
@@ -88,7 +84,7 @@ function PreviewPanel({
         <footer className="footer">
           <span>Powered by</span>
           <a href="https://imbensantos.com" target="_blank" rel="noopener noreferrer">
-            <strong>imBento</strong>
+            <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
           </a>
         </footer>
       </div>

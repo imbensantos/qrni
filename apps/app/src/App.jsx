@@ -17,8 +17,8 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1 className="logo">QRni</h1>
-        <p className="tagline">Your free QR code maker</p>
+        <h1 className="logo">QRni ✨</h1>
+        <p className="tagline">Your free QR code maker!</p>
       </header>
       <main className="body">
         <ControlsPanel
