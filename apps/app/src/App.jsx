@@ -1,33 +1,46 @@
-import QrGenerator from './components/QrGenerator'
+import { useState } from 'react'
+import ControlsPanel from './components/ControlsPanel'
+import PreviewPanel from './components/PreviewPanel'
 import './App.css'
 
 function App() {
+  const [url, setUrl] = useState('')
+  const [fgColor, setFgColor] = useState('#1A1918')
+  const [bgColor, setBgColor] = useState('#FFFFFF')
+  const [logo, setLogo] = useState(null)
+  const [dotStyle, setDotStyle] = useState('square')
+  const [size, setSize] = useState(512)
+  const [format, setFormat] = useState('png')
+
+  const isValidUrl = url.startsWith('http://') || url.startsWith('https://')
+
   return (
     <div className="app">
       <header className="header">
         <h1 className="logo">QRni</h1>
-        <p className="tagline">Your free, instant QR code maker — no sign-up needed!</p>
+        <p className="tagline">Your free QR code maker</p>
       </header>
-
-      <main className="card">
-        <div className="card-titlebar">
-          <span className="dot dot-close"></span>
-          <span className="dot dot-minimize"></span>
-          <span className="dot dot-maximize"></span>
-        </div>
-        <div className="card-body">
-          <QrGenerator />
-        </div>
+      <main className="body">
+        <ControlsPanel
+          url={url} onUrlChange={setUrl}
+          fgColor={fgColor} onFgColorChange={setFgColor}
+          bgColor={bgColor} onBgColorChange={setBgColor}
+          logo={logo} onLogoChange={setLogo}
+          dotStyle={dotStyle} onDotStyleChange={setDotStyle}
+          size={size} onSizeChange={setSize}
+        />
+        <PreviewPanel
+          url={url}
+          isValidUrl={isValidUrl}
+          fgColor={fgColor}
+          bgColor={bgColor}
+          logo={logo}
+          dotStyle={dotStyle}
+          size={size}
+          format={format}
+          onFormatChange={setFormat}
+        />
       </main>
-
-      <footer className="footer">
-        <p className="powered-by">
-          Powered by
-          <a href="https://imbensantos.com" target="_blank" rel="noopener noreferrer">
-            <img src="/imbento-logo-white.svg" alt="imBento" className="imbento-logo" />
-          </a>
-        </p>
-      </footer>
     </div>
   )
 }
