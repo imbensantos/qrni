@@ -1,0 +1,210 @@
+.preview-panel {
+  flex: 1;
+  position: relative;
+  background: var(--bg-preview);
+  overflow: hidden;
+}
+
+.preview-content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 32px;
+}
+
+/* QR Card */
+.qr-card {
+  width: 260px;
+  height: 260px;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-elevated);
+}
+
+.qr-code {
+  animation: fadeScaleIn 0.3s ease-out;
+}
+
+@keyframes fadeScaleIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.qr-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--border-strong);
+}
+
+.qr-placeholder p {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-align: center;
+  max-width: 160px;
+}
+
+/* Status */
+.status {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+
+.status-ready {
+  color: var(--accent-secondary);
+}
+
+/* Export */
+.export-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.format-selector {
+  display: flex;
+  background: var(--bg-muted);
+  border-radius: var(--radius-md);
+  padding: 3px;
+}
+
+.format-option {
+  width: 68px;
+  height: 30px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.format-option.active {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(26, 25, 24, 0.06);
+}
+
+.download-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 200px;
+  height: 44px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--accent-primary);
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-button);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.download-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(216, 149, 117, 0.35);
+}
+
+.download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+
+.footer a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+/* Doodles positioning & animation */
+.doodles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.doodle {
+  position: absolute;
+}
+
+.doodle-sparkle-1 { top: 13%; left: 17%; color: var(--accent-primary); opacity: 0.5; animation: twinkle 3s ease-in-out infinite; }
+.doodle-sparkle-2 { top: 22%; right: 15%; color: var(--accent-secondary); opacity: 0.45; animation: twinkle 3s ease-in-out infinite 1s; }
+.doodle-sparkle-3 { bottom: 15%; left: 55%; color: var(--accent-primary); opacity: 0.35; animation: twinkle 3s ease-in-out infinite 2s; }
+
+.doodle-heart-1 { top: 40%; left: 12%; color: var(--accent-primary); opacity: 0.3; animation: float 4s ease-in-out infinite; }
+.doodle-heart-2 { bottom: 20%; right: 12%; color: var(--accent-secondary); opacity: 0.25; animation: float 4s ease-in-out infinite 2s; }
+
+.doodle-corner-tl { top: 17%; left: 28%; color: var(--accent-primary); opacity: 0.4; }
+.doodle-corner-tr { top: 17%; right: 28%; color: var(--accent-primary); opacity: 0.4; }
+.doodle-corner-bl { bottom: 30%; left: 28%; color: var(--accent-primary); opacity: 0.4; }
+.doodle-corner-br { bottom: 30%; right: 28%; color: var(--accent-primary); opacity: 0.4; }
+
+.doodle-wave-1 { bottom: 25%; left: 10%; color: var(--accent-primary); opacity: 0.25; animation: sway 5s ease-in-out infinite; }
+
+.doodle-ring-1 { top: 50%; left: 14%; color: var(--accent-primary); opacity: 0.2; animation: spin 12s linear infinite; }
+.doodle-ring-2 { top: 18%; right: 22%; color: var(--accent-secondary); opacity: 0.2; animation: spin 15s linear infinite reverse; }
+
+.doodle-dot-1 { top: 28%; left: 22%; color: var(--accent-primary); opacity: 0.25; }
+.doodle-dot-2 { bottom: 18%; right: 18%; color: var(--accent-secondary); opacity: 0.25; }
+.doodle-dot-3 { top: 45%; right: 10%; color: var(--accent-primary); opacity: 0.2; }
+
+.doodle-arrow { top: 24%; left: 18%; color: var(--accent-primary); opacity: 0.3; }
+.doodle-diamond { top: 14%; left: 52%; color: var(--accent-secondary); opacity: 0.3; animation: twinkle 4s ease-in-out infinite 1.5s; }
+.doodle-zigzag { bottom: 12%; right: 20%; color: var(--accent-primary); opacity: 0.25; }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.2); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes sway {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(5px); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .preview-panel {
+    min-height: 50vh;
+  }
+}
