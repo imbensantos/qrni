@@ -1,0 +1,13 @@
+{
+  "planPath": "docs/plans/2026-03-07-qrni-app-redesign.md",
+  "tasks": [
+    {"id": 1, "subject": "Task 0: Set up design tokens and global styles", "status": "pending"},
+    {"id": 2, "subject": "Task 1: Restructure App layout to split-panel", "status": "pending", "blockedBy": [1]},
+    {"id": 3, "subject": "Task 2: Build ControlsPanel component", "status": "pending", "blockedBy": [2]},
+    {"id": 4, "subject": "Task 3: Build PreviewPanel and Doodles components", "status": "pending", "blockedBy": [2]},
+    {"id": 5, "subject": "Task 4: Install new dependencies", "status": "pending", "blockedBy": [3, 4]},
+    {"id": 6, "subject": "Task 5: Clean up old component files", "status": "pending", "blockedBy": [5]},
+    {"id": 7, "subject": "Task 6: Test full app locally", "status": "pending", "blockedBy": [6]}
+  ],
+  "lastUpdated": "2026-03-07T00:00:00Z"
+}

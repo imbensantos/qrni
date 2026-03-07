@@ -1,67 +1,61 @@
-import { useRef, useCallback } from 'react'
-import { QRCodeCanvas } from 'qrcode.react'
-import { toPng, toSvg } from 'html-to-image'
-import { jsPDF } from 'jspdf'
+import { useRef, useEffect, useMemo } from 'react'
+import QRCodeStyling from 'qr-code-styling'
 import Doodles from './Doodles'
 import './PreviewPanel.css'
 
-const FORMATS = ['PNG', 'SVG', 'PDF']
+const FORMATS = ['png', 'svg', 'webp']
 
 function PreviewPanel({
   url, isValidUrl, fgColor, bgColor, logo, dotStyle, size,
   format, onFormatChange,
 }) {
-  const qrRef = useRef(null)
+  const qrContainerRef = useRef(null)
 
-  const handleDownload = useCallback(async () => {
-    const node = qrRef.current
-    if (!node) return
+  const qrCode = useMemo(() => new QRCodeStyling({
+    width: 200,
+    height: 200,
+    type: 'svg',
+    data: '',
+    dotsOptions: { color: fgColor, type: dotStyle },
+    backgroundOptions: { color: bgColor },
+    cornersSquareOptions: { type: 'extra-rounded' },
+    imageOptions: { crossOrigin: 'anonymous', margin: 6, imageSize: 0.35 },
+    qrOptions: { errorCorrectionLevel: 'H' },
+  }), [])
 
-    const fmt = format.toLowerCase()
-
-    if (fmt === 'png') {
-      const dataUrl = await toPng(node, { pixelRatio: size / node.offsetWidth })
-      const link = document.createElement('a')
-      link.download = 'qrni-code.png'
-      link.href = dataUrl
-      link.click()
-    } else if (fmt === 'svg') {
-      const dataUrl = await toSvg(node)
-      const link = document.createElement('a')
-      link.download = 'qrni-code.svg'
-      link.href = dataUrl
-      link.click()
-    } else if (fmt === 'pdf') {
-      const dataUrl = await toPng(node, { pixelRatio: 4 })
-      const pdf = new jsPDF({ unit: 'px', format: [size, size] })
-      pdf.addImage(dataUrl, 'PNG', 0, 0, size, size)
-      pdf.save('qrni-code.pdf')
+  useEffect(() => {
+    if (qrContainerRef.current) {
+      qrContainerRef.current.innerHTML = ''
+      qrCode.append(qrContainerRef.current)
     }
-  }, [format, size])
+  }, [qrCode])
+
+  useEffect(() => {
+    qrCode.update({
+      data: isValidUrl ? url : '',
+      dotsOptions: { color: fgColor, type: dotStyle },
+      backgroundOptions: { color: bgColor },
+      image: logo || undefined,
+    })
+  }, [url, isValidUrl, fgColor, bgColor, logo, dotStyle, qrCode])
+
+  const handleDownload = () => {
+    qrCode.update({ width: size, height: size })
+    setTimeout(() => {
+      qrCode.download({ name: 'qrni-code', extension: format })
+      setTimeout(() => {
+        qrCode.update({ width: 200, height: 200 })
+      }, 100)
+    }, 50)
+  }
 
   return (
     <section className="preview-panel">
       <Doodles />
       <div className="preview-content">
         <div className="qr-card">
-          {isValidUrl ? (
-            <div className="qr-code" ref={qrRef}>
-              <QRCodeCanvas
-                value={url}
-                size={200}
-                level="H"
-                fgColor={fgColor}
-                bgColor={bgColor}
-                marginSize={2}
-                imageSettings={logo ? {
-                  src: logo,
-                  height: 40,
-                  width: 40,
-                  excavate: true,
-                } : undefined}
-              />
-            </div>
-          ) : (
+          <div className="qr-code" ref={qrContainerRef} style={{ display: isValidUrl ? 'block' : 'none' }} />
+          {!isValidUrl && (
             <div className="qr-placeholder">
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><path d="M21 14v3h-3M21 21h-3v-3"/></svg>
               <p>Paste a URL to get started</p>
@@ -78,10 +72,10 @@ function PreviewPanel({
             {FORMATS.map((f) => (
               <button
                 key={f}
-                className={`format-option ${format === f.toLowerCase() || format === f ? 'active' : ''}`}
-                onClick={() => onFormatChange(f.toLowerCase())}
+                className={`format-option ${format === f ? 'active' : ''}`}
+                onClick={() => onFormatChange(f)}
               >
-                {f}
+                {f.toUpperCase()}
               </button>
             ))}
           </div>

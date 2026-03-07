@@ -1,10 +1,11 @@
+import { useRef } from 'react'
 import './ControlsPanel.css'
 
 const DOT_STYLES = [
   { id: 'square', label: 'Square' },
   { id: 'rounded', label: 'Rounded' },
   { id: 'dots', label: 'Dots' },
-  { id: 'diamond', label: 'Diamond' },
+  { id: 'classy-rounded', label: 'Classy' },
 ]
 
 function ControlsPanel({
@@ -15,6 +16,8 @@ function ControlsPanel({
   dotStyle, onDotStyleChange,
   size, onSizeChange,
 }) {
+  const fileInputRef = useRef(null)
+
   const handleLogoUpload = (e) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -78,10 +81,10 @@ function ControlsPanel({
             <button className="logo-remove" onClick={() => onLogoChange(null)}>Remove</button>
           </div>
         ) : (
-          <label className="upload-zone">
-            <input type="file" accept="image/*" onChange={handleLogoUpload} hidden />
+          <div className="upload-zone" onClick={() => fileInputRef.current?.click()}>
+            <input ref={fileInputRef} type="file" accept="image/*" onChange={handleLogoUpload} hidden />
             <span>Add logo</span>
-          </label>
+          </div>
         )}
       </section>
 
