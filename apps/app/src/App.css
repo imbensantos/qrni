@@ -34,8 +34,14 @@
 }
 
 @media (max-width: 768px) {
+  .app {
+    height: auto;
+    min-height: 100vh;
+  }
+
   .body {
     flex-direction: column;
-    overflow-y: auto;
+    flex: none;
+    overflow: visible;
   }
 }

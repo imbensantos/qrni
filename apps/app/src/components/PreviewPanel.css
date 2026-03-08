@@ -232,6 +232,14 @@
 /* Mobile */
 @media (max-width: 768px) {
   .preview-panel {
-    min-height: 50vh;
+    min-height: auto;
+  }
+
+  .preview-content {
+    padding: 24px 16px;
+  }
+
+  .doodles {
+    display: none;
   }
 }
