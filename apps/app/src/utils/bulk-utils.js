@@ -93,6 +93,6 @@ export function parseJSON(text) {
 }
 
 export function parseFile(text, filename) {
-  if (filename.endsWith('.json')) return parseJSON(text)
+  if (filename.toLowerCase().endsWith('.json')) return parseJSON(text)
   return parseCSV(text)
 }
