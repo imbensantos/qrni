@@ -21,34 +21,28 @@ function BulkPanel({
   format, onFormatChange,
   onEntriesParsed,
 }) {
-  const fileInputRef = useRef(null)
   const logoInputRef = useRef(null)
-  const [showPaste, setShowPaste] = useState(false)
-  const [pasteText, setPasteText] = useState('')
-  const [fileName, setFileName] = useState(null)
+  const [inputText, setInputText] = useState('')
+  const [dragging, setDragging] = useState(false)
 
-  const handleFile = (file) => {
+  const handleFileDrop = (e) => {
+    e.preventDefault()
+    setDragging(false)
+    const file = e.dataTransfer.files?.[0]
     if (!file) return
     const reader = new FileReader()
-    reader.onload = (e) => {
-      const entries = parseFile(e.target.result, file.name)
-      setFileName(file.name)
+    reader.onload = (ev) => {
+      setInputText(ev.target.result)
+      const entries = parseFile(ev.target.result, file.name)
       onEntriesParsed(entries)
     }
     reader.readAsText(file)
   }
 
-  const handleDrop = (e) => {
-    e.preventDefault()
-    const file = e.dataTransfer.files[0]
-    handleFile(file)
-  }
-
-  const handlePaste = () => {
-    if (!pasteText.trim()) return
-    const isJson = pasteText.trim().startsWith('[')
-    const entries = parseFile(pasteText, isJson ? 'data.json' : 'data.csv')
-    setFileName('pasted data')
+  const handleParse = () => {
+    if (!inputText.trim()) return
+    const isJson = inputText.trim().startsWith('[')
+    const entries = parseFile(inputText, isJson ? 'data.json' : 'data.csv')
     onEntriesParsed(entries)
   }
 
@@ -80,43 +74,32 @@ function BulkPanel({
 
       <hr className="divider" />
 
-      {/* File Upload */}
+      {/* Data Input */}
       <section className="control-section">
         <span className="control-label">Data Source</span>
         <div
-          className="dropzone"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
+          className={`data-input-wrapper${dragging ? ' dragging' : ''}`}
+          onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={handleFileDrop}
         >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".csv,.json"
-            onChange={(e) => handleFile(e.target.files[0])}
-            hidden
+          <textarea
+            className="data-input"
+            placeholder={'label,url\nHomepage,https://example.com\n\n— or drag a CSV / JSON file here'}
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            rows={6}
           />
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <span>{fileName ? `Loaded: ${fileName}` : 'Drop CSV or JSON file here'}</span>
-          <span className="dropzone-hint">or click to browse</span>
+          {dragging && (
+            <div className="drag-overlay">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>Drop file here</span>
+            </div>
+          )}
         </div>
-        <button className="paste-toggle" onClick={() => setShowPaste(!showPaste)}>
-          {showPaste ? 'Hide paste' : 'Or paste data'}
+        <button className="parse-btn" onClick={handleParse} disabled={!inputText.trim()}>
+          Parse Data
         </button>
-        {showPaste && (
-          <div className="paste-area">
-            <textarea
-              className="paste-input"
-              placeholder={'label,url\nHomepage,https://example.com'}
-              value={pasteText}
-              onChange={(e) => setPasteText(e.target.value)}
-              rows={6}
-            />
-            <button className="paste-btn" onClick={handlePaste} disabled={!pasteText.trim()}>
-              Parse Data
-            </button>
-          </div>
-        )}
       </section>
 
       <hr className="divider" />

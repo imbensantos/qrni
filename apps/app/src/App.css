@@ -21,7 +21,7 @@
 }
 
 .mode-toggle {
-  display: flex;
+  display: inline-flex;
   background: var(--bg-muted);
   border-radius: var(--radius-md);
   padding: 3px;
