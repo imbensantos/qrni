@@ -85,7 +85,7 @@ function BulkPanel({
         >
           <textarea
             className="data-input"
-            placeholder={'label,url\nHomepage,https://example.com\n\n— or drag a CSV / JSON file here'}
+            placeholder={'label,url\nHomepage,https://example.com\nGoogle,https://google.com\n\nor JSON: [{"label":"Homepage","url":"https://example.com"}]\n\n— or drag a CSV / JSON file here'}
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             rows={6}
