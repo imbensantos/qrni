@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { generateZip, generatePdf } from '../utils/bulk-export'
+import { isValidUrl, sanitizeLabel, deduplicateLabels } from '../utils/bulk-utils'
 import Doodles from './Doodles'
 import './BulkPreview.css'
 
 function BulkPreview({
   entries,
+  onEntriesChange,
   fgColor, bgColor, logo, dotStyle, size, format,
 }) {
   const [generating, setGenerating] = useState(false)
@@ -14,6 +16,30 @@ function BulkPreview({
   const invalidCount = entries.length - validCount
 
   const styleOptions = { fgColor, bgColor, dotStyle, logo, size }
+
+  const handleCellEdit = useCallback((index, field, value) => {
+    const updated = entries.map((entry) => {
+      if (entry.index !== index) return entry
+      const newEntry = { ...entry, [field]: value }
+      const label = newEntry.label.trim()
+      const url = newEntry.url.trim()
+      const valid = isValidUrl(url)
+      const error = !label
+        ? 'Missing label'
+        : !url
+          ? 'Missing URL'
+          : !valid
+            ? 'Invalid URL (must start with http:// or https://)'
+            : null
+      return {
+        ...newEntry,
+        filename: sanitizeLabel(label),
+        valid: !!label && valid,
+        error,
+      }
+    })
+    onEntriesChange(deduplicateLabels(updated))
+  }, [entries, onEntriesChange])
 
   const handleZip = async () => {
     setGenerating(true)
@@ -82,8 +108,22 @@ function BulkPreview({
               {entries.map((entry) => (
                 <tr key={entry.index} className={entry.valid ? '' : 'bulk-row-invalid'}>
                   <td>{entry.index}</td>
-                  <td className="bulk-cell-label">{entry.label || '—'}</td>
-                  <td className="bulk-cell-url">{entry.url || '—'}</td>
+                  <td className="bulk-cell-label">
+                    <input
+                      className="bulk-cell-input"
+                      value={entry.label}
+                      onChange={(e) => handleCellEdit(entry.index, 'label', e.target.value)}
+                      placeholder="Label"
+                    />
+                  </td>
+                  <td className="bulk-cell-url">
+                    <input
+                      className="bulk-cell-input"
+                      value={entry.url}
+                      onChange={(e) => handleCellEdit(entry.index, 'url', e.target.value)}
+                      placeholder="https://..."
+                    />
+                  </td>
                   <td>
                     {entry.valid ? (
                       <span className="bulk-status-valid">Valid</span>

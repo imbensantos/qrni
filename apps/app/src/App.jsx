@@ -61,6 +61,7 @@ function App() {
             />
             <BulkPreview
               entries={bulkEntries}
+              onEntriesChange={setBulkEntries}
               fgColor={fgColor}
               bgColor={bgColor}
               logo={logo}

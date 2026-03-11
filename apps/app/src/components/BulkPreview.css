@@ -105,18 +105,33 @@
 }
 
 .bulk-cell-label {
-  font-weight: 500;
   max-width: 150px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .bulk-cell-url {
   max-width: 250px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+.bulk-cell-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  color: var(--text-primary);
+  outline: none;
+  padding: 2px 0;
+}
+
+.bulk-cell-input:focus {
+  border-bottom: 1.5px solid var(--accent-primary);
+}
+
+.bulk-cell-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.bulk-cell-url .bulk-cell-input {
   color: var(--text-secondary);
   font-size: 12px;
 }
