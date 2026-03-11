@@ -17,6 +17,19 @@ function BulkPreview({
 
   const styleOptions = { fgColor, bgColor, dotStyle, logo, size }
 
+  const handleAddRow = useCallback(() => {
+    const nextIndex = entries.length > 0 ? Math.max(...entries.map((e) => e.index)) + 1 : 1
+    const newEntry = {
+      index: nextIndex,
+      label: '',
+      url: '',
+      filename: 'qr-code',
+      valid: false,
+      error: 'Missing label',
+    }
+    onEntriesChange(deduplicateLabels([...entries, newEntry]))
+  }, [entries, onEntriesChange])
+
   const handleCellEdit = useCallback((index, field, value) => {
     const updated = entries.map((entry) => {
       if (entry.index !== index) return entry
@@ -138,6 +151,9 @@ function BulkPreview({
             </tbody>
           </table>
         </div>
+        <button className="bulk-add-row" onClick={handleAddRow}>
+          + Add row
+        </button>
 
         {/* Progress */}
         {generating && (

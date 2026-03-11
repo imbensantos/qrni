@@ -152,6 +152,23 @@
   cursor: help;
 }
 
+/* Add row */
+.bulk-add-row {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent-primary);
+  cursor: pointer;
+  padding: 0;
+}
+
+.bulk-add-row:hover {
+  color: var(--accent-primary-hover);
+}
+
 /* Progress */
 .bulk-progress {
   display: flex;
