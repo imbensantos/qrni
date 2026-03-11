@@ -12,6 +12,7 @@ const DOT_STYLES = [
 const FORMATS = ['png', 'svg', 'webp']
 
 function BulkPanel({
+  mode, onModeChange,
   fgColor, onFgColorChange,
   bgColor, onBgColorChange,
   logo, onLogoChange,
@@ -61,6 +62,24 @@ function BulkPanel({
 
   return (
     <aside className="bulk-panel">
+      {/* Mode Toggle */}
+      <div className="mode-toggle">
+        <button
+          className={`mode-btn ${mode === 'single' ? 'active' : ''}`}
+          onClick={() => onModeChange('single')}
+        >
+          Single
+        </button>
+        <button
+          className={`mode-btn ${mode === 'bulk' ? 'active' : ''}`}
+          onClick={() => onModeChange('bulk')}
+        >
+          Bulk
+        </button>
+      </div>
+
+      <hr className="divider" />
+
       {/* File Upload */}
       <section className="control-section">
         <span className="control-label">Data Source</span>

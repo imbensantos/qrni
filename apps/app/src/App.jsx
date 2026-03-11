@@ -22,25 +22,12 @@ function App() {
     <div className="app">
       <header className="header">
         <h1 className="logo">QRni ✨</h1>
-        <div className="mode-toggle">
-          <button
-            className={`mode-btn ${mode === 'single' ? 'active' : ''}`}
-            onClick={() => setMode('single')}
-          >
-            Single
-          </button>
-          <button
-            className={`mode-btn ${mode === 'bulk' ? 'active' : ''}`}
-            onClick={() => setMode('bulk')}
-          >
-            Bulk
-          </button>
-        </div>
       </header>
       <main className="body">
         {mode === 'single' ? (
           <>
             <ControlsPanel
+              mode={mode} onModeChange={setMode}
               url={url} onUrlChange={setUrl}
               fgColor={fgColor} onFgColorChange={setFgColor}
               bgColor={bgColor} onBgColorChange={setBgColor}
@@ -63,6 +50,7 @@ function App() {
         ) : (
           <>
             <BulkPanel
+              mode={mode} onModeChange={setMode}
               fgColor={fgColor} onFgColorChange={setFgColor}
               bgColor={bgColor} onBgColorChange={setBgColor}
               logo={logo} onLogoChange={setLogo}

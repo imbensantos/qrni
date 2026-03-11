@@ -9,6 +9,7 @@ const DOT_STYLES = [
 ]
 
 function ControlsPanel({
+  mode, onModeChange,
   url, onUrlChange,
   fgColor, onFgColorChange,
   bgColor, onBgColorChange,
@@ -28,6 +29,24 @@ function ControlsPanel({
 
   return (
     <aside className="controls-panel">
+      {/* Mode Toggle */}
+      <div className="mode-toggle">
+        <button
+          className={`mode-btn ${mode === 'single' ? 'active' : ''}`}
+          onClick={() => onModeChange('single')}
+        >
+          Single
+        </button>
+        <button
+          className={`mode-btn ${mode === 'bulk' ? 'active' : ''}`}
+          onClick={() => onModeChange('bulk')}
+        >
+          Bulk
+        </button>
+      </div>
+
+      <hr className="divider" />
+
       {/* URL */}
       <section className="control-section">
         <label className="control-label">URL</label>
