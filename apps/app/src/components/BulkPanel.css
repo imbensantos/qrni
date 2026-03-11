@@ -63,28 +63,6 @@
   pointer-events: none;
 }
 
-.parse-btn {
-  align-self: flex-end;
-  padding: 8px 16px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: var(--accent-primary);
-  color: white;
-  font-family: 'Outfit', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.parse-btn:hover:not(:disabled) {
-  background: var(--accent-primary-hover);
-}
-
-.parse-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
 
 /* Mobile */
 @media (max-width: 768px) {

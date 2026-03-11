@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect, useCallback } from 'react'
 import { parseFile } from '../utils/bulk-utils'
 import './BulkPanel.css'
 
@@ -25,25 +25,29 @@ function BulkPanel({
   const [inputText, setInputText] = useState('')
   const [dragging, setDragging] = useState(false)
 
+  const autoParse = useCallback((text) => {
+    if (!text.trim()) {
+      onEntriesParsed([])
+      return
+    }
+    const isJson = text.trim().startsWith('[')
+    const entries = parseFile(text, isJson ? 'data.json' : 'data.csv')
+    onEntriesParsed(entries)
+  }, [onEntriesParsed])
+
+  useEffect(() => {
+    const timer = setTimeout(() => autoParse(inputText), 400)
+    return () => clearTimeout(timer)
+  }, [inputText, autoParse])
+
   const handleFileDrop = (e) => {
     e.preventDefault()
     setDragging(false)
     const file = e.dataTransfer.files?.[0]
     if (!file) return
     const reader = new FileReader()
-    reader.onload = (ev) => {
-      setInputText(ev.target.result)
-      const entries = parseFile(ev.target.result, file.name)
-      onEntriesParsed(entries)
-    }
+    reader.onload = (ev) => setInputText(ev.target.result)
     reader.readAsText(file)
-  }
-
-  const handleParse = () => {
-    if (!inputText.trim()) return
-    const isJson = inputText.trim().startsWith('[')
-    const entries = parseFile(inputText, isJson ? 'data.json' : 'data.csv')
-    onEntriesParsed(entries)
   }
 
   const handleLogoUpload = (e) => {
@@ -97,9 +101,6 @@ function BulkPanel({
             </div>
           )}
         </div>
-        <button className="parse-btn" onClick={handleParse} disabled={!inputText.trim()}>
-          Parse Data
-        </button>
       </section>
 
       <hr className="divider" />
