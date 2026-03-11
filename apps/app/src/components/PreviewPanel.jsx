@@ -81,12 +81,6 @@ function PreviewPanel({
           </button>
         </div>
 
-        <footer className="footer">
-          <span>Powered by</span>
-          <a href="https://imbensantos.com" target="_blank" rel="noopener noreferrer">
-            <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
-          </a>
-        </footer>
       </div>
     </section>
   )

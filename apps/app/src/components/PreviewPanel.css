@@ -131,32 +131,6 @@
   cursor: not-allowed;
 }
 
-/* Footer */
-.footer {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-tertiary);
-}
-
-.footer a {
-  color: var(--text-secondary);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-}
-
-.imbento-logo {
-  height: 2rem;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-}
-
-.imbento-logo:hover {
-  opacity: 1;
-}
 
 /* Doodles positioning & animation */
 .doodles {

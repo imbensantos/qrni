@@ -6,7 +6,9 @@ const DOT_STYLES = [
   { id: 'square', label: 'Square' },
   { id: 'rounded', label: 'Rounded' },
   { id: 'dots', label: 'Dots' },
-  { id: 'classy-rounded', label: 'Classy' },
+  { id: 'classy', label: 'Classy' },
+  { id: 'classy-rounded', label: 'Leaf' },
+  { id: 'extra-rounded', label: 'Blob' },
 ]
 
 const FORMATS = ['png', 'svg', 'webp']
@@ -22,8 +24,27 @@ function BulkPanel({
   onEntriesParsed,
 }) {
   const logoInputRef = useRef(null)
+  const dotRowRef = useRef(null)
+  const dotDragState = useRef({ isDown: false, startX: 0, scrollLeft: 0 })
   const [inputText, setInputText] = useState('')
   const [dragging, setDragging] = useState(false)
+
+  const onDotDragStart = (e) => {
+    const row = dotRowRef.current
+    dotDragState.current = { isDown: true, startX: e.pageX - row.offsetLeft, scrollLeft: row.scrollLeft }
+    row.classList.add('dragging')
+  }
+  const onDotDragEnd = () => {
+    dotDragState.current.isDown = false
+    dotRowRef.current?.classList.remove('dragging')
+  }
+  const onDotDragMove = (e) => {
+    if (!dotDragState.current.isDown) return
+    e.preventDefault()
+    const row = dotRowRef.current
+    const x = e.pageX - row.offsetLeft
+    row.scrollLeft = dotDragState.current.scrollLeft - (x - dotDragState.current.startX)
+  }
 
   const autoParse = useCallback((text) => {
     if (!text.trim()) {
@@ -169,7 +190,14 @@ function BulkPanel({
       {/* Dot Style */}
       <section className="control-section">
         <span className="control-label">Dot Style</span>
-        <div className="dot-row">
+        <div
+          className="dot-row"
+          ref={dotRowRef}
+          onMouseDown={onDotDragStart}
+          onMouseLeave={onDotDragEnd}
+          onMouseUp={onDotDragEnd}
+          onMouseMove={onDotDragMove}
+        >
           {DOT_STYLES.map((ds) => (
             <button
               key={ds.id}
@@ -205,6 +233,14 @@ function BulkPanel({
           <span>2048</span>
         </div>
       </section>
+      <div className="panel-spacer" />
+
+      <footer className="panel-footer">
+        <span>Powered by</span>
+        <a href="https://imbensantos.com" target="_blank" rel="noopener noreferrer">
+          <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
+        </a>
+      </footer>
     </aside>
   )
 }

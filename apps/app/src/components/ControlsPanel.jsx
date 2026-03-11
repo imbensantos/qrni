@@ -5,7 +5,9 @@ const DOT_STYLES = [
   { id: 'square', label: 'Square' },
   { id: 'rounded', label: 'Rounded' },
   { id: 'dots', label: 'Dots' },
-  { id: 'classy-rounded', label: 'Classy' },
+  { id: 'classy', label: 'Classy' },
+  { id: 'classy-rounded', label: 'Leaf' },
+  { id: 'extra-rounded', label: 'Blob' },
 ]
 
 function ControlsPanel({
@@ -18,6 +20,25 @@ function ControlsPanel({
   size, onSizeChange,
 }) {
   const fileInputRef = useRef(null)
+  const dotRowRef = useRef(null)
+  const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0 })
+
+  const onDragStart = (e) => {
+    const row = dotRowRef.current
+    dragState.current = { isDown: true, startX: e.pageX - row.offsetLeft, scrollLeft: row.scrollLeft }
+    row.classList.add('dragging')
+  }
+  const onDragEnd = () => {
+    dragState.current.isDown = false
+    dotRowRef.current?.classList.remove('dragging')
+  }
+  const onDragMove = (e) => {
+    if (!dragState.current.isDown) return
+    e.preventDefault()
+    const row = dotRowRef.current
+    const x = e.pageX - row.offsetLeft
+    row.scrollLeft = dragState.current.scrollLeft - (x - dragState.current.startX)
+  }
 
   const handleLogoUpload = (e) => {
     const file = e.target.files?.[0]
@@ -114,7 +135,14 @@ function ControlsPanel({
         <div className="control-header">
           <span className="control-label">Dot Style</span>
         </div>
-        <div className="dot-row">
+        <div
+          className="dot-row"
+          ref={dotRowRef}
+          onMouseDown={onDragStart}
+          onMouseLeave={onDragEnd}
+          onMouseUp={onDragEnd}
+          onMouseMove={onDragMove}
+        >
           {DOT_STYLES.map((ds) => (
             <button
               key={ds.id}
@@ -150,6 +178,14 @@ function ControlsPanel({
           <span>2048</span>
         </div>
       </section>
+      <div className="panel-spacer" />
+
+      <footer className="panel-footer">
+        <span>Powered by</span>
+        <a href="https://imbensantos.com" target="_blank" rel="noopener noreferrer">
+          <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
+        </a>
+      </footer>
     </aside>
   )
 }
