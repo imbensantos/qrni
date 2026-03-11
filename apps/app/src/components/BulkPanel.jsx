@@ -76,7 +76,7 @@ function BulkPanel({
 
       {/* Data Input */}
       <section className="control-section">
-        <span className="control-label">Data Source</span>
+        <span className="control-label">Your Links</span>
         <div
           className={`data-input-wrapper${dragging ? ' dragging' : ''}`}
           onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
