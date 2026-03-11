@@ -26,34 +26,61 @@ export function deduplicateLabels(entries) {
   })
 }
 
+const HEADER_NAMES = ['label', 'name', 'url', 'link']
+
+function hasHeaderRow(fields) {
+  return fields.some((f) => HEADER_NAMES.includes(f.toLowerCase().trim()))
+}
+
 export function parseCSV(text) {
-  const result = Papa.parse(text.trim(), {
+  // First try with headers
+  const withHeader = Papa.parse(text.trim(), {
     header: true,
     skipEmptyLines: true,
   })
 
-  const entries = result.data.slice(0, MAX_ENTRIES).map((row, i) => {
-    const label = row.label || row.Label || row.name || row.Name || ''
-    const url = row.url || row.URL || row.link || row.Link || ''
-    const valid = isValidUrl(url)
-    const error = !label.trim()
-      ? 'Missing label'
-      : !url.trim()
-        ? 'Missing URL'
-        : !valid
-          ? 'Invalid URL (must start with http:// or https://)'
-          : null
-    return {
-      index: i + 1,
-      label: label.trim(),
-      url: url.trim(),
-      filename: sanitizeLabel(label),
-      valid: !!label.trim() && valid,
-      error,
-    }
+  // If the first row looks like a header (contains known column names), use it
+  if (withHeader.meta.fields && hasHeaderRow(withHeader.meta.fields)) {
+    const entries = withHeader.data.slice(0, MAX_ENTRIES).map((row, i) => {
+      const label = (row.label || row.Label || row.name || row.Name || '').trim()
+      const url = (row.url || row.URL || row.link || row.Link || '').trim()
+      return buildEntry(i, label, url)
+    })
+    return deduplicateLabels(entries)
+  }
+
+  // No header — treat as two-column: label, url
+  const noHeader = Papa.parse(text.trim(), {
+    header: false,
+    skipEmptyLines: true,
+  })
+
+  const entries = noHeader.data.slice(0, MAX_ENTRIES).map((cols, i) => {
+    const label = (cols[0] || '').trim()
+    const url = (cols[1] || '').trim()
+    return buildEntry(i, label, url)
   })
 
   return deduplicateLabels(entries)
+}
+
+function buildEntry(i, label, url) {
+  const valid = isValidUrl(url)
+  const error = !label
+    ? 'Missing label'
+    : !url
+      ? 'Missing URL'
+      : !valid
+        ? 'Invalid URL (must start with http:// or https://)'
+        : null
+  return {
+    index: i + 1,
+    label,
+    url,
+    filename: sanitizeLabel(label),
+    valid: !!label && valid,
+    error,
+  }
 }
 
 export function parseJSON(text) {
