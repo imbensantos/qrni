@@ -1,4 +1,5 @@
 import { useRef, useEffect, useMemo } from 'react'
+import { useWebHaptics } from 'web-haptics/react'
 import QRCodeStyling from 'qr-code-styling'
 import Doodles from './Doodles'
 import './PreviewPanel.css'
@@ -10,6 +11,7 @@ function PreviewPanel({
   format, onFormatChange,
 }) {
   const qrContainerRef = useRef(null)
+  const { trigger } = useWebHaptics()
 
   const qrCode = useMemo(() => new QRCodeStyling({
     width: 200,
@@ -40,47 +42,56 @@ function PreviewPanel({
   }, [url, isValidUrl, fgColor, bgColor, logo, dotStyle, qrCode])
 
   const handleDownload = async () => {
+    trigger('success')
     qrCode.update({ width: size, height: size })
     await qrCode.download({ name: 'qrni-code', extension: format })
     qrCode.update({ width: 200, height: 200 })
   }
 
   return (
-    <section className="preview-panel">
+    <section className="preview-panel" aria-label="QR code preview">
       <Doodles />
       <div className="preview-content">
         <div className="qr-card">
-          <div className="qr-code" ref={qrContainerRef} style={{ display: isValidUrl ? 'block' : 'none' }} />
+          <div className="qr-code" ref={qrContainerRef} role="img" aria-label="Generated QR code" style={{ display: isValidUrl ? 'block' : 'none' }} />
           {!isValidUrl && (
             <div className="qr-placeholder">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><path d="M21 14v3h-3M21 21h-3v-3"/></svg>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><path d="M21 14v3h-3M21 21h-3v-3"/></svg>
               <p>Paste a URL to get started</p>
             </div>
           )}
         </div>
 
-        <p className={`status ${isValidUrl ? 'status-ready' : ''}`}>
+        <p className={`status ${isValidUrl ? 'status-ready' : ''}`} aria-live="polite" aria-atomic="true">
           {isValidUrl ? 'Ready to download' : 'Enter a valid URL'}
         </p>
 
         <div className="export-bar">
-          <div className="format-selector">
+          <div className={`format-selector format-${FORMATS.indexOf(format)}`} role="radiogroup" aria-label="Export format">
             {FORMATS.map((f) => (
               <button
                 key={f}
+                role="radio"
+                aria-checked={format === f}
                 className={`format-option ${format === f ? 'active' : ''}`}
-                onClick={() => onFormatChange(f)}
+                onClick={() => { onFormatChange(f); trigger('nudge') }}
               >
                 {f.toUpperCase()}
               </button>
             ))}
           </div>
-          <button className="download-btn" onClick={handleDownload} disabled={!isValidUrl}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <button className="download-btn" onClick={handleDownload} disabled={!isValidUrl} aria-label="Download QR code">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Download
           </button>
         </div>
 
+        <footer className="panel-footer panel-footer-mobile">
+          <span>Powered by</span>
+          <a href="https://imbensantos.com" target="_blank" rel="noopener noreferrer" aria-label="Visit imBento website">
+            <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
+          </a>
+        </footer>
       </div>
     </section>
   )

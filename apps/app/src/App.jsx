@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useWebHaptics } from 'web-haptics/react'
 import ControlsPanel from './components/ControlsPanel'
 import PreviewPanel from './components/PreviewPanel'
 import BulkPanel from './components/BulkPanel'
@@ -15,6 +16,7 @@ function App() {
   const [size, setSize] = useState(512)
   const [format, setFormat] = useState('png')
   const [bulkEntries, setBulkEntries] = useState([])
+  const { trigger } = useWebHaptics()
 
   const isValidUrl = url.startsWith('http://') || url.startsWith('https://')
 
@@ -24,10 +26,26 @@ function App() {
         <h1 className="logo">QRni ✨</h1>
       </header>
       <main className="body">
-        {mode === 'single' ? (
-          <>
+        <div className="sidebar-panel">
+          <div className={`mode-toggle ${mode === 'bulk' ? 'bulk' : ''}`} role="group" aria-label="Generation mode">
+            <button
+              className={`mode-btn ${mode === 'single' ? 'active' : ''}`}
+              aria-pressed={mode === 'single'}
+              onClick={() => { setMode('single'); trigger('nudge') }}
+            >
+              Single
+            </button>
+            <button
+              className={`mode-btn ${mode === 'bulk' ? 'active' : ''}`}
+              aria-pressed={mode === 'bulk'}
+              onClick={() => { setMode('bulk'); trigger('nudge') }}
+            >
+              Bulk
+            </button>
+          </div>
+          <hr className="divider" />
+          {mode === 'single' ? (
             <ControlsPanel
-              mode={mode} onModeChange={setMode}
               url={url} onUrlChange={setUrl}
               fgColor={fgColor} onFgColorChange={setFgColor}
               bgColor={bgColor} onBgColorChange={setBgColor}
@@ -35,22 +53,8 @@ function App() {
               dotStyle={dotStyle} onDotStyleChange={setDotStyle}
               size={size} onSizeChange={setSize}
             />
-            <PreviewPanel
-              url={url}
-              isValidUrl={isValidUrl}
-              fgColor={fgColor}
-              bgColor={bgColor}
-              logo={logo}
-              dotStyle={dotStyle}
-              size={size}
-              format={format}
-              onFormatChange={setFormat}
-            />
-          </>
-        ) : (
-          <>
+          ) : (
             <BulkPanel
-              mode={mode} onModeChange={setMode}
               fgColor={fgColor} onFgColorChange={setFgColor}
               bgColor={bgColor} onBgColorChange={setBgColor}
               logo={logo} onLogoChange={setLogo}
@@ -59,17 +63,31 @@ function App() {
               format={format} onFormatChange={setFormat}
               onEntriesParsed={setBulkEntries}
             />
-            <BulkPreview
-              entries={bulkEntries}
-              onEntriesChange={setBulkEntries}
-              fgColor={fgColor}
-              bgColor={bgColor}
-              logo={logo}
-              dotStyle={dotStyle}
-              size={size}
-              format={format}
-            />
-          </>
+          )}
+        </div>
+        {mode === 'single' ? (
+          <PreviewPanel
+            url={url}
+            isValidUrl={isValidUrl}
+            fgColor={fgColor}
+            bgColor={bgColor}
+            logo={logo}
+            dotStyle={dotStyle}
+            size={size}
+            format={format}
+            onFormatChange={setFormat}
+          />
+        ) : (
+          <BulkPreview
+            entries={bulkEntries}
+            onEntriesChange={setBulkEntries}
+            fgColor={fgColor}
+            bgColor={bgColor}
+            logo={logo}
+            dotStyle={dotStyle}
+            size={size}
+            format={format}
+          />
         )}
       </main>
     </div>

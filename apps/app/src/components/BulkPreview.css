@@ -5,6 +5,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-height: 320px;
 }
 
 .bulk-empty {
@@ -57,7 +58,7 @@
 }
 
 .bulk-summary-invalid {
-  color: #D86B6B;
+  color: #C0392B;
 }
 
 .bulk-summary-total {
@@ -125,6 +126,7 @@
 
 .bulk-cell-input:focus {
   border-bottom: 1.5px solid var(--accent-primary);
+  box-shadow: 0 1px 0 0 var(--accent-primary);
 }
 
 .bulk-cell-input::placeholder {
@@ -146,10 +148,9 @@
 }
 
 .bulk-status-invalid {
-  color: #D86B6B;
+  color: #C0392B;
   font-size: 12px;
   font-weight: 500;
-  cursor: help;
 }
 
 /* Add row */
@@ -167,6 +168,11 @@
 
 .bulk-add-row:hover {
   color: var(--accent-primary-hover);
+}
+
+.bulk-add-row:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 /* Progress */
@@ -217,6 +223,10 @@
 @media (max-width: 768px) {
   .bulk-preview-content {
     padding: 16px;
+  }
+
+  .bulk-cell-input {
+    font-size: 16px;
   }
 
   .bulk-export-bar {

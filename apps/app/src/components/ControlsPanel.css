@@ -1,14 +1,4 @@
-.controls-panel {
-  width: 380px;
-  height: 100%;
-  overflow-y: auto;
-  background: var(--bg-card);
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  box-shadow: 1px 0 8px rgba(26, 25, 24, 0.03);
-}
+/* Controls panel styles (container is .sidebar-panel in App.css) */
 
 .control-section {
   display: flex;
@@ -52,6 +42,7 @@
 
 .url-input:focus {
   border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(216, 149, 117, 0.2);
 }
 
 .url-input::placeholder {
@@ -129,6 +120,12 @@
   border-color: var(--accent-primary);
 }
 
+.upload-zone:focus-visible {
+  border-color: var(--accent-primary);
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
 .logo-preview {
   display: flex;
   align-items: center;
@@ -159,6 +156,11 @@
   color: var(--text-primary);
 }
 
+.logo-remove:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
 /* Dot Style */
 .dot-row {
   display: flex;
@@ -166,6 +168,8 @@
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  padding: 4px;
+  margin: -4px;
 }
 
 .dot-row::-webkit-scrollbar {
@@ -189,7 +193,20 @@
   border-radius: var(--radius-sm);
   background: var(--bg-page);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease, transform 0.15s ease;
+}
+
+.dot-option:hover:not(.active) {
+  border-color: var(--text-tertiary);
+}
+
+.dot-option:active {
+  transform: scale(0.93);
+}
+
+.dot-option:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .dot-option.active {
@@ -250,6 +267,14 @@
   outline: none;
 }
 
+.size-slider:focus-visible {
+  outline: none;
+}
+
+.size-slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgba(216, 149, 117, 0.4), 0 2px 6px rgba(26, 25, 24, 0.12);
+}
+
 .size-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 20px;
@@ -302,12 +327,21 @@
   opacity: 1;
 }
 
-/* Mobile */
+.panel-footer-mobile {
+  display: none;
+}
+
 @media (max-width: 768px) {
-  .controls-panel {
-    width: 100%;
-    height: auto;
-    max-height: none;
-    overflow-y: visible;
+  .panel-footer-desktop {
+    display: none;
+  }
+
+  .panel-footer-mobile {
+    display: flex;
+  }
+
+  .url-input {
+    font-size: 16px;
   }
 }
+

@@ -1,14 +1,4 @@
-.bulk-panel {
-  width: 380px;
-  height: 100%;
-  overflow-y: auto;
-  background: var(--bg-card);
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  box-shadow: 1px 0 8px rgba(26, 25, 24, 0.03);
-}
+/* Bulk panel styles (container is .sidebar-panel in App.css) */
 
 /* Dual-purpose data input (type or drag) */
 .data-input-wrapper {
@@ -64,12 +54,43 @@
 }
 
 
-/* Mobile */
+/* File upload button */
+.file-upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--accent-primary);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(216, 149, 117, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.2s;
+}
+
+.file-upload-btn:hover {
+  box-shadow: 0 6px 20px rgba(216, 149, 117, 0.35);
+  transform: translateY(-1px);
+}
+
+.file-upload-btn:active {
+  transform: scale(0.97);
+}
+
+.file-upload-btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
 @media (max-width: 768px) {
-  .bulk-panel {
-    width: 100%;
-    height: auto;
-    max-height: none;
-    overflow-y: visible;
+  .data-input {
+    font-size: 16px;
   }
 }
+

@@ -79,6 +79,29 @@
   background: var(--bg-muted);
   border-radius: var(--radius-md);
   padding: 3px;
+  position: relative;
+}
+
+.format-selector::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / 3);
+  height: calc(100% - 6px);
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 3px rgba(26, 25, 24, 0.06);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+
+.format-selector.format-1::before {
+  transform: translateX(100%);
+}
+
+.format-selector.format-2::before {
+  transform: translateX(200%);
 }
 
 .format-option {
@@ -92,14 +115,23 @@
   font-weight: 500;
   color: var(--text-tertiary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.2s ease, font-weight 0.2s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.format-option:hover:not(.active) {
+  color: var(--text-secondary);
+}
+
+.format-option:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: -2px;
 }
 
 .format-option.active {
-  background: var(--bg-card);
   color: var(--text-primary);
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(26, 25, 24, 0.06);
 }
 
 .download-btn {
@@ -126,8 +158,13 @@
   box-shadow: 0 6px 20px rgba(216, 149, 117, 0.35);
 }
 
+.download-btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
 .download-btn:disabled {
-  opacity: 0.5;
+  background: #C4B5AB;
   cursor: not-allowed;
 }
 

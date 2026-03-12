@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#F5F4F1"/>
+  <rect x="440" y="160" width="320" height="320" rx="24" fill="#D89575" opacity="0.15"/>
+  <rect x="470" y="190" width="260" height="260" rx="16" fill="white" stroke="#D89575" stroke-width="3"/>
+  <!-- QR pattern hint -->
+  <g fill="#1A1918" opacity="0.8">
+    <rect x="495" y="215" width="30" height="30" rx="2"/>
+    <rect x="530" y="215" width="30" height="30" rx="2"/>
+    <rect x="565" y="215" width="30" height="30" rx="2"/>
+    <rect x="495" y="250" width="30" height="30" rx="2"/>
+    <rect x="565" y="250" width="30" height="30" rx="2"/>
+    <rect x="495" y="285" width="30" height="30" rx="2"/>
+    <rect x="530" y="285" width="30" height="30" rx="2"/>
+    <rect x="565" y="285" width="30" height="30" rx="2"/>
+    <rect x="635" y="215" width="30" height="30" rx="8"/>
+    <rect x="670" y="215" width="30" height="30" rx="8"/>
+    <rect x="635" y="250" width="30" height="30" rx="8"/>
+    <rect x="670" y="250" width="30" height="30" rx="8"/>
+    <rect x="670" y="285" width="30" height="30" rx="8"/>
+    <rect x="495" y="355" width="30" height="30" rx="2"/>
+    <rect x="530" y="355" width="30" height="30" rx="2"/>
+    <rect x="565" y="355" width="30" height="30" rx="2"/>
+    <rect x="495" y="390" width="30" height="30" rx="2"/>
+    <rect x="565" y="390" width="30" height="30" rx="2"/>
+    <rect x="495" y="320" width="30" height="30" rx="2"/>
+    <rect x="565" y="320" width="30" height="30" rx="2"/>
+    <rect x="635" y="355" width="30" height="30" rx="8"/>
+    <rect x="670" y="355" width="30" height="30" rx="8"/>
+    <rect x="635" y="390" width="30" height="30" rx="8"/>
+    <rect x="670" y="390" width="30" height="30" rx="8"/>
+    <rect x="670" y="320" width="30" height="30" rx="8"/>
+    <rect x="635" y="320" width="30" height="30" rx="8"/>
+  </g>
+  <text x="600" y="550" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="48" fill="#1A1918">QRni</text>
+  <text x="600" y="590" text-anchor="middle" font-family="Arial,sans-serif" font-weight="500" font-size="22" fill="#8A8784">Free QR Code Generator</text>
+</svg>
