@@ -1,0 +1,12 @@
+{
+  "planPath": "docs/plans/2026-03-14-merge-shorten-into-qr-mode-implementation.md",
+  "tasks": [
+    {"id": 0, "subject": "Task 1: Delete desktop Shorten screens (S1-S4)", "status": "pending"},
+    {"id": 1, "subject": "Task 2: Delete mobile Shorten screens (M1-M4)", "status": "pending", "blockedBy": [0]},
+    {"id": 2, "subject": "Task 3: Update desktop Mode Toggles — remove Shorten tab", "status": "pending", "blockedBy": [0]},
+    {"id": 3, "subject": "Task 4: Update mobile Mode Toggles — remove Shorten tab", "status": "pending", "blockedBy": [1]},
+    {"id": 4, "subject": "Task 5: Update screen names to reflect new structure", "status": "pending", "blockedBy": [2, 3]},
+    {"id": 5, "subject": "Task 6: Visual verification pass", "status": "pending", "blockedBy": [4]}
+  ],
+  "lastUpdated": "2026-03-14T00:00:00Z"
+}
