@@ -38,7 +38,7 @@ function LinkRow({ link, copiedId, onCopy, onDelete }) {
         {truncateUrl(link.destinationUrl)}
       </td>
       <td className="link-clicks">{link.clickCount}</td>
-      <td className="link-date">{formatDate(link.createdAt)}</td>
+      <td className="link-date col-date">{formatDate(link.createdAt)}</td>
       <td className="link-actions">
         <button
           className="action-btn copy"
@@ -70,7 +70,7 @@ function LinksTable({ links, copiedId, onCopy, onDelete }) {
             <th scope="col">Short URL</th>
             <th scope="col">Destination</th>
             <th scope="col">Clicks</th>
-            <th scope="col">Created</th>
+            <th scope="col" className="col-date">Created</th>
             <th scope="col"><span className="sr-only">Actions</span></th>
           </tr>
         </thead>

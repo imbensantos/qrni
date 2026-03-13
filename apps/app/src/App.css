@@ -116,4 +116,9 @@
     flex: none;
     overflow: visible;
   }
+
+  .mode-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
 }

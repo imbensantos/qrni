@@ -141,7 +141,19 @@
     padding: 16px;
   }
 
+  /* Give the table a minimum width so the wrapper's overflow-x: auto kicks in
+     on very narrow screens rather than the table collapsing illegibly */
+  .links-table {
+    min-width: 480px;
+  }
+
   .link-dest {
     max-width: 150px;
+  }
+
+  /* Hide the Created date column — least critical on small screens */
+  .links-table th.col-date,
+  .links-table td.col-date {
+    display: none;
   }
 }
