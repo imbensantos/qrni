@@ -5,6 +5,7 @@ import PreviewPanel from './components/PreviewPanel'
 import BulkPanel from './components/BulkPanel'
 import BulkPreview from './components/BulkPreview'
 import ShortenPanel from './components/ShortenPanel'
+import ShortenPreview from './components/ShortenPreview'
 import './App.css'
 
 function App() {
@@ -99,9 +100,7 @@ function App() {
             format={format}
           />
         ) : (
-          <div className="preview-placeholder" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9C9B99' }}>
-            Shortened links will appear here
-          </div>
+          <ShortenPreview />
         )}
       </main>
     </div>

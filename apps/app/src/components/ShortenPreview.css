@@ -1,0 +1,147 @@
+.shorten-preview {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--bg-preview);
+  display: flex;
+  flex-direction: column;
+}
+
+.shorten-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.empty-icon {
+  font-size: 32px;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Table */
+.links-table-wrapper {
+  padding: 24px;
+  overflow-x: auto;
+}
+
+.links-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Outfit', sans-serif;
+}
+
+.links-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.links-table td {
+  padding: 12px;
+  font-size: 13px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.link-code {
+  font-weight: 600;
+  color: var(--accent-secondary);
+}
+
+.link-dest {
+  color: var(--text-secondary);
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-clicks {
+  font-weight: 600;
+  text-align: center;
+}
+
+.link-date {
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.link-actions {
+  display: flex;
+  gap: 4px;
+}
+
+/* Action buttons */
+.action-btn {
+  padding: 4px 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.action-btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.action-btn.copy {
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+}
+
+.action-btn.copy:hover {
+  background: var(--border-subtle);
+}
+
+.action-btn.delete {
+  background: none;
+  color: var(--text-tertiary);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.action-btn.delete:hover {
+  color: #D85555;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .links-table-wrapper {
+    padding: 16px;
+  }
+
+  .link-dest {
+    max-width: 150px;
+  }
+}
