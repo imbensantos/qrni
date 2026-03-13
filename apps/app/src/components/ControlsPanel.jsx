@@ -18,6 +18,7 @@ function ControlsPanel({
   logo, onLogoChange,
   dotStyle, onDotStyleChange,
   size, onSizeChange,
+  shortenLink, onShortenLinkChange,
 }) {
   const fileInputRef = useRef(null)
   const dotRowRef = useRef(null)
@@ -73,6 +74,19 @@ function ControlsPanel({
           autoFocus
         />
       </section>
+
+      {/* Short Link Toggle */}
+      <div className="shortlink-toggle-row">
+        <span className="shortlink-label">Also create short link</span>
+        <button
+          role="switch"
+          aria-checked={shortenLink}
+          className={`toggle-switch ${shortenLink ? 'on' : ''}`}
+          onClick={() => { onShortenLinkChange(!shortenLink); trigger('nudge') }}
+        >
+          <span className="toggle-knob" />
+        </button>
+      </div>
 
       <hr className="divider" />
 

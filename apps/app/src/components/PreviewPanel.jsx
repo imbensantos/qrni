@@ -8,7 +8,7 @@ const FORMATS = ['png', 'svg', 'webp']
 
 function PreviewPanel({
   url, isValidUrl, fgColor, bgColor, logo, dotStyle, size,
-  format, onFormatChange,
+  format, onFormatChange, shortenLink,
 }) {
   const qrContainerRef = useRef(null)
   const { trigger } = useWebHaptics()
@@ -65,6 +65,21 @@ function PreviewPanel({
         <p className={`status ${isValidUrl ? 'status-ready' : ''}`} aria-live="polite" aria-atomic="true">
           {isValidUrl ? 'Ready to download' : 'Enter a valid URL'}
         </p>
+
+        {shortenLink && isValidUrl && (
+          <div className="short-link-card">
+            <div className="sl-left">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3D8A5A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+              </svg>
+              <span className="sl-url">qrni.to/bR7mQ</span>
+            </div>
+            <button className="sl-copy-btn" onClick={() => { navigator.clipboard?.writeText('https://qrni.to/bR7mQ'); trigger('success') }}>
+              Copy
+            </button>
+          </div>
+        )}
 
         <div className="export-bar">
           <div className={`format-selector format-${FORMATS.indexOf(format)}`} role="radiogroup" aria-label="Export format">

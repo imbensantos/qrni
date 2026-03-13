@@ -18,6 +18,7 @@ function App() {
   const [size, setSize] = useState(512)
   const [format, setFormat] = useState('png')
   const [bulkEntries, setBulkEntries] = useState([])
+  const [shortenLink, setShortenLink] = useState(false)
   const { trigger } = useWebHaptics()
 
   const isValidUrl = url.startsWith('http://') || url.startsWith('https://')
@@ -61,6 +62,7 @@ function App() {
               logo={logo} onLogoChange={setLogo}
               dotStyle={dotStyle} onDotStyleChange={setDotStyle}
               size={size} onSizeChange={setSize}
+              shortenLink={shortenLink} onShortenLinkChange={setShortenLink}
             />
           ) : mode === 'bulk' ? (
             <BulkPanel
@@ -87,6 +89,7 @@ function App() {
             size={size}
             format={format}
             onFormatChange={setFormat}
+            shortenLink={shortenLink}
           />
         ) : mode === 'bulk' ? (
           <BulkPreview

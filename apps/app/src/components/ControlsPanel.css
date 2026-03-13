@@ -345,3 +345,53 @@
   }
 }
 
+
+/* Short Link Toggle */
+.shortlink-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+}
+
+.shortlink-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border: none;
+  border-radius: 12px;
+  background: var(--bg-muted);
+  cursor: pointer;
+  transition: background 0.2s;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-switch:focus-visible {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}
+
+.toggle-switch.on {
+  background: var(--accent-secondary);
+}
+
+.toggle-knob {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-switch.on .toggle-knob {
+  transform: translateX(20px);
+}
