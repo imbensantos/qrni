@@ -4,6 +4,7 @@ import ControlsPanel from './components/ControlsPanel'
 import PreviewPanel from './components/PreviewPanel'
 import BulkPanel from './components/BulkPanel'
 import BulkPreview from './components/BulkPreview'
+import ShortenPanel from './components/ShortenPanel'
 import './App.css'
 
 function App() {
@@ -71,7 +72,7 @@ function App() {
               onEntriesParsed={setBulkEntries}
             />
           ) : (
-            <div style={{ padding: 20, color: '#9C9B99' }}>URL shortener coming soon</div>
+            <ShortenPanel />
           )}
         </div>
         {mode === 'single' ? (

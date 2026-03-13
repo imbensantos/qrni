@@ -1,0 +1,245 @@
+/* ShortenPanel styles — extends shared patterns from ControlsPanel.css */
+
+/* Shorten Button */
+.shorten-btn {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--accent-primary);
+  color: #FFFFFF;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-button);
+  transition: background 0.2s, transform 0.15s;
+}
+
+.shorten-btn:hover:not(:disabled) {
+  background: var(--accent-primary-hover);
+}
+
+.shorten-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.shorten-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.shorten-btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 3px;
+}
+
+/* Result Card */
+.shorten-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--accent-secondary);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+}
+
+.result-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.result-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.result-url {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Copy Button */
+.copy-btn {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--bg-page);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.copy-btn:hover {
+  background: var(--bg-muted);
+}
+
+.copy-btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Slug counter */
+.slug-counter {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+
+/* Namespace select wrapper (positions the chevron icon) */
+.namespace-select-wrapper {
+  position: relative;
+}
+
+.namespace-select {
+  width: 100%;
+  height: 48px;
+  padding: 0 40px 0 16px;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-page);
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  color: var(--text-primary);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.namespace-select:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(216, 149, 117, 0.2);
+}
+
+.namespace-chevron {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+/* Create namespace inline form */
+.create-namespace-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.create-namespace-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.ns-create-btn {
+  flex: 1;
+  height: 36px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent-secondary);
+  color: #FFFFFF;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.ns-create-btn:hover {
+  opacity: 0.85;
+}
+
+.ns-create-btn:focus-visible {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}
+
+.ns-cancel-btn {
+  flex: 1;
+  height: 36px;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.ns-cancel-btn:hover {
+  border-color: var(--text-tertiary);
+}
+
+.ns-cancel-btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Namespace nudge card */
+.namespace-nudge {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--accent-warm);
+  border-radius: var(--radius-sm);
+}
+
+.nudge-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.nudge-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Error */
+.shorten-error {
+  font-size: 13px;
+  font-weight: 500;
+  color: #D85555;
+  margin: 0;
+}
+
+/* Sign-in hint */
+.shorten-hint {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-align: center;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .namespace-select {
+    font-size: 16px;
+  }
+}
