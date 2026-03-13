@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout
   title="QRni — Free QR Code Generator | No Sign-Up Needed"
-  description="Generate QR codes instantly for free. No sign-up, no limits. Paste a URL, get a high-quality PNG QR code in seconds."
+  description="Generate QR codes instantly for free and shorten URLs for your events. No sign-up, no limits. Organize links with namespaces, set custom slugs, and invite your team."
 >
   <!-- Hero -->
   <section class="hero">
@@ -107,6 +107,57 @@ import Layout from '../layouts/Layout.astro';
           <h3>High-quality PNG download</h3>
           <p>Crisp, clean QR codes ready for print or digital use.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- URL Shortener -->
+  <section class="url-shortener">
+    <div class="container">
+      <div class="shortener-badge">New</div>
+      <h2 class="section-title">Shorten URLs for your events</h2>
+      <p class="section-subtitle">
+        Keep your links clean and memorable. Perfect for conferences, workshops, pop-ups — anywhere you need QR codes that actually make sense.
+      </p>
+
+      <div class="shortener-grid">
+        <div class="shortener-card shortener-card--highlight">
+          <div class="shortener-card__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+              <path d="M16 3H8L2 7h20l-6-4z" />
+            </svg>
+          </div>
+          <h3>Namespaces for every event</h3>
+          <p>Organize your links under a shared namespace — keep your annual gala, weekly markets, and product launches neatly separated.</p>
+        </div>
+
+        <div class="shortener-card">
+          <div class="shortener-card__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+            </svg>
+          </div>
+          <h3>Custom slugs</h3>
+          <p>Choose exactly what comes after the slash. Turn <span class="slug-example">qrni.co/xyz99</span> into something like <span class="slug-example">qrni.co/artfest-map</span>.</p>
+        </div>
+
+        <div class="shortener-card">
+          <div class="shortener-card__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </div>
+          <h3>Invite your team</h3>
+          <p>Share a namespace with your crew. Everyone can create and manage links for the event without stepping on each other's toes.</p>
+        </div>
+      </div>
+
+      <div class="shortener-cta">
+        <a href="https://app.qrni.imbento.co" class="cta-btn cta-btn--secondary">Try URL Shortener</a>
       </div>
     </div>
   </section>
@@ -288,6 +339,95 @@ import Layout from '../layouts/Layout.astro';
     line-height: 1.5;
   }
 
+  /* URL Shortener */
+  .url-shortener {
+    padding: 4rem 0;
+    text-align: center;
+  }
+
+  .shortener-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, #a78bfa, #ec4899);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .section-subtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 520px;
+    margin: 0.75rem auto 2.5rem;
+    line-height: 1.6;
+  }
+
+  .shortener-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    text-align: left;
+  }
+
+  .shortener-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 2rem;
+  }
+
+  .shortener-card--highlight {
+    background: rgba(167, 139, 250, 0.25);
+    border: 1px solid rgba(167, 139, 250, 0.4);
+  }
+
+  .shortener-card__icon {
+    margin-bottom: 1rem;
+    color: #fff;
+  }
+
+  .shortener-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #fff;
+  }
+
+  .shortener-card p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.5;
+  }
+
+  .slug-example {
+    font-family: monospace;
+    font-size: 0.85em;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .shortener-cta {
+    margin-top: 0.5rem;
+  }
+
+  .cta-btn--secondary {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    box-shadow: none;
+  }
+
+  .cta-btn--secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+  }
+
   /* Footer */
   .site-footer {
     padding: 3rem 0 2rem;
@@ -341,6 +481,12 @@ import Layout from '../layouts/Layout.astro';
       grid-template-columns: 1fr;
       max-width: 400px;
       margin: 0 auto;
+    }
+
+    .shortener-grid {
+      grid-template-columns: 1fr;
+      max-width: 400px;
+      margin: 0 auto 2.5rem;
     }
 
     .hero-logo {
