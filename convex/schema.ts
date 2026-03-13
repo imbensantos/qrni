@@ -1,4 +1,67 @@
-import { defineSchema } from 'convex/server'
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
 
-// Schema is empty for now — tables will be added as features are built.
-export default defineSchema({})
+export default defineSchema({
+  users: defineTable({
+    googleId: v.string(),
+    email: v.string(),
+    name: v.optional(v.string()),
+    avatarUrl: v.optional(v.string()),
+    createdAt: v.number(),
+  }).index("by_google_id", ["googleId"]),
+
+  namespaces: defineTable({
+    owner: v.id("users"),
+    slug: v.string(),
+    createdAt: v.number(),
+    lastActiveAt: v.number(),
+  })
+    .index("by_slug", ["slug"])
+    .index("by_owner", ["owner"]),
+
+  namespace_members: defineTable({
+    namespace: v.id("namespaces"),
+    user: v.id("users"),
+    role: v.union(v.literal("editor"), v.literal("viewer")),
+    invitedBy: v.id("users"),
+    joinedAt: v.number(),
+  })
+    .index("by_namespace", ["namespace"])
+    .index("by_user", ["user"])
+    .index("by_namespace_user", ["namespace", "user"]),
+
+  namespace_invites: defineTable({
+    namespace: v.id("namespaces"),
+    role: v.union(v.literal("editor"), v.literal("viewer")),
+    type: v.union(v.literal("email"), v.literal("link")),
+    email: v.optional(v.string()),
+    token: v.string(),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    revoked: v.boolean(),
+  })
+    .index("by_namespace", ["namespace"])
+    .index("by_token", ["token"])
+    .index("by_email", ["email"]),
+
+  links: defineTable({
+    shortCode: v.string(),
+    namespace: v.optional(v.id("namespaces")),
+    namespaceSlug: v.optional(v.string()),
+    destinationUrl: v.string(),
+    creatorIp: v.optional(v.string()),
+    owner: v.optional(v.id("users")),
+    createdAt: v.number(),
+    clickCount: v.number(),
+  })
+    .index("by_short_code", ["shortCode"])
+    .index("by_namespace_slug", ["namespace", "namespaceSlug"])
+    .index("by_owner", ["owner"])
+    .index("by_creator_ip", ["creatorIp"]),
+
+  rate_limits: defineTable({
+    ip: v.string(),
+    windowStart: v.number(),
+    count: v.number(),
+  }).index("by_ip", ["ip"]),
+});
