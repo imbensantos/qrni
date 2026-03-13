@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@auth/core": "^0.37.4",
+    "@convex-dev/auth": "^0.0.91",
     "@vercel/analytics": "^2.0.0",
     "convex": "^1.33.0",
     "jspdf": "^4.2.0",
