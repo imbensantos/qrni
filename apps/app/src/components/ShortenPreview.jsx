@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from 'convex/react'
 import { useState } from 'react'
 import { useWebHaptics } from 'web-haptics/react'
-import { api } from '../../convex/_generated/api'
+import { api } from '../../../../convex/_generated/api'
 import { useAuth } from '../hooks/useAuth'
 import './ShortenPreview.css'
 

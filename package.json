@@ -10,5 +10,11 @@
     "dev:landing": "npm run dev --workspace=apps/landing",
     "build:app": "npm run build --workspace=apps/app",
     "build:landing": "npm run build --workspace=apps/landing"
+  },
+  "dependencies": {
+    "convex": "^1.33.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0"
   }
 }
