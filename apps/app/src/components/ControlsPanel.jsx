@@ -1,5 +1,9 @@
-import { useRef } from 'react'
+import { useRef, useState, useCallback } from 'react'
 import { useWebHaptics } from 'web-haptics/react'
+import { useMutation, useQuery } from 'convex/react'
+import { useAuthActions } from '@convex-dev/auth/react'
+import { api } from '../../../../convex/_generated/api'
+import { useAuth } from '../hooks/useAuth'
 import './ControlsPanel.css'
 
 const DOT_STYLES = [
@@ -19,11 +23,130 @@ function ControlsPanel({
   dotStyle, onDotStyleChange,
   size, onSizeChange,
   shortenLink, onShortenLinkChange,
+  onShortLinkCreated,
+  onGenerate,
+  qrGenerated,
 }) {
   const fileInputRef = useRef(null)
   const dotRowRef = useRef(null)
   const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0 })
   const { trigger } = useWebHaptics()
+  const { isAuthenticated } = useAuth()
+  const { signIn } = useAuthActions()
+
+  const [customSlug, setCustomSlug] = useState('')
+  const [selectedNamespace, setSelectedNamespace] = useState(null)
+  const [shortLinkLoading, setShortLinkLoading] = useState(false)
+  const [shortLinkError, setShortLinkError] = useState(null)
+  const [nsDropdownOpen, setNsDropdownOpen] = useState(false)
+  const [creatingNs, setCreatingNs] = useState(false)
+  const [newNsSlug, setNewNsSlug] = useState('')
+  const [nsCreateError, setNsCreateError] = useState(null)
+
+  const createNamespace = useMutation(api.namespaces.create)
+
+  const handleCreateNamespace = async () => {
+    if (!newNsSlug.trim()) return
+    setNsCreateError(null)
+    try {
+      const nsId = await createNamespace({ slug: newNsSlug.trim().toLowerCase() })
+      setNewNsSlug('')
+      setCreatingNs(false)
+      setNsDropdownOpen(false)
+      // Select the newly created namespace — will appear in the list on next render
+    } catch (err) {
+      const msg = err.message
+        .replace(/\[CONVEX [^\]]*\]\s*/g, '')
+        .replace(/\[Request ID: [^\]]*\]\s*/g, '')
+        .replace(/Server Error\s*/gi, '')
+        .replace(/Uncaught Error:\s*/gi, '')
+        .replace(/\s*at handler\s*\(.*$/s, '')
+        .replace(/\s*Called by client\s*$/i, '')
+        .trim()
+      setNsCreateError(msg || 'Failed to create namespace')
+    }
+  }
+
+  const handleSignIn = async () => {
+    try {
+      await signIn('google')
+    } catch (err) {
+      console.error('Sign-in error:', err)
+    }
+  }
+
+  const createAnonymousLink = useMutation(api.links.createAnonymousLink)
+  const createCustomSlugLink = useMutation(api.links.createCustomSlugLink)
+  const createNamespacedLink = useMutation(api.links.createNamespacedLink)
+
+  const myLinks = useQuery(api.links.listMyLinks) ?? []
+  const myNamespaces = useQuery(api.namespaces.listMine)
+
+  const flatCustomCount = myLinks.filter(l => !l.namespace && l.owner).length
+
+  const allNamespaces = [
+    ...(myNamespaces?.owned ?? []),
+    ...(myNamespaces?.collaborated ?? []),
+  ]
+
+  const createShortLink = useCallback(async (targetUrl) => {
+    const isValid = targetUrl.startsWith('http://') || targetUrl.startsWith('https://')
+    if (!isValid) return
+    setShortLinkLoading(true)
+    setShortLinkError(null)
+    try {
+      let res
+      if (!isAuthenticated) {
+        res = await createAnonymousLink({ destinationUrl: targetUrl, creatorIp: 'anonymous' })
+      } else if (selectedNamespace) {
+        res = await createNamespacedLink({
+          destinationUrl: targetUrl,
+          namespaceId: selectedNamespace._id,
+          slug: customSlug.trim() || undefined,
+        })
+      } else if (customSlug.trim()) {
+        res = await createCustomSlugLink({
+          destinationUrl: targetUrl,
+          customSlug: customSlug.trim(),
+        })
+      } else {
+        res = await createAnonymousLink({ destinationUrl: targetUrl, creatorIp: 'anonymous' })
+      }
+      onShortLinkCreated?.(res)
+      trigger('success')
+    } catch (err) {
+      const msg = err.message || 'Failed to create short link'
+      // Strip Convex noise: [CONVEX ...] [Request ID: ...] Server Error Uncaught Error: ...
+      const clean = msg
+        .replace(/\[CONVEX [^\]]*\]\s*/g, '')
+        .replace(/\[Request ID: [^\]]*\]\s*/g, '')
+        .replace(/Server Error\s*/gi, '')
+        .replace(/Uncaught Error:\s*/gi, '')
+        .replace(/\s*at handler\s*\(.*$/s, '')
+        .replace(/\s*Called by client\s*$/i, '')
+        .trim()
+      setShortLinkError(clean || 'Failed to create short link')
+      trigger('error')
+    } finally {
+      setShortLinkLoading(false)
+    }
+  }, [isAuthenticated, selectedNamespace, customSlug, createAnonymousLink, createNamespacedLink, createCustomSlugLink, onShortLinkCreated, trigger])
+
+  const handleGenerate = useCallback(async () => {
+    onGenerate?.()
+    if (shortenLink) await createShortLink(url)
+    else trigger('success')
+  }, [onGenerate, shortenLink, createShortLink, url, trigger])
+
+  const handleNamespaceSelect = (value) => {
+    setNsDropdownOpen(false)
+    if (value === 'none') {
+      setSelectedNamespace(null)
+      return
+    }
+    const ns = allNamespaces.find(n => n._id === value)
+    setSelectedNamespace(ns ?? null)
+  }
 
   const onDragStart = (e) => {
     const row = dotRowRef.current
@@ -82,18 +205,166 @@ function ControlsPanel({
           role="switch"
           aria-checked={shortenLink}
           className={`toggle-switch ${shortenLink ? 'on' : ''}`}
-          onClick={() => { onShortenLinkChange(!shortenLink); trigger('nudge') }}
+          onClick={() => {
+            const next = !shortenLink
+            onShortenLinkChange(next)
+            if (!next) {
+              onShortLinkCreated?.(null)
+              setShortLinkError(null)
+            }
+            trigger('nudge')
+          }}
         >
           <span className="toggle-knob" />
         </button>
       </div>
+
+      {/* Short Link Options (revealed when toggle is on) */}
+      {shortenLink && (
+        <div className="shortlink-options">
+          {shortLinkLoading && (
+            <p className="shortlink-status">Creating short link...</p>
+          )}
+          {shortLinkError && (
+            <p className="shortlink-error" role="alert">{shortLinkError}</p>
+          )}
+
+          {/* Authenticated: Custom Slug + Namespace */}
+          {isAuthenticated ? (
+            <>
+              <section className="control-section" role="group" aria-labelledby="slug-label">
+                <div className="control-header">
+                  <label id="slug-label" className="control-label" htmlFor="slug-input">
+                    Custom slug
+                  </label>
+                  <span className="slug-counter">{flatCustomCount} of 5 used</span>
+                </div>
+                <input
+                  id="slug-input"
+                  type="text"
+                  className="url-input"
+                  placeholder="e.g., my-link"
+                  value={customSlug}
+                  onChange={(e) => setCustomSlug(e.target.value)}
+                  disabled={!!selectedNamespace}
+                />
+              </section>
+            </>
+          ) : null}
+
+          {isAuthenticated ? (
+            <>
+              <section className="control-section" role="group" aria-labelledby="namespace-label">
+                <label id="namespace-label" className="control-label">
+                  Namespace
+                </label>
+                <div className="namespace-dropdown-wrapper">
+                  <button
+                    type="button"
+                    className="namespace-dropdown-trigger"
+                    onClick={() => setNsDropdownOpen(!nsDropdownOpen)}
+                    aria-expanded={nsDropdownOpen}
+                    aria-haspopup="listbox"
+                  >
+                    <span>{selectedNamespace ? `${selectedNamespace.slug}` : 'None (flat link)'}</span>
+                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none" className={`ns-chevron ${nsDropdownOpen ? 'open' : ''}`}>
+                      <path d="M1 1L6 6L11 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  {nsDropdownOpen && (
+                    <ul className="namespace-dropdown-menu" role="listbox">
+                      <li
+                        role="option"
+                        aria-selected={!selectedNamespace}
+                        className={`ns-option ${!selectedNamespace ? 'selected' : ''}`}
+                        onClick={() => handleNamespaceSelect('none')}
+                      >
+                        None (flat link)
+                      </li>
+                      {allNamespaces.map(ns => (
+                        <li
+                          key={ns._id}
+                          role="option"
+                          aria-selected={selectedNamespace?._id === ns._id}
+                          className={`ns-option ${selectedNamespace?._id === ns._id ? 'selected' : ''}`}
+                          onClick={() => handleNamespaceSelect(ns._id)}
+                        >
+                          {ns.slug}
+                        </li>
+                      ))}
+                      <li className="ns-option ns-create-option">
+                        {creatingNs ? (
+                          <div className="ns-create-form" onClick={(e) => e.stopPropagation()}>
+                            <input
+                              type="text"
+                              className="ns-create-input"
+                              placeholder="my-namespace"
+                              value={newNsSlug}
+                              onChange={(e) => setNewNsSlug(e.target.value)}
+                              onKeyDown={(e) => { if (e.key === 'Enter') handleCreateNamespace(); if (e.key === 'Escape') { setCreatingNs(false); setNsCreateError(null) } }}
+                              autoFocus
+                            />
+                            <button type="button" className="ns-create-confirm" onClick={handleCreateNamespace}>Add</button>
+                          </div>
+                        ) : (
+                          <button type="button" className="ns-create-trigger" onClick={(e) => { e.stopPropagation(); setCreatingNs(true); setNsCreateError(null) }}>
+                            + Create namespace
+                          </button>
+                        )}
+                        {nsCreateError && <p className="shortlink-error" style={{ marginTop: 4 }}>{nsCreateError}</p>}
+                      </li>
+                    </ul>
+                  )}
+                </div>
+              </section>
+
+              {/* Namespace nudge */}
+              {!selectedNamespace && (
+                <div className="namespace-nudge" role="note">
+                  <span className="nudge-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7z" fill="#D89575" />
+                      <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1z" fill="#D89575" />
+                    </svg>
+                  </span>
+                  <span className="nudge-text">
+                    Want unlimited short links? Try a namespace instead.
+                  </span>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="namespace-nudge" role="note">
+              <span className="nudge-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7z" fill="#D89575" />
+                  <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1z" fill="#D89575" />
+                </svg>
+              </span>
+              <span className="nudge-text">
+                <button type="button" className="inline-signin-btn" onClick={(e) => { e.stopPropagation(); handleSignIn() }}>Sign in</button> for custom slugs and namespaces — perfect for events!
+              </span>
+            </div>
+          )}
+
+        </div>
+      )}
 
       <hr className="divider" />
 
       {/* Colors */}
       <section className="control-section" role="group" aria-labelledby="colors-label">
         <div className="control-header">
-          <span id="colors-label" className="control-label">Colors</span>
+          <span id="colors-label" className="control-label">
+            <svg className="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z" />
+              <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+              <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
+              <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
+              <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
+            </svg>
+            Colors
+          </span>
         </div>
         <div className="color-row">
           <div className="color-group">
@@ -120,7 +391,14 @@ function ControlsPanel({
       {/* Logo */}
       <section className="control-section" role="group" aria-labelledby="logo-label">
         <div className="control-header">
-          <span id="logo-label" className="control-label">Logo</span>
+          <span id="logo-label" className="control-label">
+            <svg className="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+              <circle cx="9" cy="9" r="2" />
+              <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+            </svg>
+            Logo
+          </span>
         </div>
         {logo ? (
           <div className="logo-preview">
@@ -134,6 +412,11 @@ function ControlsPanel({
             onClick={() => { fileInputRef.current?.click(); trigger('nudge') }}
           >
             <input ref={fileInputRef} type="file" accept="image/*" onChange={handleLogoUpload} hidden aria-label="Upload logo image" />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
             <span>Add logo</span>
           </button>
         )}
@@ -144,7 +427,16 @@ function ControlsPanel({
       {/* Dot Style */}
       <section className="control-section" role="group" aria-labelledby="dotstyle-label">
         <div className="control-header">
-          <span id="dotstyle-label" className="control-label">Dot Style</span>
+          <span id="dotstyle-label" className="control-label">
+            <svg className="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect width="18" height="18" x="3" y="3" rx="2" />
+              <path d="M3 9h18" />
+              <path d="M3 15h18" />
+              <path d="M9 3v18" />
+              <path d="M15 3v18" />
+            </svg>
+            Dot Style
+          </span>
         </div>
         <div
           className="dot-row"
@@ -177,7 +469,15 @@ function ControlsPanel({
       {/* Size */}
       <section className="control-section" role="group" aria-labelledby="size-label">
         <div className="control-header">
-          <span id="size-label" className="control-label">Size</span>
+          <span id="size-label" className="control-label">
+            <svg className="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+              <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+              <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+              <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+            </svg>
+            Size
+          </span>
           <span className="size-value" aria-live="polite">{size} px</span>
         </div>
         <input
@@ -199,6 +499,15 @@ function ControlsPanel({
           <span>2048</span>
         </div>
       </section>
+      {/* Generate Button */}
+      <button
+        className="generate-btn"
+        disabled={!(url.startsWith('http://') || url.startsWith('https://')) || shortLinkLoading}
+        onClick={handleGenerate}
+      >
+        {shortLinkLoading ? 'Generating...' : 'Generate QR'}
+      </button>
+
       <div className="panel-spacer" />
 
       <footer className="panel-footer panel-footer-desktop">
