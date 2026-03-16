@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useWebHaptics } from 'web-haptics/react'
+import { useQuery } from 'convex/react'
+import { useAuthActions } from '@convex-dev/auth/react'
+import { api } from '../../../convex/_generated/api'
 import ControlsPanel from './components/ControlsPanel'
 import PreviewPanel from './components/PreviewPanel'
 import BulkPanel from './components/BulkPanel'
 import BulkPreview from './components/BulkPreview'
-import ShortenPanel from './components/ShortenPanel'
-import ShortenPreview from './components/ShortenPreview'
+import ProfileDropdown from './components/ProfileDropdown'
 import './App.css'
 
 function App() {
@@ -18,8 +20,12 @@ function App() {
   const [size, setSize] = useState(512)
   const [format, setFormat] = useState('png')
   const [bulkEntries, setBulkEntries] = useState([])
-  const [shortenLink, setShortenLink] = useState(false)
+  const [shortenLink, setShortenLink] = useState(() => localStorage.getItem('qrni-shorten-link') === 'true')
+  const [shortLinkResult, setShortLinkResult] = useState(null)
+  const [qrGenerated, setQrGenerated] = useState(false)
   const { trigger } = useWebHaptics()
+  const { signIn } = useAuthActions()
+  const user = useQuery(api.users.currentUser)
 
   const isValidUrl = url.startsWith('http://') || url.startsWith('https://')
 
@@ -27,6 +33,13 @@ function App() {
     <div className="app">
       <header className="header">
         <h1 className="logo">QRni ✨</h1>
+        {user ? (
+          <ProfileDropdown user={user} />
+        ) : (
+          <button className="signin-btn" onClick={() => signIn("google")}>
+            Sign in
+          </button>
+        )}
       </header>
       <main className="body">
         <div className="sidebar-panel">
@@ -45,26 +58,22 @@ function App() {
             >
               Bulk
             </button>
-            <button
-              className={`mode-btn ${mode === 'shorten' ? 'active' : ''}`}
-              aria-pressed={mode === 'shorten'}
-              onClick={() => { setMode('shorten'); trigger('nudge') }}
-            >
-              Shorten
-            </button>
           </div>
           <hr className="divider" />
           {mode === 'single' ? (
             <ControlsPanel
-              url={url} onUrlChange={setUrl}
+              url={url} onUrlChange={(v) => { setUrl(v); setQrGenerated(false) }}
               fgColor={fgColor} onFgColorChange={setFgColor}
               bgColor={bgColor} onBgColorChange={setBgColor}
               logo={logo} onLogoChange={setLogo}
               dotStyle={dotStyle} onDotStyleChange={setDotStyle}
               size={size} onSizeChange={setSize}
-              shortenLink={shortenLink} onShortenLinkChange={setShortenLink}
+              shortenLink={shortenLink} onShortenLinkChange={(v) => { setShortenLink(v); localStorage.setItem('qrni-shorten-link', String(v)) }}
+              onShortLinkCreated={setShortLinkResult}
+              onGenerate={() => setQrGenerated(true)}
+              qrGenerated={qrGenerated}
             />
-          ) : mode === 'bulk' ? (
+          ) : (
             <BulkPanel
               fgColor={fgColor} onFgColorChange={setFgColor}
               bgColor={bgColor} onBgColorChange={setBgColor}
@@ -74,14 +83,12 @@ function App() {
               format={format} onFormatChange={setFormat}
               onEntriesParsed={setBulkEntries}
             />
-          ) : (
-            <ShortenPanel />
           )}
         </div>
         {mode === 'single' ? (
           <PreviewPanel
             url={url}
-            isValidUrl={isValidUrl}
+            isValidUrl={isValidUrl && qrGenerated}
             fgColor={fgColor}
             bgColor={bgColor}
             logo={logo}
@@ -90,8 +97,9 @@ function App() {
             format={format}
             onFormatChange={setFormat}
             shortenLink={shortenLink}
+            shortLinkResult={shortLinkResult}
           />
-        ) : mode === 'bulk' ? (
+        ) : (
           <BulkPreview
             entries={bulkEntries}
             onEntriesChange={setBulkEntries}
@@ -102,8 +110,6 @@ function App() {
             size={size}
             format={format}
           />
-        ) : (
-          <ShortenPreview />
         )}
       </main>
     </div>
