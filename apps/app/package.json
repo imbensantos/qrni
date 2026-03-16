@@ -12,6 +12,7 @@
   "dependencies": {
     "@auth/core": "^0.37.4",
     "@convex-dev/auth": "^0.0.91",
+    "@tanstack/react-router": "^1.167.3",
     "@vercel/analytics": "^2.0.0",
     "convex": "^1.33.0",
     "jspdf": "^4.2.0",
