@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    {
+      "source": "/profile",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:code([a-zA-Z0-9]{7})",
+      "destination": "https://keen-akita-913.convex.site/:code"
+    },
+    {
+      "source": "/:ns([a-z][a-z0-9-]{2,29})/:slug([a-zA-Z0-9_-]{1,60})",
+      "destination": "https://keen-akita-913.convex.site/:ns/:slug"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
