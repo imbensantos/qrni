@@ -1,90 +1,127 @@
-.profile-dropdown {
+.pd {
   position: relative;
 }
 
-.profile-avatar-btn {
+/* Pill-shaped trigger button */
+.pd-trigger {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border-subtle);
-  padding: 0;
+  gap: 8px;
+  padding: 5px 14px 5px 5px;
+  background: #EDECEA;
+  border: none;
+  border-radius: 100px;
   cursor: pointer;
-  background: var(--bg-muted);
-  overflow: hidden;
-  transition: border-color 0.15s ease;
+  transition: background 0.15s;
 }
 
-.profile-avatar-btn:hover {
-  border-color: var(--accent-primary);
+.pd-trigger:hover {
+  background: #E5E4E1;
 }
 
-.profile-avatar-img {
-  width: 100%;
-  height: 100%;
+/* Avatar inside trigger */
+.pd-trigger-avatar-img,
+.pd-trigger-avatar-fallback {
+  width: 30px;
+  height: 30px;
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+
+.pd-trigger-avatar-img {
   object-fit: cover;
 }
 
-.profile-avatar-fallback {
+.pd-trigger-avatar-fallback {
+  background: #D89575;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: 'Outfit', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  color: var(--text-primary);
 }
 
-.profile-menu {
+.pd-trigger-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1A1918;
+}
+
+.pd-trigger-chevron {
+  color: #9C9B99;
+  flex-shrink: 0;
+}
+
+/* Dropdown menu */
+.pd-menu {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  min-width: 200px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-elevated);
+  width: 200px;
+  background: #ffffff;
+  border: 1px solid #E5E4E1;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(26, 25, 24, 0.08);
+  padding: 6px;
   z-index: 100;
-  padding: 4px 0;
 }
 
-.profile-menu-info {
-  padding: 10px 14px;
+.pd-menu-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s;
 }
 
-.profile-menu-name {
-  font-size: 13px;
+.pd-menu-info:hover {
+  background: #F5F4F1;
+}
+
+.pd-menu-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #1A1918;
 }
 
-.profile-menu-email {
+.pd-menu-email {
+  font-family: 'Outfit', sans-serif;
   font-size: 12px;
-  color: var(--text-tertiary);
+  color: #9C9B99;
 }
 
-.profile-menu-divider {
-  border: none;
-  border-top: 1px solid var(--border-subtle);
-  margin: 4px 0;
+.pd-menu-divider {
+  height: 1px;
+  background: #E5E4E1;
+  margin: 2px 0;
 }
 
-.profile-menu-item {
-  display: block;
+.pd-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: 100%;
-  padding: 8px 14px;
+  height: 36px;
+  padding: 0 12px;
   border: none;
   background: none;
+  border-radius: 8px;
   font-family: 'Outfit', sans-serif;
   font-size: 13px;
-  color: var(--text-secondary);
+  font-weight: 500;
+  color: #6D6C6A;
   cursor: pointer;
-  text-align: left;
+  text-decoration: none;
+  transition: background 0.15s;
 }
 
-.profile-menu-item:hover {
-  background: var(--bg-muted);
-  color: var(--text-primary);
+.pd-menu-item:hover {
+  background: #F5F4F1;
 }

@@ -28,44 +28,49 @@ function ProfileDropdown({ user }) {
   }, [open])
 
   const initial = (user.name || user.email || '?')[0].toUpperCase()
+  const firstName = (user.name || user.email || 'User').split(' ')[0]
 
   return (
-    <div className="profile-dropdown" ref={dropdownRef}>
+    <div className="pd" ref={dropdownRef}>
       <button
-        className="profile-avatar-btn"
+        className="pd-trigger"
         onClick={() => setOpen(!open)}
         aria-expanded={open}
         aria-haspopup="true"
         aria-label="Profile menu"
       >
         {user.image ? (
-          <img src={user.image} alt="" className="profile-avatar-img" />
+          <img src={user.image} alt="" className="pd-trigger-avatar-img" referrerPolicy="no-referrer" />
         ) : (
-          <span className="profile-avatar-fallback">{initial}</span>
+          <span className="pd-trigger-avatar-fallback">{initial}</span>
         )}
+        <span className="pd-trigger-name">{firstName}</span>
+        <svg className="pd-trigger-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
       </button>
+
       {open && (
-        <div className="profile-menu" role="menu">
-          <div className="profile-menu-info">
-            <span className="profile-menu-name">{user.name || user.email || 'User'}</span>
-            {user.email && (
-              <span className="profile-menu-email">{user.email}</span>
-            )}
-          </div>
+        <div className="pd-menu" role="menu">
           <Link
             to="/profile"
-            className="profile-menu-item"
-            role="menuitem"
+            className="pd-menu-info"
             onClick={() => setOpen(false)}
           >
-            View profile
+            <span className="pd-menu-name">{user.name || user.email || 'User'}</span>
+            {user.email && <span className="pd-menu-email">{user.email}</span>}
           </Link>
-          <hr className="profile-menu-divider" />
+          <div className="pd-menu-divider" />
           <button
-            className="profile-menu-item"
+            className="pd-menu-item"
             role="menuitem"
             onClick={() => { signOut(); setOpen(false) }}
           >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
             Sign out
           </button>
         </div>
