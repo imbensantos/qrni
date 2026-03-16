@@ -3,6 +3,9 @@ import { useQuery } from 'convex/react'
 import { Link } from '@tanstack/react-router'
 import { api } from '../../../../convex/_generated/api'
 import AddLinkModal from '../components/modals/AddLinkModal'
+import EditLinkModal from '../components/modals/EditLinkModal'
+import DeleteLinkConfirmModal from '../components/modals/DeleteLinkConfirmModal'
+import CreateNamespaceModal from '../components/modals/CreateNamespaceModal'
 import './ProfilePage.css'
 
 const NAMESPACE_COLORS = ['#D89575', '#3D8A5A', '#5B8BD4', '#9B6BC4', '#D4805B', '#5BAD8A']
@@ -277,10 +280,7 @@ function ProfilePage() {
   const [editProfileModal, setEditProfileModal] = useState(false)
   const [allLinksView, setAllLinksView] = useState({ active: false, namespaceId: null, namespaceName: null })
 
-  // Suppress unused variable warnings in dev
-  void editLinkModal
-  void deleteLinkModal
-  void createNamespaceModal
+  // Suppress unused variable warnings in dev (modals built in later tasks)
   void inviteModal
   void editProfileModal
   void allLinksView
@@ -387,6 +387,20 @@ function ProfilePage() {
         onClose={() => setAddLinkModal({ open: false, namespaceId: null, namespaceSlug: null })}
         namespaceId={addLinkModal.namespaceId}
         namespaceSlug={addLinkModal.namespaceSlug}
+      />
+      <EditLinkModal
+        isOpen={editLinkModal.open}
+        onClose={() => setEditLinkModal({ open: false, link: null })}
+        link={editLinkModal.link}
+      />
+      <DeleteLinkConfirmModal
+        isOpen={deleteLinkModal.open}
+        onClose={() => setDeleteLinkModal({ open: false, link: null })}
+        link={deleteLinkModal.link}
+      />
+      <CreateNamespaceModal
+        isOpen={createNamespaceModal}
+        onClose={() => setCreateNamespaceModal(false)}
       />
     </main>
   )
