@@ -5,16 +5,27 @@ import { v } from "convex/values";
 export default defineSchema({
   ...authTables,
   users: defineTable({
-    googleId: v.string(),
-    email: v.string(),
+    // Auth fields (from @convex-dev/auth)
     name: v.optional(v.string()),
+    image: v.optional(v.string()),
+    email: v.optional(v.string()),
+    emailVerificationTime: v.optional(v.number()),
+    phone: v.optional(v.string()),
+    phoneVerificationTime: v.optional(v.number()),
+    isAnonymous: v.optional(v.boolean()),
+    // Custom fields
+    googleId: v.optional(v.string()),
     avatarUrl: v.optional(v.string()),
-    createdAt: v.number(),
-  }).index("by_google_id", ["googleId"]),
+    createdAt: v.optional(v.number()),
+  })
+    .index("email", ["email"])
+    .index("phone", ["phone"])
+    .index("by_google_id", ["googleId"]),
 
   namespaces: defineTable({
     owner: v.id("users"),
     slug: v.string(),
+    description: v.optional(v.string()),
     createdAt: v.number(),
     lastActiveAt: v.number(),
   })
