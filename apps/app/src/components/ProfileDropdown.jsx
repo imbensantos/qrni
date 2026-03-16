@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuthActions } from '@convex-dev/auth/react'
+import { Link } from '@tanstack/react-router'
 import './ProfileDropdown.css'
 
 function ProfileDropdown({ user }) {
@@ -51,6 +52,14 @@ function ProfileDropdown({ user }) {
               <span className="profile-menu-email">{user.email}</span>
             )}
           </div>
+          <Link
+            to="/profile"
+            className="profile-menu-item"
+            role="menuitem"
+            onClick={() => setOpen(false)}
+          >
+            View profile
+          </Link>
           <hr className="profile-menu-divider" />
           <button
             className="profile-menu-item"
