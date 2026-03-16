@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { useQuery } from 'convex/react'
 import { Link } from '@tanstack/react-router'
 import { api } from '../../../../convex/_generated/api'
+import AddLinkModal from '../components/modals/AddLinkModal'
 import './ProfilePage.css'
 
 const NAMESPACE_COLORS = ['#D89575', '#3D8A5A', '#5B8BD4', '#9B6BC4', '#D4805B', '#5BAD8A']
@@ -277,7 +278,6 @@ function ProfilePage() {
   const [allLinksView, setAllLinksView] = useState({ active: false, namespaceId: null, namespaceName: null })
 
   // Suppress unused variable warnings in dev
-  void addLinkModal
   void editLinkModal
   void deleteLinkModal
   void createNamespaceModal
@@ -380,6 +380,14 @@ function ProfilePage() {
       <button className="create-namespace-btn" onClick={() => setCreateNamespaceModal(true)}>
         + Create new namespace
       </button>
+
+      {/* Modals */}
+      <AddLinkModal
+        isOpen={addLinkModal.open}
+        onClose={() => setAddLinkModal({ open: false, namespaceId: null, namespaceSlug: null })}
+        namespaceId={addLinkModal.namespaceId}
+        namespaceSlug={addLinkModal.namespaceSlug}
+      />
     </main>
   )
 }
