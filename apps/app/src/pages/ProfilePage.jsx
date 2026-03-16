@@ -6,6 +6,8 @@ import AddLinkModal from '../components/modals/AddLinkModal'
 import EditLinkModal from '../components/modals/EditLinkModal'
 import DeleteLinkConfirmModal from '../components/modals/DeleteLinkConfirmModal'
 import CreateNamespaceModal from '../components/modals/CreateNamespaceModal'
+import InviteMemberModal from '../components/modals/InviteMemberModal'
+import EditProfileModal from '../components/modals/EditProfileModal'
 import './ProfilePage.css'
 
 const NAMESPACE_COLORS = ['#D89575', '#3D8A5A', '#5B8BD4', '#9B6BC4', '#D4805B', '#5BAD8A']
@@ -280,9 +282,7 @@ function ProfilePage() {
   const [editProfileModal, setEditProfileModal] = useState(false)
   const [allLinksView, setAllLinksView] = useState({ active: false, namespaceId: null, namespaceName: null })
 
-  // Suppress unused variable warnings in dev (modals built in later tasks)
-  void inviteModal
-  void editProfileModal
+  // allLinksView will be built in Task 15
   void allLinksView
 
   // Loading state
@@ -401,6 +401,17 @@ function ProfilePage() {
       <CreateNamespaceModal
         isOpen={createNamespaceModal}
         onClose={() => setCreateNamespaceModal(false)}
+      />
+      <InviteMemberModal
+        isOpen={inviteModal.open}
+        onClose={() => setInviteModal({ open: false, namespaceId: null, namespaceName: null })}
+        namespaceId={inviteModal.namespaceId}
+        namespaceName={inviteModal.namespaceName}
+      />
+      <EditProfileModal
+        isOpen={editProfileModal}
+        onClose={() => setEditProfileModal(false)}
+        user={user}
       />
     </main>
   )
