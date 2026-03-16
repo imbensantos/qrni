@@ -23,7 +23,7 @@ function CreateNamespaceModal({ isOpen, onClose }) {
 
   const sanitizedName = name.toLowerCase().replace(/[^a-z0-9-]/g, '')
 
-  const isValid = sanitizedName.length >= 3 && sanitizedName.length <= 30
+  const isValid = sanitizedName.length > 0
 
   function handleNameChange(e) {
     const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '')
@@ -60,7 +60,7 @@ function CreateNamespaceModal({ isOpen, onClose }) {
             </div>
             <div>
               <h2 className="cnm-title">Create namespace</h2>
-              <p className="cnm-subtitle">Organize your links</p>
+              <p className="cnm-subtitle">Organize your links under a custom path</p>
             </div>
           </div>
           <button type="button" className="cnm-close" onClick={onClose} aria-label="Close">
@@ -79,8 +79,7 @@ function CreateNamespaceModal({ isOpen, onClose }) {
             type="text"
             value={name}
             onChange={handleNameChange}
-            placeholder="my-namespace"
-            maxLength={30}
+            placeholder="my-portfolio"
             autoFocus
           />
           <div className="cnm-url-preview">
@@ -88,9 +87,8 @@ function CreateNamespaceModal({ isOpen, onClose }) {
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
             </svg>
-            <span>qrni.co/{sanitizedName || '...'}/your-slug</span>
+            <span>qrni.co/{sanitizedName || '[namespace]'}/your-slug</span>
           </div>
-          <p className="cnm-hint">3-30 characters: lowercase letters, numbers, hyphens</p>
         </div>
 
         <div className="cnm-field">
