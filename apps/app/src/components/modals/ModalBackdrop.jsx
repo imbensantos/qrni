@@ -1,7 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import './ModalBackdrop.css'
 
 function ModalBackdrop({ isOpen, onClose, children }) {
+  const mouseDownTarget = useRef(null)
+
   useEffect(() => {
     if (!isOpen) return
     function handleEscape(e) {
@@ -18,8 +20,17 @@ function ModalBackdrop({ isOpen, onClose, children }) {
   if (!isOpen) return null
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="modal-backdrop"
+      onMouseDown={(e) => { mouseDownTarget.current = e.target }}
+      onClick={(e) => {
+        // Only close if both mousedown and mouseup happened on the backdrop itself
+        if (e.target === e.currentTarget && mouseDownTarget.current === e.currentTarget) {
+          onClose()
+        }
+      }}
+    >
+      <div className="modal-content">
         {children}
       </div>
     </div>
