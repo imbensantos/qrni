@@ -1,0 +1,212 @@
+.edit-profile-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.edit-profile-modal-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary, #1A1918);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.edit-profile-modal-close {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--text-tertiary, #9C9B99);
+  border-radius: var(--radius-sm, 8px);
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.edit-profile-modal-close:hover {
+  color: var(--text-primary, #1A1918);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Avatar section */
+.edit-profile-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.edit-profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.edit-profile-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-primary, #D89575);
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.edit-profile-avatar-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.edit-profile-avatar-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.edit-profile-avatar-link:hover {
+  opacity: 0.8;
+}
+
+.edit-profile-avatar-link.upload {
+  color: var(--accent-primary, #D89575);
+}
+
+.edit-profile-avatar-link.remove {
+  color: var(--text-secondary, #6D6C6A);
+}
+
+/* Form */
+.edit-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.edit-profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.edit-profile-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary, #1A1918);
+}
+
+.edit-profile-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--border-subtle, #E5E4E1);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--bg-card, #FFFFFF);
+  transition: border-color 0.15s;
+  overflow: hidden;
+}
+
+.edit-profile-input-wrapper:focus-within {
+  border-color: var(--accent-primary, #D89575);
+}
+
+.edit-profile-input-wrapper.has-error {
+  border-color: #D85B5B;
+}
+
+.edit-profile-input-wrapper.disabled {
+  background: var(--bg-surface, #F5F4F1);
+  border-color: var(--border-subtle, #E5E4E1);
+}
+
+.edit-profile-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary, #1A1918);
+  padding: 10px 12px;
+  min-width: 0;
+}
+
+.edit-profile-input:disabled {
+  color: var(--text-tertiary, #9C9B99);
+  cursor: not-allowed;
+}
+
+.edit-profile-input::placeholder {
+  color: var(--text-tertiary, #9C9B99);
+}
+
+.edit-profile-hint {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  color: var(--text-tertiary, #9C9B99);
+  margin: 0;
+}
+
+.edit-profile-error {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  color: #D85B5B;
+  margin: 0;
+}
+
+/* Actions */
+.edit-profile-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.edit-profile-btn-cancel {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: var(--radius-pill, 100px);
+  border: 1.5px solid var(--border-subtle, #E5E4E1);
+  background: transparent;
+  color: var(--text-primary, #1A1918);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.edit-profile-btn-cancel:hover {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: var(--text-tertiary, #9C9B99);
+}
+
+.edit-profile-btn-save {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: var(--radius-pill, 100px);
+  border: none;
+  background: var(--accent-primary, #D89575);
+  color: white;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.edit-profile-btn-save:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.edit-profile-btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
