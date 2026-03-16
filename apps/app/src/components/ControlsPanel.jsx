@@ -248,7 +248,7 @@ function ControlsPanel({
                   <label id="slug-label" className="control-label" htmlFor="slug-input">
                     Custom slug
                   </label>
-                  <span className="slug-counter">{flatCustomCount} of 5 used</span>
+                  {!selectedNamespace && <span className="slug-counter">{flatCustomCount} of 5 used</span>}
                 </div>
                 <input
                   id="slug-input"
@@ -257,7 +257,6 @@ function ControlsPanel({
                   placeholder="e.g., my-link"
                   value={customSlug}
                   onChange={(e) => setCustomSlug(e.target.value)}
-                  disabled={!!selectedNamespace}
                 />
               </section>
             </>
