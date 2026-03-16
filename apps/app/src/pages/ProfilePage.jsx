@@ -179,6 +179,128 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete }) {
   )
 }
 
+// All namespace links view with pagination
+function AllNamespaceLinksView({ namespaceId, namespaceName, onBack, onEdit, onDelete, onAdd, onInvite }) {
+  const [page, setPage] = useState(0)
+  const LINKS_PER_PAGE = 5
+
+  const nsLinks = useQuery(api.links.listNamespaceLinks, { namespaceId })
+  const members = useQuery(api.collaboration.listMembers, { namespaceId })
+
+  const totalLinks = nsLinks ? nsLinks.length : 0
+  const totalPages = Math.max(1, Math.ceil(totalLinks / LINKS_PER_PAGE))
+  const pagedLinks = nsLinks ? nsLinks.slice(page * LINKS_PER_PAGE, (page + 1) * LINKS_PER_PAGE) : []
+  const memberCount = members ? members.length : 0
+
+  // Determine role from members list
+  const currentUserMember = members?.find(m => m.isCurrentUser)
+  const role = currentUserMember?.role || 'viewer'
+  const roleLabel = role.charAt(0).toUpperCase() + role.slice(1)
+
+  return (
+    <div className="all-links-view">
+      <button className="all-links-back" onClick={onBack}>
+        &larr; Back to profile
+      </button>
+
+      <div className="all-links-header">
+        <div className="namespace-avatar" style={{ background: '#D89575' }}>
+          {namespaceName.charAt(0).toUpperCase()}
+        </div>
+        <span className="namespace-name">{namespaceName}</span>
+        <span className="all-links-meta">
+          {totalLinks} links &middot; {memberCount} member{memberCount !== 1 ? 's' : ''} &middot; {roleLabel}
+        </span>
+        <div className="all-links-header-actions">
+          <button className="namespace-invite-btn" onClick={() => onInvite(namespaceId, namespaceName)}>
+            Invite
+          </button>
+          <button className="section-add-btn" onClick={() => onAdd(namespaceId, namespaceName)}>
+            <PlusIcon /> Add link
+          </button>
+        </div>
+      </div>
+
+      {totalLinks === 0 ? (
+        <div className="empty-state">No links in this namespace yet.</div>
+      ) : (
+        <>
+          <table className="all-links-table">
+            <thead>
+              <tr>
+                <th>Link</th>
+                <th>Clicks</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pagedLinks.map(link => {
+                const shortUrl = link.namespaceSlug
+                  ? `qrni.co/${link.namespaceSlug}/${link.shortCode}`
+                  : `qrni.co/${link.shortCode}`
+                return (
+                  <tr key={link._id}>
+                    <td>
+                      <div className="link-short">
+                        <a href={`https://${shortUrl}`} target="_blank" rel="noopener noreferrer" className="link-short-url">
+                          /{link.shortCode}
+                        </a>
+                        <CopyButton text={`https://${shortUrl}`} />
+                      </div>
+                      <div className="link-destination">{link.destinationUrl}</div>
+                    </td>
+                    <td>{link.clickCount}</td>
+                    <td>{formatDate(link.createdAt)}</td>
+                    <td>
+                      <div className="link-actions">
+                        <button className="link-action-btn" onClick={() => onEdit(link)} title="Edit link">
+                          <PencilIcon />
+                        </button>
+                        <button className="link-action-btn delete" onClick={() => onDelete(link)} title="Delete link">
+                          <TrashIcon />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button
+                className="page-btn"
+                disabled={page === 0}
+                onClick={() => setPage(p => p - 1)}
+              >
+                &lsaquo;
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  className={`page-btn ${page === i ? 'active' : ''}`}
+                  onClick={() => setPage(i)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                className="page-btn"
+                disabled={page === totalPages - 1}
+                onClick={() => setPage(p => p + 1)}
+              >
+                &rsaquo;
+              </button>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  )
+}
+
 // Single namespace section
 function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete, onInvite, onViewAll }) {
   const [expanded, setExpanded] = useState(true)
@@ -282,9 +404,6 @@ function ProfilePage() {
   const [editProfileModal, setEditProfileModal] = useState(false)
   const [allLinksView, setAllLinksView] = useState({ active: false, namespaceId: null, namespaceName: null })
 
-  // allLinksView will be built in Task 15
-  void allLinksView
-
   // Loading state
   if (user === undefined) {
     return (
@@ -315,71 +434,85 @@ function ProfilePage() {
 
   return (
     <main className="profile-page">
-      {/* Profile Header */}
-      <div className="profile-header">
-        <div className="profile-info">
-          {avatarUrl ? (
-            <img src={avatarUrl} alt={displayName} className="profile-avatar" referrerPolicy="no-referrer" />
-          ) : (
-            <div className="profile-avatar-fallback">
-              {displayName.charAt(0).toUpperCase()}
-            </div>
-          )}
-          <div className="profile-details">
-            <div className="profile-name-row">
-              <span className="profile-name">{displayName}</span>
-              <button className="profile-edit-btn" onClick={() => setEditProfileModal(true)} title="Edit profile">
-                <PencilIcon />
-              </button>
-            </div>
-            {user.email && <span className="profile-email">{user.email}</span>}
-            {user.createdAt && <span className="profile-member-since">{formatMemberSince(user.createdAt)}</span>}
-          </div>
-        </div>
-
-        <div className="profile-stats">
-          <div className="stat-card">
-            <span className="stat-number">{stats?.totalLinks ?? 0}</span>
-            <span className="stat-label">Links</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-number">{stats?.totalClicks ?? 0}</span>
-            <span className="stat-label">Clicks</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-number">{stats?.totalNamespaces ?? 0}</span>
-            <span className="stat-label">Namespaces</span>
-          </div>
-        </div>
-      </div>
-
-      {/* My Links Section */}
-      <MyLinksSection
-        links={myLinks}
-        onAdd={(nsId, nsSlug) => setAddLinkModal({ open: true, namespaceId: nsId, namespaceSlug: nsSlug })}
-        onEdit={(link) => setEditLinkModal({ open: true, link })}
-        onDelete={(link) => setDeleteLinkModal({ open: true, link })}
-      />
-
-      {/* Namespace Sections */}
-      {allNamespaces.map((ns, index) => (
-        <NamespaceSection
-          key={ns._id}
-          namespace={ns}
-          role={ns.role}
-          colorIndex={index}
-          onAdd={(nsId, nsSlug) => setAddLinkModal({ open: true, namespaceId: nsId, namespaceSlug: nsSlug })}
+      {allLinksView.active ? (
+        <AllNamespaceLinksView
+          namespaceId={allLinksView.namespaceId}
+          namespaceName={allLinksView.namespaceName}
+          onBack={() => setAllLinksView({ active: false, namespaceId: null, namespaceName: null })}
           onEdit={(link) => setEditLinkModal({ open: true, link })}
           onDelete={(link) => setDeleteLinkModal({ open: true, link })}
+          onAdd={(nsId, nsSlug) => setAddLinkModal({ open: true, namespaceId: nsId, namespaceSlug: nsSlug })}
           onInvite={(nsId, nsName) => setInviteModal({ open: true, namespaceId: nsId, namespaceName: nsName })}
-          onViewAll={(nsId, nsName) => setAllLinksView({ active: true, namespaceId: nsId, namespaceName: nsName })}
         />
-      ))}
+      ) : (
+        <>
+          {/* Profile Header */}
+          <div className="profile-header">
+            <div className="profile-info">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt={displayName} className="profile-avatar" referrerPolicy="no-referrer" />
+              ) : (
+                <div className="profile-avatar-fallback">
+                  {displayName.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div className="profile-details">
+                <div className="profile-name-row">
+                  <span className="profile-name">{displayName}</span>
+                  <button className="profile-edit-btn" onClick={() => setEditProfileModal(true)} title="Edit profile">
+                    <PencilIcon />
+                  </button>
+                </div>
+                {user.email && <span className="profile-email">{user.email}</span>}
+                {user.createdAt && <span className="profile-member-since">{formatMemberSince(user.createdAt)}</span>}
+              </div>
+            </div>
 
-      {/* Create Namespace Button */}
-      <button className="create-namespace-btn" onClick={() => setCreateNamespaceModal(true)}>
-        + Create new namespace
-      </button>
+            <div className="profile-stats">
+              <div className="stat-card">
+                <span className="stat-number">{stats?.totalLinks ?? 0}</span>
+                <span className="stat-label">Links</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-number">{stats?.totalClicks ?? 0}</span>
+                <span className="stat-label">Clicks</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-number">{stats?.totalNamespaces ?? 0}</span>
+                <span className="stat-label">Namespaces</span>
+              </div>
+            </div>
+          </div>
+
+          {/* My Links Section */}
+          <MyLinksSection
+            links={myLinks}
+            onAdd={(nsId, nsSlug) => setAddLinkModal({ open: true, namespaceId: nsId, namespaceSlug: nsSlug })}
+            onEdit={(link) => setEditLinkModal({ open: true, link })}
+            onDelete={(link) => setDeleteLinkModal({ open: true, link })}
+          />
+
+          {/* Namespace Sections */}
+          {allNamespaces.map((ns, index) => (
+            <NamespaceSection
+              key={ns._id}
+              namespace={ns}
+              role={ns.role}
+              colorIndex={index}
+              onAdd={(nsId, nsSlug) => setAddLinkModal({ open: true, namespaceId: nsId, namespaceSlug: nsSlug })}
+              onEdit={(link) => setEditLinkModal({ open: true, link })}
+              onDelete={(link) => setDeleteLinkModal({ open: true, link })}
+              onInvite={(nsId, nsName) => setInviteModal({ open: true, namespaceId: nsId, namespaceName: nsName })}
+              onViewAll={(nsId, nsName) => setAllLinksView({ active: true, namespaceId: nsId, namespaceName: nsName })}
+            />
+          ))}
+
+          {/* Create Namespace Button */}
+          <button className="create-namespace-btn" onClick={() => setCreateNamespaceModal(true)}>
+            + Create new namespace
+          </button>
+        </>
+      )}
 
       {/* Modals */}
       <AddLinkModal
