@@ -21,8 +21,8 @@ function DeleteLinkConfirmModal({ isOpen, onClose, link }) {
   if (!link) return null
 
   const shortUrl = link.namespaceSlug
-    ? `qrni.co/${link.namespaceSlug}/${link.shortCode}`
-    : `qrni.co/${link.shortCode}`
+    ? `${window.location.host}/${link.namespaceSlug}/${link.shortCode}`
+    : `${window.location.host}/${link.shortCode}`
 
   async function handleDelete() {
     setError(null)
@@ -47,7 +47,7 @@ function DeleteLinkConfirmModal({ isOpen, onClose, link }) {
         <h2 className="delete-modal-title">Delete this link?</h2>
 
         <p className="delete-modal-warning">
-          This will permanently delete the short link <strong>qrni.co/{link.shortCode}</strong> and
+          This will permanently delete the short link <strong>{window.location.host}/{link.shortCode}</strong> and
           its QR code. Anyone using this link will get a 404 error. This action cannot be undone.
         </p>
 

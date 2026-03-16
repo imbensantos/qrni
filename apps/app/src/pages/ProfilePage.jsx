@@ -211,8 +211,8 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete }) {
         ) : (
           personalLinks.map((link, i) => {
             const shortUrl = link.namespaceSlug
-              ? `qrni.co/${link.namespaceSlug}/${link.shortCode}`
-              : `qrni.co/${link.shortCode}`
+              ? `${window.location.host}/${link.namespaceSlug}/${link.shortCode}`
+              : `${window.location.host}/${link.shortCode}`
             return (
               <div key={link._id}>
                 <div className="pp-link-row">
@@ -311,8 +311,8 @@ function AllNamespaceLinksView({ namespaceId, namespaceName, onBack, onEdit, onD
             <tbody>
               {pagedLinks.map(link => {
                 const shortUrl = link.namespaceSlug
-                  ? `qrni.co/${link.namespaceSlug}/${link.shortCode}`
-                  : `qrni.co/${link.shortCode}`
+                  ? `${window.location.host}/${link.namespaceSlug}/${link.shortCode}`
+                  : `${window.location.host}/${link.shortCode}`
                 return (
                   <tr key={link._id}>
                     <td>
@@ -530,7 +530,7 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
             ) : (
               previewLinks.map((link, i) => {
                 const slug = extractSlug(link.shortCode, namespace.slug)
-                const fullUrl = `https://qrni.co/${namespace.slug}/${slug}`
+                const fullUrl = `${window.location.origin}/${namespace.slug}/${slug}`
                 return (
                   <div key={link._id}>
                     <div className="pp-link-row">
@@ -540,7 +540,7 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
                           <CopyButton text={fullUrl} />
                         </div>
                         <div className="pp-link-destination pp-link-destination--ns">
-                          qrni.co/{namespace.slug}/{slug} → {link.destinationUrl}
+                          {window.location.host}/{namespace.slug}/{slug} → {link.destinationUrl}
                         </div>
                       </div>
                       <div className="pp-link-meta">

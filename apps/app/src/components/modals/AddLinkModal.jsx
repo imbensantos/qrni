@@ -24,7 +24,7 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
     }
   }, [isOpen])
 
-  const prefix = namespaceId ? `qrni.co/${namespaceSlug}/` : 'qrni.co/'
+  const prefix = namespaceId ? `${window.location.host}/${namespaceSlug}/` : `${window.location.host}/`
 
   async function handleSubmit(e) {
     e.preventDefault()

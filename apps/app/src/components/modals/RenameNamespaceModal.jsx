@@ -101,7 +101,7 @@ function RenameNamespaceModal({ isOpen, onClose, namespaceId, namespaceName, nam
             <line x1="2" y1="12" x2="22" y2="12" />
             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
           </svg>
-          <span><span style={{ opacity: 0.5 }}>qrni.co/</span>{sanitizedName || '[namespace]'}<span style={{ opacity: 0.5 }}>/your-slug</span></span>
+          <span><span style={{ opacity: 0.5 }}>{window.location.host}/</span>{sanitizedName || '[namespace]'}<span style={{ opacity: 0.5 }}>/your-slug</span></span>
         </div>
 
         <div className="cnm-field">

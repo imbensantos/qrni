@@ -56,8 +56,8 @@ function EditLinkModal({ isOpen, onClose, link }) {
   }, [link])
 
   const prefix = link?.namespace
-    ? `qrni.co/${link.namespace}/`
-    : 'qrni.co/'
+    ? `${window.location.host}/${link.namespace}/`
+    : `${window.location.host}/`
 
   async function handleSubmit(e) {
     e.preventDefault()
