@@ -248,3 +248,103 @@ export const deleteLink = mutation({
     await ctx.db.delete(args.linkId);
   },
 });
+
+export const updateLink = mutation({
+  args: {
+    linkId: v.id("links"),
+    newSlug: v.optional(v.string()),
+    newDestinationUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Must be signed in");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_google_id", (q) => q.eq("googleId", identity.subject))
+      .first();
+    if (!user) throw new Error("User not found");
+
+    const link = await ctx.db.get(args.linkId);
+    if (!link) throw new Error("Link not found");
+    if (link.owner !== user._id) throw new Error("Not authorized");
+
+    const updates: Record<string, unknown> = {};
+
+    if (args.newDestinationUrl !== undefined) {
+      if (!args.newDestinationUrl.startsWith("http://") && !args.newDestinationUrl.startsWith("https://")) {
+        throw new Error("URL must start with http:// or https://");
+      }
+      updates.destinationUrl = args.newDestinationUrl;
+    }
+
+    if (args.newSlug !== undefined) {
+      if (!isValidCustomSlug(args.newSlug)) {
+        throw new Error("Slug must be 1-60 chars: letters, numbers, hyphens, underscores");
+      }
+
+      let newShortCode: string;
+      if (link.namespace) {
+        const ns = await ctx.db.get(link.namespace);
+        if (!ns) throw new Error("Namespace not found");
+        const existing = await ctx.db
+          .query("links")
+          .withIndex("by_namespace_slug", (q) =>
+            q.eq("namespace", link.namespace!).eq("namespaceSlug", args.newSlug!)
+          )
+          .first();
+        if (existing && existing._id !== link._id) throw new Error("This slug already exists in this namespace");
+        newShortCode = `${ns.slug}/${args.newSlug}`;
+        updates.namespaceSlug = args.newSlug;
+      } else {
+        const existing = await ctx.db
+          .query("links")
+          .withIndex("by_short_code", (q) => q.eq("shortCode", args.newSlug!))
+          .first();
+        if (existing && existing._id !== link._id) throw new Error("This slug is already taken");
+        newShortCode = args.newSlug;
+      }
+      updates.shortCode = newShortCode;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await ctx.db.patch(args.linkId, updates);
+    }
+  },
+});
+
+export const listNamespaceLinks = query({
+  args: {
+    namespaceId: v.id("namespaces"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return [];
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_google_id", (q) => q.eq("googleId", identity.subject))
+      .first();
+    if (!user) return [];
+
+    const namespace = await ctx.db.get(args.namespaceId);
+    if (!namespace) return [];
+
+    const isOwner = namespace.owner === user._id;
+    if (!isOwner) {
+      const membership = await ctx.db
+        .query("namespace_members")
+        .withIndex("by_namespace_user", (q) =>
+          q.eq("namespace", args.namespaceId).eq("user", user._id)
+        )
+        .first();
+      if (!membership) return [];
+    }
+
+    return await ctx.db
+      .query("links")
+      .withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId))
+      .order("desc")
+      .collect();
+  },
+});
