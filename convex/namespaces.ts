@@ -1,16 +1,23 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { isValidSlug } from "./lib/shortCode";
 
-const RESERVED_SLUGS = ["admin", "api", "app", "www", "help", "support", "about", "blog", "login", "signup", "settings"];
+const RESERVED_SLUGS = [
+  // App routes
+  "admin", "app", "www", "help", "support", "about", "blog", "settings", "dashboard",
+  // Auth routes (used by Convex auth HTTP handlers)
+  "api", "login", "signup", "signin", "signout", "auth", "oauth", "callback",
+  ".well-known",
+];
 
 export const create = mutation({
-  args: { slug: v.string() },
+  args: { slug: v.string(), description: v.optional(v.string()) },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Must be signed in");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
 
-    const user = await ctx.db.query("users").withIndex("by_google_id", (q) => q.eq("googleId", identity.subject)).first();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     const slug = args.slug.toLowerCase();
@@ -37,18 +44,82 @@ export const create = mutation({
     return await ctx.db.insert("namespaces", {
       owner: user._id,
       slug,
+      description: args.description,
       createdAt: Date.now(),
       lastActiveAt: Date.now(),
     });
   },
 });
 
+export const update = mutation({
+  args: {
+    namespaceId: v.id("namespaces"),
+    newSlug: v.optional(v.string()),
+    description: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
+
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+
+    const namespace = await ctx.db.get(args.namespaceId);
+    if (!namespace) throw new Error("Namespace not found");
+    if (namespace.owner !== user._id) throw new Error("Only the owner can edit a namespace");
+
+    const updates: Record<string, unknown> = {};
+
+    // Handle description update
+    if (args.description !== undefined) {
+      updates.description = args.description || undefined;
+    }
+
+    // Handle slug rename
+    if (args.newSlug !== undefined) {
+      const slug = args.newSlug.toLowerCase();
+
+      if (!isValidSlug(slug)) {
+        throw new Error("Namespace must be 3-30 chars: lowercase letters, numbers, hyphens");
+      }
+
+      if (RESERVED_SLUGS.includes(slug)) {
+        throw new Error("This namespace is reserved");
+      }
+
+      if (slug !== namespace.slug) {
+        const existing = await ctx.db.query("namespaces").withIndex("by_slug", (q) => q.eq("slug", slug)).first();
+        if (existing) throw new Error("This namespace is already taken");
+
+        const linkConflict = await ctx.db.query("links").withIndex("by_short_code", (q) => q.eq("shortCode", slug)).first();
+        if (linkConflict) throw new Error("This name conflicts with an existing short link");
+
+        // Update all links in this namespace to use the new slug prefix
+        const links = await ctx.db.query("links").withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId)).collect();
+        for (const link of links) {
+          if (link.namespaceSlug) {
+            await ctx.db.patch(link._id, {
+              shortCode: `${slug}/${link.namespaceSlug}`,
+            });
+          }
+        }
+
+        updates.slug = slug;
+      }
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await ctx.db.patch(args.namespaceId, updates);
+    }
+  },
+});
+
 export const listMine = query({
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return { owned: [], collaborated: [] };
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return { owned: [], collaborated: [] };
 
-    const user = await ctx.db.query("users").withIndex("by_google_id", (q) => q.eq("googleId", identity.subject)).first();
+    const user = await ctx.db.get(userId);
     if (!user) return { owned: [], collaborated: [] };
 
     const owned = await ctx.db.query("namespaces").withIndex("by_owner", (q) => q.eq("owner", user._id)).collect();
@@ -69,10 +140,10 @@ export const listMine = query({
 export const remove = mutation({
   args: { namespaceId: v.id("namespaces") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Must be signed in");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
 
-    const user = await ctx.db.query("users").withIndex("by_google_id", (q) => q.eq("googleId", identity.subject)).first();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     const namespace = await ctx.db.get(args.namespaceId);

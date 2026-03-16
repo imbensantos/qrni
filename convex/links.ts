@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 import { generateShortCode, isValidCustomSlug } from "./lib/shortCode";
 
@@ -79,13 +80,10 @@ export const createCustomSlugLink = mutation({
     customSlug: v.string(),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Must be signed in to create custom slugs");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in to create custom slugs");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_google_id", (q) => q.eq("googleId", identity.subject))
-      .first();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     if (!isValidCustomSlug(args.customSlug)) {
@@ -142,13 +140,10 @@ export const createNamespacedLink = mutation({
     slug: v.string(),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Must be signed in");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_google_id", (q) => q.eq("googleId", identity.subject))
-      .first();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     const namespace = await ctx.db.get(args.namespaceId);
@@ -212,13 +207,10 @@ export const getLink = query({
 
 export const listMyLinks = query({
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return [];
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_google_id", (q) => q.eq("googleId", identity.subject))
-      .first();
+    const user = await ctx.db.get(userId);
     if (!user) return [];
 
     return await ctx.db
@@ -232,13 +224,10 @@ export const listMyLinks = query({
 export const deleteLink = mutation({
   args: { linkId: v.id("links") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Must be signed in");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_google_id", (q) => q.eq("googleId", identity.subject))
-      .first();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     const link = await ctx.db.get(args.linkId);
@@ -256,13 +245,10 @@ export const updateLink = mutation({
     newDestinationUrl: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Must be signed in");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_google_id", (q) => q.eq("googleId", identity.subject))
-      .first();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     const link = await ctx.db.get(args.linkId);
@@ -318,13 +304,10 @@ export const listNamespaceLinks = query({
     namespaceId: v.id("namespaces"),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return [];
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_google_id", (q) => q.eq("googleId", identity.subject))
-      .first();
+    const user = await ctx.db.get(userId);
     if (!user) return [];
 
     const namespace = await ctx.db.get(args.namespaceId);

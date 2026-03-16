@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { generateShortCode } from "./lib/shortCode";
 
 const roleValidator = v.union(v.literal("editor"), v.literal("viewer"));
@@ -11,13 +12,10 @@ export const createEmailInvite = mutation({
     role: roleValidator,
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Must be signed in");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_google_id", (q) => q.eq("googleId", identity.subject))
-      .first();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     const namespace = await ctx.db.get(args.namespaceId);
@@ -45,13 +43,10 @@ export const createInviteLink = mutation({
     role: roleValidator,
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Must be signed in");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_google_id", (q) => q.eq("googleId", identity.subject))
-      .first();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     const namespace = await ctx.db.get(args.namespaceId);
@@ -77,13 +72,10 @@ export const createInviteLink = mutation({
 export const acceptInvite = mutation({
   args: { token: v.string() },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Must be signed in");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_google_id", (q) => q.eq("googleId", identity.subject))
-      .first();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     const invite = await ctx.db
@@ -95,7 +87,7 @@ export const acceptInvite = mutation({
     if (invite.revoked) throw new Error("This invite has been revoked");
 
     if (invite.type === "email") {
-      if (!invite.email || invite.email !== user.email.toLowerCase().trim()) {
+      if (!invite.email || !user.email || invite.email !== user.email.toLowerCase().trim()) {
         throw new Error("This invite was sent to a different email address");
       }
     }
@@ -134,13 +126,10 @@ export const revokeInvite = mutation({
     inviteId: v.id("namespace_invites"),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Must be signed in");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_google_id", (q) => q.eq("googleId", identity.subject))
-      .first();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     const namespace = await ctx.db.get(args.namespaceId);
@@ -161,13 +150,10 @@ export const removeMember = mutation({
     membershipId: v.id("namespace_members"),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Must be signed in");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_google_id", (q) => q.eq("googleId", identity.subject))
-      .first();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     const namespace = await ctx.db.get(args.namespaceId);
@@ -185,8 +171,8 @@ export const removeMember = mutation({
 export const listMembers = query({
   args: { namespaceId: v.id("namespaces") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Must be signed in");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
 
     const members = await ctx.db
       .query("namespace_members")
@@ -213,8 +199,8 @@ export const listMembers = query({
 export const listInvites = query({
   args: { namespaceId: v.id("namespaces") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Must be signed in");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
 
     return await ctx.db
       .query("namespace_invites")
