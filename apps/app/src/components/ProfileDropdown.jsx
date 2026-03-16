@@ -46,7 +46,7 @@ function ProfileDropdown({ user }) {
       {open && (
         <div className="profile-menu" role="menu">
           <div className="profile-menu-info">
-            <span className="profile-menu-name">{user.name}</span>
+            <span className="profile-menu-name">{user.name || user.email || 'User'}</span>
             {user.email && (
               <span className="profile-menu-email">{user.email}</span>
             )}
