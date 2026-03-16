@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, useEffect } from 'react'
 import { useWebHaptics } from 'web-haptics/react'
 import { useMutation, useQuery } from 'convex/react'
 import { useAuthActions } from '@convex-dev/auth/react'
@@ -42,6 +42,7 @@ function ControlsPanel({
   const [creatingNs, setCreatingNs] = useState(false)
   const [newNsSlug, setNewNsSlug] = useState('')
   const [nsCreateError, setNsCreateError] = useState(null)
+  const [pendingNsId, setPendingNsId] = useState(null)
 
   const createNamespace = useMutation(api.namespaces.create)
 
@@ -50,10 +51,10 @@ function ControlsPanel({
     setNsCreateError(null)
     try {
       const nsId = await createNamespace({ slug: newNsSlug.trim().toLowerCase() })
+      setPendingNsId(nsId)
       setNewNsSlug('')
       setCreatingNs(false)
       setNsDropdownOpen(false)
-      // Select the newly created namespace — will appear in the list on next render
     } catch (err) {
       const msg = err.message
         .replace(/\[CONVEX [^\]]*\]\s*/g, '')
@@ -88,6 +89,16 @@ function ControlsPanel({
     ...(myNamespaces?.owned ?? []),
     ...(myNamespaces?.collaborated ?? []),
   ]
+
+  useEffect(() => {
+    if (pendingNsId) {
+      const ns = allNamespaces.find(n => n._id === pendingNsId)
+      if (ns) {
+        setSelectedNamespace(ns)
+        setPendingNsId(null)
+      }
+    }
+  }, [pendingNsId, allNamespaces])
 
   const createShortLink = useCallback(async (targetUrl) => {
     const isValid = targetUrl.startsWith('http://') || targetUrl.startsWith('https://')
