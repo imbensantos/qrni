@@ -5,7 +5,7 @@ import { api } from '../../../../convex/_generated/api'
 import { useAuth } from '../hooks/useAuth'
 import './ShortenPreview.css'
 
-const BASE_URL = window.location.origin + '/'
+const BASE_URL = window.location.origin + '/s/'
 const COPY_RESET_DELAY_MS = 2000
 const DEST_URL_MAX_LEN = 40
 
@@ -116,7 +116,7 @@ function ShortenPreview() {
   if (!isAuthenticated) {
     return (
       <div className="shorten-preview">
-        <EmptyState icon="🔗" message="Your shortened links will appear here" />
+        <EmptyState icon="🔗" message="Sign in to see your short links" />
       </div>
     )
   }

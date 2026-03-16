@@ -5,7 +5,7 @@ import { api } from '../../../../convex/_generated/api'
 import { useAuth } from '../hooks/useAuth'
 import './ShortenPanel.css'
 
-const BASE_URL_PATH = '/'
+const BASE_URL_PATH = '/s/'
 
 function ShortenPanel() {
   const [url, setUrl] = useState('')
@@ -285,6 +285,13 @@ function ShortenPanel() {
             {copied ? 'Copied!' : 'Copy'}
           </button>
         </div>
+      )}
+
+      {/* Sign-in prompt for anonymous users */}
+      {!isAuthenticated && (
+        <p className="shorten-hint">
+          Sign in for custom slugs and namespaces — perfect for events!
+        </p>
       )}
 
       <div className="panel-spacer" />
