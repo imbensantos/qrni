@@ -39,7 +39,7 @@ function QRGeneratorPage() {
   const urlIsValid = isValidUrl(url);
 
   return (
-    <main className="body">
+    <main className="body" id="main-content">
       <div className="sidebar-panel">
         <div className={`mode-toggle ${mode}`} role="group" aria-label="Generation mode">
           <button

@@ -44,6 +44,9 @@ function App() {
 
   return (
     <ErrorBoundary>
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <div className="app">
         <header className="header">
           <Link to="/" className="logo-link">
