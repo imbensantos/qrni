@@ -3,9 +3,9 @@ import react from '@vitejs/plugin-react'
 
 const CONVEX_SITE_URL = process.env.VITE_CONVEX_URL?.replace('.cloud', '.site') || 'https://keen-akita-913.convex.site'
 
-// Short codes are 7-char alphanumeric, namespace slugs are lowercase+hyphens
-const SHORT_CODE_RE = /^\/[a-zA-Z0-9]{7}$/
-const NAMESPACED_RE = /^\/[a-z][a-z0-9-]{2,29}\/[a-zA-Z0-9_-]{1,60}$/
+// Short codes: auto-generated (7-char alphanumeric) or custom slugs (letters, numbers, hyphens, underscores)
+const SHORT_CODE_RE = /^\/[a-zA-Z0-9][a-zA-Z0-9_-]{0,59}$/
+const NAMESPACED_RE = /^\/[a-z][a-z0-9-]{0,29}\/[a-zA-Z0-9_-]{1,60}$/
 // App routes that should never be treated as short links
 const APP_ROUTES = new Set(['/profile'])
 
