@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { cleanConvexError } from "./errors";
+import { cleanConvexError, categorizeConvexError } from "./errors";
 
 describe("cleanConvexError", () => {
   it("strips [CONVEX ...] prefixes", () => {
@@ -42,5 +42,22 @@ describe("cleanConvexError", () => {
 
   it("handles empty string", () => {
     expect(cleanConvexError("")).toBe("");
+  });
+});
+
+describe("categorizeConvexError", () => {
+  it('categorizes URL-related errors as "url"', () => {
+    expect(categorizeConvexError("URL must start with http://")).toBe("url");
+    expect(categorizeConvexError("This URL was flagged as potentially harmful")).toBe("url");
+    expect(categorizeConvexError("Invalid destination")).toBe("url");
+  });
+
+  it('categorizes slug-related errors as "slug"', () => {
+    expect(categorizeConvexError("That short link name is already taken")).toBe("slug");
+    expect(categorizeConvexError("You've reached the limit of 5 custom short links")).toBe("slug");
+  });
+
+  it('defaults to "slug" for unknown errors', () => {
+    expect(categorizeConvexError("Something went wrong")).toBe("slug");
   });
 });

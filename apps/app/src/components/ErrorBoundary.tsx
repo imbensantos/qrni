@@ -33,7 +33,7 @@ class ErrorBoundary extends Component<Props, State> {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#F5F4F1",
+            backgroundColor: "var(--color-bg, #F5F4F1)",
             fontFamily: "Outfit, sans-serif",
             padding: "2rem",
           }}
@@ -45,7 +45,7 @@ class ErrorBoundary extends Component<Props, State> {
               padding: "2.5rem",
               backgroundColor: "#fff",
               borderRadius: "16px",
-              border: "1.5px solid #E8E5DF",
+              border: "1.5px solid var(--color-border, #E8E5DF)",
               boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
             }}
           >
@@ -54,7 +54,7 @@ class ErrorBoundary extends Component<Props, State> {
                 width: "56px",
                 height: "56px",
                 borderRadius: "50%",
-                backgroundColor: "#FDF0E9",
+                backgroundColor: "var(--color-accent-light, #FDF0E9)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -82,7 +82,7 @@ class ErrorBoundary extends Component<Props, State> {
                 margin: "0 0 0.5rem",
                 fontSize: "1.25rem",
                 fontWeight: 600,
-                color: "#2C2C2C",
+                color: "var(--color-text, #2C2C2C)",
               }}
             >
               Something went wrong
@@ -90,7 +90,7 @@ class ErrorBoundary extends Component<Props, State> {
             <p
               style={{
                 margin: "0 0 1.5rem",
-                color: "#6B6560",
+                color: "var(--color-text-muted, #6B6560)",
                 fontSize: "0.9rem",
                 lineHeight: 1.6,
               }}
@@ -102,7 +102,7 @@ class ErrorBoundary extends Component<Props, State> {
               style={{
                 display: "inline-block",
                 padding: "0.6rem 1.5rem",
-                backgroundColor: "#D89575",
+                backgroundColor: "var(--color-accent, #D89575)",
                 color: "#fff",
                 border: "none",
                 borderRadius: "8px",

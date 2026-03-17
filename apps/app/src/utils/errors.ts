@@ -1,3 +1,16 @@
+export type ErrorCategory = "slug" | "url";
+
+/**
+ * Categorize a Convex error message for display in the appropriate field.
+ */
+export function categorizeConvexError(message: string): ErrorCategory {
+  const lower = message.toLowerCase();
+  if (lower.includes("url") || lower.includes("destination") || lower.includes("harmful")) {
+    return "url";
+  }
+  return "slug";
+}
+
 /**
  * Strip Convex framework noise from error messages so users see
  * only the application-level text.

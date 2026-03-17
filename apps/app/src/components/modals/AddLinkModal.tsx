@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAction } from "convex/react";
+import { getAppHost } from "../../utils/url-utils";
 import { api } from "../../../../../convex/_generated/api";
-import { cleanConvexError } from "../../utils/errors";
+import { cleanConvexError, categorizeConvexError } from "../../utils/errors";
 import ModalBackdrop from "./ModalBackdrop";
 import { IconPlus, IconClose, IconLink } from "../Icons";
 import { Id } from "../../../../../convex/_generated/dataModel";
@@ -14,12 +15,7 @@ interface AddLinkModalProps {
   namespaceSlug?: string | null;
 }
 
-function AddLinkModal({
-  isOpen,
-  onClose,
-  namespaceId,
-  namespaceSlug,
-}: AddLinkModalProps) {
+function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }: AddLinkModalProps) {
   const [slug, setSlug] = useState("");
   const [destinationUrl, setDestinationUrl] = useState("");
   const [slugError, setSlugError] = useState("");
@@ -40,9 +36,7 @@ function AddLinkModal({
     }
   }, [isOpen]);
 
-  const prefix = namespaceId
-    ? `${window.location.host}/${namespaceSlug}/`
-    : `${window.location.host}/`;
+  const prefix = namespaceId ? `${getAppHost()}/${namespaceSlug}/` : `${getAppHost()}/`;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -53,19 +47,14 @@ function AddLinkModal({
     const hasSlug = slug.trim().length > 0;
 
     if (hasSlug && !/^[a-zA-Z0-9_-]{1,60}$/.test(slug)) {
-      setSlugError(
-        "Only letters, numbers, and hyphens allowed (max 60 characters)",
-      );
+      setSlugError("Only letters, numbers, and hyphens allowed (max 60 characters)");
       hasError = true;
     }
 
     if (!destinationUrl.trim()) {
       setUrlError("Destination URL is required");
       hasError = true;
-    } else if (
-      !destinationUrl.startsWith("http://") &&
-      !destinationUrl.startsWith("https://")
-    ) {
+    } else if (!destinationUrl.startsWith("http://") && !destinationUrl.startsWith("https://")) {
       setUrlError("URL must start with http:// or https://");
       hasError = true;
     }
@@ -88,19 +77,8 @@ function AddLinkModal({
       onClose();
     } catch (err) {
       const message =
-        cleanConvexError((err as Error).message || "") ||
-        "Something went wrong. Please try again.";
-      if (
-        message.toLowerCase().includes("name") ||
-        message.toLowerCase().includes("short") ||
-        message.toLowerCase().includes("limit")
-      ) {
-        setSlugError(message);
-      } else if (
-        message.toLowerCase().includes("url") ||
-        message.toLowerCase().includes("destination") ||
-        message.toLowerCase().includes("harmful")
-      ) {
+        cleanConvexError((err as Error).message || "") || "Something went wrong. Please try again.";
+      if (categorizeConvexError(message) === "url") {
         setUrlError(message);
       } else {
         setSlugError(message);
@@ -125,12 +103,7 @@ function AddLinkModal({
               <p className="alm-subtitle">Create a custom short link</p>
             </div>
           </div>
-          <button
-            type="button"
-            className="alm-close-btn"
-            onClick={onClose}
-            aria-label="Close"
-          >
+          <button type="button" className="alm-close-btn" onClick={onClose} aria-label="Close">
             <IconClose size={18} />
           </button>
         </div>
@@ -182,9 +155,7 @@ function AddLinkModal({
             {slugError ? (
               <p className="alm-error">{slugError}</p>
             ) : (
-              <p className="alm-hint">
-                Leave empty to auto-generate, or enter a custom slug
-              </p>
+              <p className="alm-hint">Leave empty to auto-generate, or enter a custom slug</p>
             )}
           </div>
         </div>
@@ -193,11 +164,7 @@ function AddLinkModal({
           <button type="button" className="alm-btn-cancel" onClick={onClose}>
             Cancel
           </button>
-          <button
-            type="submit"
-            className="alm-btn-create"
-            disabled={submitting}
-          >
+          <button type="submit" className="alm-btn-create" disabled={submitting}>
             {submitting ? "Creating..." : "Create link"}
           </button>
         </div>
