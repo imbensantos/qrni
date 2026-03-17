@@ -8,7 +8,7 @@ export interface QrOptions {
   size: number;
 }
 
-type ExportFormat = "png" | "webp" | "svg";
+export type ExportFormat = "png" | "webp" | "svg";
 
 function createQRCode(
   QRCodeStyling: any,

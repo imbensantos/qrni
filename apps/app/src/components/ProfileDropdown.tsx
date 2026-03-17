@@ -4,10 +4,20 @@ import { Link } from "@tanstack/react-router";
 import { useClickOutside } from "../hooks/useClickOutside";
 import "./ProfileDropdown.css";
 
-function ProfileDropdown({ user }) {
+interface ProfileDropdownUser {
+  name?: string;
+  email?: string;
+  image?: string;
+}
+
+interface ProfileDropdownProps {
+  user: ProfileDropdownUser;
+}
+
+function ProfileDropdown({ user }: ProfileDropdownProps) {
   const [open, setOpen] = useState(false);
   const { signOut } = useAuthActions();
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(dropdownRef, () => setOpen(false), open);
 

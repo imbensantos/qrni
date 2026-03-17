@@ -1,16 +1,24 @@
-import { Component } from "react";
+import { Component, ReactNode } from "react";
 
-class ErrorBoundary extends Component {
-  constructor(props) {
+interface Props {
+  children: ReactNode;
+}
+
+interface State {
+  hasError: boolean;
+}
+
+class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError() {
+  static getDerivedStateFromError(): State {
     return { hasError: true };
   }
 
-  componentDidCatch(error, info) {
+  componentDidCatch(error: Error, info: React.ErrorInfo): void {
     console.error("Uncaught render error:", error, info);
   }
 

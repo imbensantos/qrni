@@ -1,10 +1,33 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { parseFile } from "../utils/bulk-utils";
+import { parseFile, type BulkEntry } from "../utils/bulk-utils";
 import { DOT_STYLES } from "../utils/constants";
 import "./BulkPanel.css";
 
-const FORMATS = ["png", "svg", "webp"];
+const FORMATS = ["png", "svg", "webp"] as const;
+type ExportFormat = (typeof FORMATS)[number];
+
+interface DragState {
+  isDown: boolean;
+  startX: number;
+  scrollLeft: number;
+}
+
+interface BulkPanelProps {
+  fgColor: string;
+  onFgColorChange: (color: string) => void;
+  bgColor: string;
+  onBgColorChange: (color: string) => void;
+  logo: string | null;
+  onLogoChange: (logo: string | null) => void;
+  dotStyle: string;
+  onDotStyleChange: (style: string) => void;
+  size: number;
+  onSizeChange: (size: number) => void;
+  format: ExportFormat;
+  onFormatChange: (format: ExportFormat) => void;
+  onEntriesParsed: (entries: BulkEntry[]) => void;
+}
 
 function BulkPanel({
   fgColor,
@@ -20,18 +43,23 @@ function BulkPanel({
   format,
   onFormatChange,
   onEntriesParsed,
-}) {
-  const logoInputRef = useRef(null);
-  const fileInputRef = useRef(null);
-  const textareaRef = useRef(null);
-  const dotRowRef = useRef(null);
-  const dotDragState = useRef({ isDown: false, startX: 0, scrollLeft: 0 });
+}: BulkPanelProps) {
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const dotRowRef = useRef<HTMLDivElement>(null);
+  const dotDragState = useRef<DragState>({
+    isDown: false,
+    startX: 0,
+    scrollLeft: 0,
+  });
   const [inputText, setInputText] = useState("");
   const [dragging, setDragging] = useState(false);
   const { trigger } = useWebHaptics();
 
-  const onDotDragStart = (e) => {
+  const onDotDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
     const row = dotRowRef.current;
+    if (!row) return;
     dotDragState.current = {
       isDown: true,
       startX: e.pageX - row.offsetLeft,
@@ -43,16 +71,17 @@ function BulkPanel({
     dotDragState.current.isDown = false;
     dotRowRef.current?.classList.remove("dragging");
   };
-  const onDotDragMove = (e) => {
+  const onDotDragMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!dotDragState.current.isDown) return;
     e.preventDefault();
     const row = dotRowRef.current;
+    if (!row) return;
     const x = e.pageX - row.offsetLeft;
     row.scrollLeft =
       dotDragState.current.scrollLeft - (x - dotDragState.current.startX);
   };
 
-  const handleDotRowKeyDown = (e) => {
+  const handleDotRowKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const row = dotRowRef.current;
     if (!row) return;
     if (e.key === "ArrowRight") {
@@ -66,7 +95,7 @@ function BulkPanel({
   };
 
   const autoParse = useCallback(
-    (text) => {
+    (text: string) => {
       if (!text.trim()) {
         onEntriesParsed([]);
         return;
@@ -87,32 +116,32 @@ function BulkPanel({
     textareaRef.current?.focus();
   }, []);
 
-  const handleFileDrop = (e) => {
+  const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => setInputText(ev.target.result);
+    reader.onload = (ev) => setInputText(ev.target?.result as string);
     reader.readAsText(file);
     trigger("success");
   };
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => setInputText(ev.target.result);
+    reader.onload = (ev) => setInputText(ev.target?.result as string);
     reader.readAsText(file);
     trigger("success");
     e.target.value = "";
   };
 
-  const handleLogoUpload = (e) => {
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => onLogoChange(ev.target.result);
+    reader.onload = (ev) => onLogoChange(ev.target?.result as string);
     reader.readAsDataURL(file);
   };
 
@@ -256,7 +285,7 @@ function BulkPanel({
                 value={fgColor}
                 onClick={() => trigger("nudge")}
                 onInput={(e) => {
-                  onFgColorChange(e.target.value);
+                  onFgColorChange((e.target as HTMLInputElement).value);
                   trigger(30);
                 }}
                 onChange={(e) => {
@@ -281,7 +310,7 @@ function BulkPanel({
                 value={bgColor}
                 onClick={() => trigger("nudge")}
                 onInput={(e) => {
-                  onBgColorChange(e.target.value);
+                  onBgColorChange((e.target as HTMLInputElement).value);
                   trigger(30);
                 }}
                 onChange={(e) => {

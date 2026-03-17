@@ -1,13 +1,29 @@
 import { useState, useCallback } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { generateZip, generatePdf } from "../utils/bulk-export";
+import {
+  generateZip,
+  generatePdf,
+  type ExportFormat,
+} from "../utils/bulk-export";
 import {
   isValidUrl,
   sanitizeLabel,
   deduplicateLabels,
+  type BulkEntry,
 } from "../utils/bulk-utils";
 import Doodles from "./Doodles";
 import "./BulkPreview.css";
+
+interface BulkPreviewProps {
+  entries: BulkEntry[];
+  onEntriesChange: (entries: BulkEntry[]) => void;
+  fgColor: string;
+  bgColor: string;
+  logo: string | null;
+  dotStyle: string;
+  size: number;
+  format: ExportFormat;
+}
 
 function BulkPreview({
   entries,
@@ -18,7 +34,7 @@ function BulkPreview({
   dotStyle,
   size,
   format,
-}) {
+}: BulkPreviewProps) {
   const [generating, setGenerating] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const { trigger } = useWebHaptics();
@@ -31,7 +47,7 @@ function BulkPreview({
   const handleAddRow = useCallback(() => {
     const nextIndex =
       entries.length > 0 ? Math.max(...entries.map((e) => e.index)) + 1 : 1;
-    const newEntry = {
+    const newEntry: BulkEntry = {
       index: nextIndex,
       label: "",
       url: "",
@@ -44,7 +60,7 @@ function BulkPreview({
   }, [entries, onEntriesChange, trigger]);
 
   const handleCellEdit = useCallback(
-    (index, field, value) => {
+    (index: number, field: "label" | "url", value: string) => {
       const updated = entries.map((entry) => {
         if (entry.index !== index) return entry;
         const newEntry = { ...entry, [field]: value };

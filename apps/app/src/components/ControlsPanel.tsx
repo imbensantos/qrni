@@ -3,6 +3,7 @@ import { useWebHaptics } from "web-haptics/react";
 import { useMutation, useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
 import { useAuth } from "../hooks/useAuth";
 import { hasCachedUser } from "../utils/cached-user";
 import { getSessionId } from "../utils/session-id";
@@ -10,6 +11,41 @@ import { cleanConvexError } from "../utils/errors";
 import { DOT_STYLES } from "../utils/constants";
 import { isValidUrl } from "../utils/bulk-utils";
 import "./ControlsPanel.css";
+
+interface ShortLinkResult {
+  shortCode: string;
+  linkId: Id<"links">;
+}
+
+interface Namespace {
+  _id: Id<"namespaces">;
+  slug: string;
+}
+
+interface DragState {
+  isDown: boolean;
+  startX: number;
+  scrollLeft: number;
+}
+
+interface ControlsPanelProps {
+  url: string;
+  onUrlChange: (url: string) => void;
+  fgColor: string;
+  onFgColorChange: (color: string) => void;
+  bgColor: string;
+  onBgColorChange: (color: string) => void;
+  logo: string | null;
+  onLogoChange: (logo: string | null) => void;
+  dotStyle: string;
+  onDotStyleChange: (style: string) => void;
+  size: number;
+  onSizeChange: (size: number) => void;
+  shortenLink: boolean;
+  onShortenLinkChange: (value: boolean) => void;
+  onShortLinkCreated: ((result: ShortLinkResult | null) => void) | undefined;
+  onGenerate: (() => void) | undefined;
+}
 
 function ControlsPanel({
   url,
@@ -28,25 +64,31 @@ function ControlsPanel({
   onShortenLinkChange,
   onShortLinkCreated,
   onGenerate,
-}) {
-  const fileInputRef = useRef(null);
-  const dotRowRef = useRef(null);
-  const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0 });
+}: ControlsPanelProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dotRowRef = useRef<HTMLDivElement>(null);
+  const dragState = useRef<DragState>({
+    isDown: false,
+    startX: 0,
+    scrollLeft: 0,
+  });
   const { trigger } = useWebHaptics();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const showAuthFeatures = authLoading ? hasCachedUser() : isAuthenticated;
   const { signIn } = useAuthActions();
 
   const [customSlug, setCustomSlug] = useState("");
-  const [selectedNamespace, setSelectedNamespace] = useState(null);
+  const [selectedNamespace, setSelectedNamespace] = useState<Namespace | null>(
+    null,
+  );
   const [shortLinkLoading, setShortLinkLoading] = useState(false);
-  const [shortLinkError, setShortLinkError] = useState(null);
+  const [shortLinkError, setShortLinkError] = useState<string | null>(null);
   const [nsDropdownOpen, setNsDropdownOpen] = useState(false);
   const [nsFocusedIndex, setNsFocusedIndex] = useState(0);
   const [creatingNs, setCreatingNs] = useState(false);
   const [newNsSlug, setNewNsSlug] = useState("");
-  const [nsCreateError, setNsCreateError] = useState(null);
-  const [pendingNsId, setPendingNsId] = useState(null);
+  const [nsCreateError, setNsCreateError] = useState<string | null>(null);
+  const [pendingNsId, setPendingNsId] = useState<Id<"namespaces"> | null>(null);
 
   const createNamespace = useMutation(api.namespaces.create);
 
@@ -62,7 +104,7 @@ function ControlsPanel({
       setCreatingNs(false);
       setNsDropdownOpen(false);
     } catch (err) {
-      const msg = cleanConvexError(err.message);
+      const msg = cleanConvexError((err as Error).message);
       setNsCreateError(msg || "Failed to create namespace");
     }
   };
@@ -84,9 +126,11 @@ function ControlsPanel({
 
   const flatCustomCount = myLinks.filter((l) => !l.namespace && l.owner).length;
 
-  const allNamespaces = [
+  const allNamespaces: Namespace[] = [
     ...(myNamespaces?.owned ?? []),
-    ...(myNamespaces?.collaborated ?? []),
+    ...(myNamespaces?.collaborated ?? []).filter(
+      (ns): ns is NonNullable<typeof ns> => ns !== null,
+    ),
   ];
 
   useEffect(() => {
@@ -100,13 +144,13 @@ function ControlsPanel({
   }, [pendingNsId, allNamespaces]);
 
   const createShortLink = useCallback(
-    async (targetUrl) => {
+    async (targetUrl: string) => {
       const isValid = isValidUrl(targetUrl);
       if (!isValid) return;
       setShortLinkLoading(true);
       setShortLinkError(null);
       try {
-        let res;
+        let res: ShortLinkResult;
         if (!isAuthenticated) {
           res = await createAnonymousLink({
             destinationUrl: targetUrl,
@@ -116,7 +160,7 @@ function ControlsPanel({
           res = await createNamespacedLink({
             destinationUrl: targetUrl,
             namespaceId: selectedNamespace._id,
-            slug: customSlug.trim() || undefined,
+            slug: customSlug.trim(),
           });
         } else if (customSlug.trim()) {
           res = await createCustomSlugLink({
@@ -133,7 +177,7 @@ function ControlsPanel({
         trigger("success");
       } catch (err) {
         const clean = cleanConvexError(
-          err.message || "Failed to create short link",
+          (err as Error).message || "Failed to create short link",
         );
         setShortLinkError(clean || "Failed to create short link");
         trigger("error");
@@ -159,7 +203,7 @@ function ControlsPanel({
     else trigger("success");
   }, [onGenerate, shortenLink, createShortLink, url, trigger]);
 
-  const handleNamespaceSelect = (value) => {
+  const handleNamespaceSelect = (value: string) => {
     setNsDropdownOpen(false);
     if (value === "none") {
       setSelectedNamespace(null);
@@ -169,8 +213,9 @@ function ControlsPanel({
     setSelectedNamespace(ns ?? null);
   };
 
-  const onDragStart = (e) => {
+  const onDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
     const row = dotRowRef.current;
+    if (!row) return;
     dragState.current = {
       isDown: true,
       startX: e.pageX - row.offsetLeft,
@@ -182,17 +227,19 @@ function ControlsPanel({
     dragState.current.isDown = false;
     dotRowRef.current?.classList.remove("dragging");
   };
-  const onDragMove = (e) => {
+  const onDragMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!dragState.current.isDown) return;
     e.preventDefault();
     const row = dotRowRef.current;
+    if (!row) return;
     const x = e.pageX - row.offsetLeft;
     row.scrollLeft =
       dragState.current.scrollLeft - (x - dragState.current.startX);
   };
 
-  const onTouchStart = (e) => {
+  const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     const row = dotRowRef.current;
+    if (!row) return;
     const touch = e.touches[0];
     dragState.current = {
       isDown: true,
@@ -203,19 +250,18 @@ function ControlsPanel({
   const onTouchEnd = () => {
     dragState.current.isDown = false;
   };
-  const onTouchMove = (e) => {
+  const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     if (!dragState.current.isDown) return;
     const row = dotRowRef.current;
+    if (!row) return;
     const touch = e.touches[0];
     const x = touch.pageX - row.offsetLeft;
     row.scrollLeft =
       dragState.current.scrollLeft - (x - dragState.current.startX);
   };
 
-  // Namespace dropdown keyboard navigation
-  // Options: index 0 = "None", 1..N = namespaces
-  const handleNsKeyDown = (e) => {
-    const optionCount = 1 + allNamespaces.length; // "None" + namespaces
+  const handleNsKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
+    const optionCount = 1 + allNamespaces.length;
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setNsFocusedIndex((i) => Math.min(i + 1, optionCount - 1));
@@ -232,7 +278,7 @@ function ControlsPanel({
     }
   };
 
-  const handleDotRowKeyDown = (e) => {
+  const handleDotRowKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const row = dotRowRef.current;
     if (!row) return;
     if (e.key === "ArrowRight") {
@@ -245,11 +291,11 @@ function ControlsPanel({
     }
   };
 
-  const handleLogoUpload = (e) => {
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => onLogoChange(ev.target.result);
+    reader.onload = (ev) => onLogoChange(ev.target?.result as string);
     reader.readAsDataURL(file);
   };
 
@@ -564,7 +610,7 @@ function ControlsPanel({
                 value={fgColor}
                 onClick={() => trigger("nudge")}
                 onInput={(e) => {
-                  onFgColorChange(e.target.value);
+                  onFgColorChange((e.target as HTMLInputElement).value);
                   trigger(30);
                 }}
                 onChange={(e) => {
@@ -589,7 +635,7 @@ function ControlsPanel({
                 value={bgColor}
                 onClick={() => trigger("nudge")}
                 onInput={(e) => {
-                  onBgColorChange(e.target.value);
+                  onBgColorChange((e.target as HTMLInputElement).value);
                   trigger(30);
                 }}
                 onChange={(e) => {

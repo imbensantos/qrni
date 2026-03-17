@@ -3,9 +3,30 @@ import { useWebHaptics } from "web-haptics/react";
 import QRCodeStyling from "qr-code-styling";
 import Doodles from "./Doodles";
 import { buildShortLinkUrl } from "../utils/url-utils";
+import type { Id } from "../../../../convex/_generated/dataModel";
 import "./PreviewPanel.css";
 
-const FORMATS = ["png", "svg", "webp"];
+const FORMATS = ["png", "svg", "webp"] as const;
+type ExportFormat = (typeof FORMATS)[number];
+
+interface ShortLinkResult {
+  shortCode: string;
+  linkId: Id<"links">;
+}
+
+interface PreviewPanelProps {
+  url: string;
+  isValidUrl: boolean;
+  fgColor: string;
+  bgColor: string;
+  logo: string | null;
+  dotStyle: string;
+  size: number;
+  format: ExportFormat;
+  onFormatChange: (format: ExportFormat) => void;
+  shortenLink: boolean;
+  shortLinkResult: ShortLinkResult | null;
+}
 
 function PreviewPanel({
   url,
@@ -19,8 +40,8 @@ function PreviewPanel({
   onFormatChange,
   shortenLink,
   shortLinkResult,
-}) {
-  const qrContainerRef = useRef(null);
+}: PreviewPanelProps) {
+  const qrContainerRef = useRef<HTMLDivElement>(null);
   const { trigger } = useWebHaptics();
 
   const qrCode = useMemo(
@@ -49,7 +70,8 @@ function PreviewPanel({
   useEffect(() => {
     qrCode.update({
       data: isValidUrl ? url : "",
-      dotsOptions: { color: fgColor, type: dotStyle },
+       
+      dotsOptions: { color: fgColor, type: dotStyle as any },
       backgroundOptions: { color: bgColor },
       image: logo || undefined,
     });
@@ -124,19 +146,13 @@ function PreviewPanel({
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
               </svg>
               <span className="sl-url">
-                {buildShortLinkUrl(
-                  shortLinkResult.shortCode,
-                  shortLinkResult.namespaceSlug,
-                )}
+                {buildShortLinkUrl(shortLinkResult.shortCode)}
               </span>
             </div>
             <button
               className="sl-copy-btn"
               onClick={() => {
-                const shortUrl = buildShortLinkUrl(
-                  shortLinkResult.shortCode,
-                  shortLinkResult.namespaceSlug,
-                );
+                const shortUrl = buildShortLinkUrl(shortLinkResult.shortCode);
                 navigator.clipboard?.writeText(shortUrl);
                 trigger("success");
               }}

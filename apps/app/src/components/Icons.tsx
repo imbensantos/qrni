@@ -2,7 +2,11 @@
 // Props: size (number, pixels) — defaults match original usage at each call site.
 // All icons use currentColor so they inherit color from CSS.
 
-export function IconCopy({ size = 12 }) {
+interface IconProps {
+  size?: number;
+}
+
+export function IconCopy({ size = 12 }: IconProps) {
   return (
     <svg
       width={size}
@@ -20,7 +24,7 @@ export function IconCopy({ size = 12 }) {
   );
 }
 
-export function IconCheck({ size = 12 }) {
+export function IconCheck({ size = 12 }: IconProps) {
   return (
     <svg
       width={size}
@@ -37,7 +41,7 @@ export function IconCheck({ size = 12 }) {
   );
 }
 
-export function IconPencil({ size = 14 }) {
+export function IconPencil({ size = 14 }: IconProps) {
   return (
     <svg
       width={size}
@@ -54,7 +58,7 @@ export function IconPencil({ size = 14 }) {
   );
 }
 
-export function IconTrash({ size = 14 }) {
+export function IconTrash({ size = 14 }: IconProps) {
   return (
     <svg
       width={size}
@@ -72,7 +76,7 @@ export function IconTrash({ size = 14 }) {
   );
 }
 
-export function IconClose({ size = 18 }) {
+export function IconClose({ size = 18 }: IconProps) {
   return (
     <svg
       width={size}
@@ -90,7 +94,7 @@ export function IconClose({ size = 18 }) {
   );
 }
 
-export function IconChevronDown({ size = 16 }) {
+export function IconChevronDown({ size = 16 }: IconProps) {
   return (
     <svg
       width={size}
@@ -107,7 +111,7 @@ export function IconChevronDown({ size = 16 }) {
   );
 }
 
-export function IconPlus({ size = 16 }) {
+export function IconPlus({ size = 16 }: IconProps) {
   return (
     <svg
       width={size}
@@ -125,7 +129,7 @@ export function IconPlus({ size = 16 }) {
   );
 }
 
-export function IconLink({ size = 18 }) {
+export function IconLink({ size = 18 }: IconProps) {
   return (
     <svg
       width={size}
@@ -143,7 +147,7 @@ export function IconLink({ size = 18 }) {
   );
 }
 
-export function IconFolderOpen({ size = 18 }) {
+export function IconFolderOpen({ size = 18 }: IconProps) {
   return (
     <svg
       width={size}
@@ -161,7 +165,7 @@ export function IconFolderOpen({ size = 18 }) {
   );
 }
 
-export function IconClick({ size = 12 }) {
+export function IconClick({ size = 12 }: IconProps) {
   return (
     <svg
       width={size}
@@ -179,7 +183,7 @@ export function IconClick({ size = 12 }) {
   );
 }
 
-export function IconUserPlus({ size = 13 }) {
+export function IconUserPlus({ size = 13 }: IconProps) {
   return (
     <svg
       width={size}
@@ -199,7 +203,7 @@ export function IconUserPlus({ size = 13 }) {
   );
 }
 
-export function IconEllipsis({ size = 16 }) {
+export function IconEllipsis({ size = 16 }: IconProps) {
   return (
     <svg
       width={size}
@@ -218,7 +222,7 @@ export function IconEllipsis({ size = 16 }) {
   );
 }
 
-export function IconArrowRight({ size = 12 }) {
+export function IconArrowRight({ size = 12 }: IconProps) {
   return (
     <svg
       width={size}
@@ -236,7 +240,7 @@ export function IconArrowRight({ size = 12 }) {
   );
 }
 
-export function IconGlobe({ size = 16 }) {
+export function IconGlobe({ size = 16 }: IconProps) {
   return (
     <svg
       width={size}
