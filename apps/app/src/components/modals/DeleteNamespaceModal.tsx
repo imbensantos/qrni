@@ -25,11 +25,14 @@ function DeleteNamespaceModal({
 
   if (!namespaceId) return null;
 
+  // Capture before async callback to preserve TypeScript narrowing
+  const safeNamespaceId = namespaceId;
+
   async function handleDelete() {
     setError(null);
     setSubmitting(true);
     try {
-      await removeNamespace({ namespaceId });
+      await removeNamespace({ namespaceId: safeNamespaceId });
       onClose();
     } catch (err) {
       const msg = cleanConvexError((err as Error).message ?? "");

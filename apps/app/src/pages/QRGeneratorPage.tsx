@@ -1,25 +1,35 @@
 import { useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { isValidUrl } from "../utils/bulk-utils";
+import { isValidUrl, type BulkEntry } from "../utils/bulk-utils";
+import { type ExportFormat } from "../utils/bulk-export";
+import type { Id } from "../../../../convex/_generated/dataModel";
 import ControlsPanel from "../components/ControlsPanel";
 import PreviewPanel from "../components/PreviewPanel";
 import BulkPanel from "../components/BulkPanel";
 import BulkPreview from "../components/BulkPreview";
 
+interface ShortLinkResult {
+  shortCode: string;
+  linkId: Id<"links">;
+}
+
+type QRMode = "single" | "bulk";
+
 function QRGeneratorPage() {
-  const [mode, setMode] = useState("single");
+  const [mode, setMode] = useState<QRMode>("single");
   const [url, setUrl] = useState("");
   const [fgColor, setFgColor] = useState("#1A1918");
   const [bgColor, setBgColor] = useState("#FFFFFF");
-  const [logo, setLogo] = useState(null);
+  const [logo, setLogo] = useState<string | null>(null);
   const [dotStyle, setDotStyle] = useState("square");
   const [size, setSize] = useState(512);
-  const [format, setFormat] = useState("png");
-  const [bulkEntries, setBulkEntries] = useState([]);
+  const [format, setFormat] = useState<ExportFormat>("png");
+  const [bulkEntries, setBulkEntries] = useState<BulkEntry[]>([]);
   const [shortenLink, setShortenLink] = useState(
     () => localStorage.getItem("qrni-shorten-link") === "true",
   );
-  const [shortLinkResult, setShortLinkResult] = useState(null);
+  const [shortLinkResult, setShortLinkResult] =
+    useState<ShortLinkResult | null>(null);
   const [qrGenerated, setQrGenerated] = useState(false);
   const { trigger } = useWebHaptics();
 
@@ -79,7 +89,6 @@ function QRGeneratorPage() {
             }}
             onShortLinkCreated={setShortLinkResult}
             onGenerate={() => setQrGenerated(true)}
-            qrGenerated={qrGenerated}
           />
         ) : (
           <BulkPanel

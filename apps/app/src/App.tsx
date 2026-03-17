@@ -18,13 +18,29 @@ function App() {
   // Keep cache in sync with real auth state
   useEffect(() => {
     if (!isLoading) {
-      if (user) cacheUser(user);
-      else clearCachedUser();
+      if (user) {
+        cacheUser({
+          name: user.name ?? "",
+          email: user.email ?? "",
+          image: user.image,
+        });
+      } else {
+        clearCachedUser();
+      }
     }
   }, [isLoading, user]);
 
   // While loading: show cached user optimistically, or empty placeholder if no cache
   const displayUser = isLoading ? cachedUser : user;
+
+  // Normalize to ProfileDropdown-compatible shape (image must be string | undefined, not null)
+  const dropdownUser = displayUser
+    ? {
+        name: displayUser.name ?? undefined,
+        email: displayUser.email ?? undefined,
+        image: displayUser.image ?? undefined,
+      }
+    : null;
 
   return (
     <ErrorBoundary>
@@ -35,8 +51,8 @@ function App() {
           </Link>
           {isLoading && !cachedUser ? (
             <div className="auth-placeholder" />
-          ) : displayUser ? (
-            <ProfileDropdown user={displayUser} />
+          ) : dropdownUser ? (
+            <ProfileDropdown user={dropdownUser} />
           ) : (
             <button className="signin-btn" onClick={() => signIn("google")}>
               Sign in

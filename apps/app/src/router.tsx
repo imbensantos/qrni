@@ -25,3 +25,9 @@ const profileRoute = createRoute({
 
 export const routeTree = rootRoute.addChildren([indexRoute, profileRoute]);
 export const router = createRouter({ routeTree });
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}

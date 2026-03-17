@@ -227,23 +227,18 @@ function InviteMemberModal({
                   </span>
                   <span className="imm-member-email">{member.user?.email}</span>
                 </div>
-                {member.role === "owner" ? (
-                  <span className="imm-role-badge imm-role-owner">Owner</span>
-                ) : (
-                  <div className="imm-role-actions">
-                    <span className={`imm-role-badge imm-role-${member.role}`}>
-                      {member.role.charAt(0).toUpperCase() +
-                        member.role.slice(1)}
-                    </span>
-                    <button
-                      type="button"
-                      className="imm-revoke-btn"
-                      aria-label={`Remove ${member.user?.name || member.user?.email}`}
-                    >
-                      <IconClose size={14} />
-                    </button>
-                  </div>
-                )}
+                <div className="imm-role-actions">
+                  <span className={`imm-role-badge imm-role-${member.role}`}>
+                    {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                  </span>
+                  <button
+                    type="button"
+                    className="imm-revoke-btn"
+                    aria-label={`Remove ${member.user?.name || member.user?.email}`}
+                  >
+                    <IconClose size={14} />
+                  </button>
+                </div>
               </div>
             ))}
 

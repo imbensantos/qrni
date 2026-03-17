@@ -27,12 +27,14 @@ function DeleteLinkConfirmModal({
   if (!link) return null;
 
   const shortUrl = buildShortLinkUrl(link.shortCode, link.namespaceSlug);
+  // Capture before async callback to preserve TypeScript narrowing
+  const linkId = link._id;
 
   async function handleDelete() {
     setError(null);
     setSubmitting(true);
     try {
-      await deleteLink({ linkId: link._id });
+      await deleteLink({ linkId });
       onClose();
     } catch (err) {
       setError((err as Error).message || "Failed to delete link");

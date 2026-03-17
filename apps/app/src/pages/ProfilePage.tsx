@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "convex/react";
 import { Link } from "@tanstack/react-router";
 import { api } from "../../../../convex/_generated/api";
+import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import AddLinkModal from "../components/modals/AddLinkModal";
 import EditLinkModal from "../components/modals/EditLinkModal";
 import DeleteLinkConfirmModal from "../components/modals/DeleteLinkConfirmModal";
@@ -17,6 +18,50 @@ import NamespaceSection from "../components/profile/NamespaceSection";
 import { formatMemberSince } from "../utils/ui-utils";
 import "./ProfilePage.css";
 
+type ShortLink = Doc<"links">;
+type NamespaceRole = "owner" | "editor" | "viewer";
+
+interface AddLinkModalState {
+  open: boolean;
+  namespaceId: Id<"namespaces"> | null;
+  namespaceSlug: string | null;
+}
+
+interface EditLinkModalState {
+  open: boolean;
+  link: ShortLink | null;
+}
+
+interface DeleteLinkModalState {
+  open: boolean;
+  link: ShortLink | null;
+}
+
+interface InviteModalState {
+  open: boolean;
+  namespaceId: Id<"namespaces"> | null;
+  namespaceName: string | null;
+}
+
+interface DeleteNsModalState {
+  open: boolean;
+  namespaceId: Id<"namespaces"> | null;
+  namespaceName: string | null;
+}
+
+interface RenameNsModalState {
+  open: boolean;
+  namespaceId: Id<"namespaces"> | null;
+  namespaceName: string | null;
+  namespaceDescription: string | null;
+}
+
+interface AllLinksViewState {
+  active: boolean;
+  namespaceId: Id<"namespaces"> | null;
+  namespaceName: string | null;
+}
+
 function ProfilePage() {
   const user = useQuery(api.users.currentUser);
   const stats = useQuery(api.users.getUserStats);
@@ -24,38 +69,38 @@ function ProfilePage() {
   const namespaces = useQuery(api.namespaces.listMine);
 
   // Modal states — do not modify
-  const [addLinkModal, setAddLinkModal] = useState({
+  const [addLinkModal, setAddLinkModal] = useState<AddLinkModalState>({
     open: false,
     namespaceId: null,
     namespaceSlug: null,
   });
-  const [editLinkModal, setEditLinkModal] = useState({
+  const [editLinkModal, setEditLinkModal] = useState<EditLinkModalState>({
     open: false,
     link: null,
   });
-  const [deleteLinkModal, setDeleteLinkModal] = useState({
+  const [deleteLinkModal, setDeleteLinkModal] = useState<DeleteLinkModalState>({
     open: false,
     link: null,
   });
   const [createNamespaceModal, setCreateNamespaceModal] = useState(false);
-  const [inviteModal, setInviteModal] = useState({
+  const [inviteModal, setInviteModal] = useState<InviteModalState>({
     open: false,
     namespaceId: null,
     namespaceName: null,
   });
   const [editProfileModal, setEditProfileModal] = useState(false);
-  const [deleteNsModal, setDeleteNsModal] = useState({
+  const [deleteNsModal, setDeleteNsModal] = useState<DeleteNsModalState>({
     open: false,
     namespaceId: null,
     namespaceName: null,
   });
-  const [renameNsModal, setRenameNsModal] = useState({
+  const [renameNsModal, setRenameNsModal] = useState<RenameNsModalState>({
     open: false,
     namespaceId: null,
     namespaceName: null,
     namespaceDescription: null,
   });
-  const [allLinksView, setAllLinksView] = useState({
+  const [allLinksView, setAllLinksView] = useState<AllLinksViewState>({
     active: false,
     namespaceId: null,
     namespaceName: null,
@@ -82,23 +127,36 @@ function ProfilePage() {
 
   const avatarUrl = user.image || user.avatarUrl;
   const displayName = user.name || "User";
-  const allNamespaces = [
-    ...(namespaces?.owned || []).map((ns) => ({ ...ns, role: "owner" })),
-    ...(namespaces?.collaborated || []).filter(Boolean),
+  type NamespaceWithRole = Doc<"namespaces"> & { role: NamespaceRole };
+
+  const ownedWithRole: NamespaceWithRole[] = (namespaces?.owned || []).map(
+    (ns) => ({ ...ns, role: "owner" as const }),
+  );
+
+  // collaborated items from Convex may include null (Promise.all results) — filter them out
+  const collaboratedWithRole = (namespaces?.collaborated || []).flatMap((ns) =>
+    ns !== null ? [ns as NamespaceWithRole] : [],
+  );
+
+  const allNamespaces: NamespaceWithRole[] = [
+    ...ownedWithRole,
+    ...collaboratedWithRole,
   ];
 
   const modalHandlers = {
-    onAdd: (nsId, nsSlug) =>
+    onAdd: (nsId: Id<"namespaces"> | null, nsSlug: string | null) =>
       setAddLinkModal({ open: true, namespaceId: nsId, namespaceSlug: nsSlug }),
-    onEdit: (link) => setEditLinkModal({ open: true, link }),
-    onDelete: (link) => setDeleteLinkModal({ open: true, link }),
-    onInvite: (nsId, nsName) =>
+    onEdit: (link: ShortLink) => setEditLinkModal({ open: true, link }),
+    onDelete: (link: ShortLink) => setDeleteLinkModal({ open: true, link }),
+    onInvite: (nsId: Id<"namespaces">, nsName: string) =>
       setInviteModal({ open: true, namespaceId: nsId, namespaceName: nsName }),
   };
 
   return (
     <main className="profile-page">
-      {allLinksView.active ? (
+      {allLinksView.active &&
+      allLinksView.namespaceId &&
+      allLinksView.namespaceName ? (
         <AllNamespaceLinksView
           namespaceId={allLinksView.namespaceId}
           namespaceName={allLinksView.namespaceName}
@@ -206,7 +264,7 @@ function ProfilePage() {
                   open: true,
                   namespaceId: nsId,
                   namespaceName: nsName,
-                  namespaceDescription: nsDesc,
+                  namespaceDescription: nsDesc ?? null,
                 })
               }
               onDeleteNamespace={(nsId, nsName) =>
@@ -267,7 +325,7 @@ function ProfilePage() {
           })
         }
         namespaceId={inviteModal.namespaceId}
-        namespaceName={inviteModal.namespaceName}
+        namespaceName={inviteModal.namespaceName ?? ""}
       />
       <EditProfileModal
         isOpen={editProfileModal}
@@ -284,7 +342,7 @@ function ProfilePage() {
           })
         }
         namespaceId={deleteNsModal.namespaceId}
-        namespaceName={deleteNsModal.namespaceName}
+        namespaceName={deleteNsModal.namespaceName ?? undefined}
       />
       <RenameNamespaceModal
         isOpen={renameNsModal.open}
@@ -297,8 +355,8 @@ function ProfilePage() {
           })
         }
         namespaceId={renameNsModal.namespaceId}
-        namespaceName={renameNsModal.namespaceName}
-        namespaceDescription={renameNsModal.namespaceDescription}
+        namespaceName={renameNsModal.namespaceName ?? undefined}
+        namespaceDescription={renameNsModal.namespaceDescription ?? undefined}
       />
     </main>
   );
