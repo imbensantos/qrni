@@ -1,24 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, RefObject } from "react";
 
 /**
  * Attaches click-outside and Escape-key listeners when `isOpen` is true,
  * calling `onClose` when either event fires outside `ref`.
- *
- * @param {React.RefObject} ref      - Ref attached to the element to exclude
- * @param {() => void}      onClose  - Callback to close the element
- * @param {boolean}         isOpen   - Whether the element is currently open
  */
-export function useClickOutside(ref, onClose, isOpen) {
+export function useClickOutside(
+  ref: RefObject<HTMLElement | null>,
+  onClose: () => void,
+  isOpen: boolean,
+): void {
   useEffect(() => {
     if (!isOpen) return;
 
-    function handleClickOutside(e) {
-      if (ref.current && !ref.current.contains(e.target)) {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
         onClose();
       }
     }
 
-    function handleEscape(e) {
+    function handleEscape(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
     }
 
