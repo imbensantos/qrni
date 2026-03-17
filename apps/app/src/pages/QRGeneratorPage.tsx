@@ -32,8 +32,7 @@ function QRGeneratorPage() {
       return false;
     }
   });
-  const [shortLinkResult, setShortLinkResult] =
-    useState<ShortLinkResult | null>(null);
+  const [shortLinkResult, setShortLinkResult] = useState<ShortLinkResult | null>(null);
   const [qrGenerated, setQrGenerated] = useState(false);
   const { trigger } = useWebHaptics();
 
@@ -42,11 +41,7 @@ function QRGeneratorPage() {
   return (
     <main className="body">
       <div className="sidebar-panel">
-        <div
-          className={`mode-toggle ${mode}`}
-          role="group"
-          aria-label="Generation mode"
-        >
+        <div className={`mode-toggle ${mode}`} role="group" aria-label="Generation mode">
           <button
             className={`mode-btn ${mode === "single" ? "active" : ""}`}
             aria-pressed={mode === "single"}

@@ -1,13 +1,6 @@
 import { useState } from "react";
 import { MAX_CUSTOM_LINKS } from "../../utils/constants";
-import {
-  IconLink,
-  IconPlus,
-  IconClick,
-  IconPencil,
-  IconTrash,
-  IconChevronDown,
-} from "../Icons";
+import { IconLink, IconPlus, IconClick, IconPencil, IconTrash, IconChevronDown } from "../Icons";
 import CopyButton from "./CopyButton";
 import { Doc } from "../../../../../convex/_generated/dataModel";
 
@@ -20,12 +13,7 @@ interface MyLinksSectionProps {
   onDelete: (link: Link) => void;
 }
 
-function MyLinksSection({
-  links,
-  onAdd,
-  onEdit,
-  onDelete,
-}: MyLinksSectionProps) {
+function MyLinksSection({ links, onAdd, onEdit, onDelete }: MyLinksSectionProps) {
   const [expanded, setExpanded] = useState(true);
   const personalLinks = links ? links.filter((l) => !l.namespace) : [];
   const customSlugCount = personalLinks.filter((l) => !l.autoSlug).length;
@@ -70,9 +58,7 @@ function MyLinksSection({
 
           <div className="pp-link-list">
             {personalLinks.length === 0 ? (
-              <div className="pp-empty">
-                No links yet. Create your first short link!
-              </div>
+              <div className="pp-empty">No links yet. Create your first short link!</div>
             ) : (
               personalLinks.map((link, i) => {
                 const shortUrl = link.namespaceSlug
@@ -91,23 +77,15 @@ function MyLinksSection({
                           >
                             {shortUrl}
                           </a>
-                          {!link.autoSlug && (
-                            <span className="pp-custom-badge">custom</span>
-                          )}
-                          <CopyButton
-                            text={`${window.location.origin}/${link.shortCode}`}
-                          />
+                          {!link.autoSlug && <span className="pp-custom-badge">custom</span>}
+                          <CopyButton text={`${window.location.origin}/${link.shortCode}`} />
                         </div>
-                        <div className="pp-link-destination">
-                          {link.destinationUrl}
-                        </div>
+                        <div className="pp-link-destination">{link.destinationUrl}</div>
                       </div>
                       <div className="pp-link-meta">
                         <span className="pp-clicks">
                           <IconClick size={12} />
-                          <span className="pp-clicks-count">
-                            {link.clickCount}
-                          </span>
+                          <span className="pp-clicks-count">{link.clickCount}</span>
                         </span>
                         <button
                           className="pp-icon-btn"
@@ -125,9 +103,7 @@ function MyLinksSection({
                         </button>
                       </div>
                     </div>
-                    {i < personalLinks.length - 1 && (
-                      <div className="pp-row-divider" />
-                    )}
+                    {i < personalLinks.length - 1 && <div className="pp-row-divider" />}
                   </div>
                 );
               })

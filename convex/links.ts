@@ -30,10 +30,7 @@ async function countCustomLinks(
     .filter((q) =>
       q.and(
         q.eq(q.field("namespace"), undefined),
-        q.or(
-          q.eq(q.field("autoSlug"), undefined),
-          q.eq(q.field("autoSlug"), false),
-        ),
+        q.or(q.eq(q.field("autoSlug"), undefined), q.eq(q.field("autoSlug"), false)),
       ),
     )
     .take(MAX_CUSTOM_LINKS_PER_USER + 1);

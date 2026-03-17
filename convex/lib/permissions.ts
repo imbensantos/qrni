@@ -25,9 +25,7 @@ export async function checkPermission(
 
   const membership = await ctx.db
     .query("namespace_members")
-    .withIndex("by_namespace_user", (q) =>
-      q.eq("namespace", namespaceId).eq("user", userId),
-    )
+    .withIndex("by_namespace_user", (q) => q.eq("namespace", namespaceId).eq("user", userId))
     .first();
 
   if (!membership) throw new Error(ERR.NOT_AUTHORIZED);
