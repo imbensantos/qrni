@@ -98,27 +98,6 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
 
         <div className="alm-fields">
           <div className="alm-field">
-            <label className="alm-label" htmlFor="alm-slug">Short link slug</label>
-            <div className={`alm-slug-row ${slugError ? 'has-error' : ''}`}>
-              <span className="alm-slug-prefix">{prefix}</span>
-              <input
-                id="alm-slug"
-                type="text"
-                className="alm-slug-input"
-                value={slug}
-                onChange={(e) => { setSlug(e.target.value); setSlugError('') }}
-                placeholder="my-link"
-                autoFocus
-              />
-            </div>
-            {slugError ? (
-              <p className="alm-error">{slugError}</p>
-            ) : (
-              <p className="alm-hint">Only letters, numbers, and hyphens allowed</p>
-            )}
-          </div>
-
-          <div className="alm-field">
             <label className="alm-label" htmlFor="alm-url">Destination URL</label>
             <div className={`alm-dest-row ${urlError ? 'has-error' : ''}`}>
               <svg className="alm-dest-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -132,9 +111,30 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
                 value={destinationUrl}
                 onChange={(e) => { setDestinationUrl(e.target.value); setUrlError('') }}
                 placeholder="https://example.com/your-page"
+                autoFocus
               />
             </div>
             {urlError && <p className="alm-error">{urlError}</p>}
+          </div>
+
+          <div className="alm-field">
+            <label className="alm-label" htmlFor="alm-slug">Short link slug</label>
+            <div className={`alm-slug-row ${slugError ? 'has-error' : ''}`}>
+              <span className="alm-slug-prefix">{prefix}</span>
+              <input
+                id="alm-slug"
+                type="text"
+                className="alm-slug-input"
+                value={slug}
+                onChange={(e) => { setSlug(e.target.value); setSlugError('') }}
+                placeholder="my-link"
+              />
+            </div>
+            {slugError ? (
+              <p className="alm-error">{slugError}</p>
+            ) : (
+              <p className="alm-hint">Only letters, numbers, and hyphens allowed</p>
+            )}
           </div>
         </div>
 
