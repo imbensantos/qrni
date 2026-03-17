@@ -1,16 +1,8 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { useWebHaptics } from 'web-haptics/react'
 import { parseFile } from '../utils/bulk-utils'
+import { DOT_STYLES } from '../utils/constants'
 import './BulkPanel.css'
-
-const DOT_STYLES = [
-  { id: 'square', label: 'Square' },
-  { id: 'rounded', label: 'Rounded' },
-  { id: 'dots', label: 'Dots' },
-  { id: 'classy', label: 'Classy' },
-  { id: 'classy-rounded', label: 'Leaf' },
-  { id: 'extra-rounded', label: 'Blob' },
-]
 
 const FORMATS = ['png', 'svg', 'webp']
 

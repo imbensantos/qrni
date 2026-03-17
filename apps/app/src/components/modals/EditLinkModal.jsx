@@ -2,33 +2,14 @@ import { useState, useEffect } from 'react'
 import { useMutation } from 'convex/react'
 import { api } from '../../../../../convex/_generated/api'
 import ModalBackdrop from './ModalBackdrop'
+import { IconPencil, IconLink, IconClose } from '../Icons'
 import './EditLinkModal.css'
 
 function PencilCircleIcon() {
   return (
     <div className="edit-link-icon">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-      </svg>
+      <IconPencil size={18} />
     </div>
-  )
-}
-
-function LinkIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
-    </svg>
-  )
-}
-
-function CloseIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
   )
 }
 
@@ -110,7 +91,7 @@ function EditLinkModal({ isOpen, onClose, link }) {
             </div>
           </div>
           <button className="edit-link-close" onClick={onClose} type="button">
-            <CloseIcon />
+            <IconClose size={18} />
           </button>
         </div>
 
@@ -135,7 +116,7 @@ function EditLinkModal({ isOpen, onClose, link }) {
           <div className="edit-link-field">
             <label className="edit-link-label" htmlFor="edit-destination">Destination URL</label>
             <div className="edit-link-input-group">
-              <span className="edit-link-input-icon"><LinkIcon /></span>
+              <span className="edit-link-input-icon"><IconLink size={16} /></span>
               <input
                 id="edit-destination"
                 type="url"

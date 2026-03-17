@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useWebHaptics } from 'web-haptics/react'
+import { isValidUrl } from '../utils/bulk-utils'
 import ControlsPanel from '../components/ControlsPanel'
 import PreviewPanel from '../components/PreviewPanel'
 import BulkPanel from '../components/BulkPanel'
@@ -20,7 +21,7 @@ function QRGeneratorPage() {
   const [qrGenerated, setQrGenerated] = useState(false)
   const { trigger } = useWebHaptics()
 
-  const isValidUrl = url.startsWith('http://') || url.startsWith('https://')
+  const urlIsValid = isValidUrl(url)
 
   return (
     <main className="body">
@@ -70,7 +71,7 @@ function QRGeneratorPage() {
       {mode === 'single' ? (
         <PreviewPanel
           url={url}
-          isValidUrl={isValidUrl && qrGenerated}
+          isValidUrl={urlIsValid && qrGenerated}
           fgColor={fgColor}
           bgColor={bgColor}
           logo={logo}

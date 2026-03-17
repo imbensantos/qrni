@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useMutation } from 'convex/react'
 import { api } from '../../../../../convex/_generated/api'
 import ModalBackdrop from './ModalBackdrop'
+import { IconPlus, IconClose, IconLink } from '../Icons'
 import './AddLinkModal.css'
 
 function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
@@ -78,10 +79,7 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
         <div className="alm-header">
           <div className="alm-header-left">
             <div className="alm-icon-circle">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
+              <IconPlus size={20} />
             </div>
             <div className="alm-title-group">
               <h2 className="alm-title">Add new link</h2>
@@ -89,10 +87,7 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
             </div>
           </div>
           <button type="button" className="alm-close-btn" onClick={onClose} aria-label="Close">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <IconClose size={18} />
           </button>
         </div>
 
@@ -100,10 +95,7 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
           <div className="alm-field">
             <label className="alm-label" htmlFor="alm-url">Destination URL</label>
             <div className={`alm-dest-row ${urlError ? 'has-error' : ''}`}>
-              <svg className="alm-dest-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
-                <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
-              </svg>
+              <span className="alm-dest-icon"><IconLink size={16} /></span>
               <input
                 id="alm-url"
                 type="text"

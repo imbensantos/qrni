@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useMutation } from 'convex/react'
 import { api } from '../../../../../convex/_generated/api'
+import { cleanConvexError } from '../../utils/errors'
 import ModalBackdrop from './ModalBackdrop'
+import { IconTrash } from '../Icons'
 
 function DeleteNamespaceModal({ isOpen, onClose, namespaceId, namespaceName }) {
   const [error, setError] = useState(null)
@@ -17,12 +19,7 @@ function DeleteNamespaceModal({ isOpen, onClose, namespaceId, namespaceName }) {
       await removeNamespace({ namespaceId })
       onClose()
     } catch (err) {
-      const msg = err.message
-        ?.replace(/\[CONVEX [^\]]*\]\s*/g, '')
-        .replace(/Uncaught Error:\s*/gi, '')
-        .replace(/\s*at handler\s*\(.*$/s, '')
-        .replace(/\s*Called by client\s*$/i, '')
-        .trim()
+      const msg = cleanConvexError(err.message ?? '')
       setError(msg || 'Failed to delete namespace')
     } finally {
       setSubmitting(false)
@@ -32,11 +29,8 @@ function DeleteNamespaceModal({ isOpen, onClose, namespaceId, namespaceName }) {
   return (
     <ModalBackdrop isOpen={isOpen} onClose={onClose}>
       <div className="delete-modal">
-        <div className="delete-modal-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="3 6 5 6 21 6" />
-            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-          </svg>
+        <div className="delete-modal-icon" style={{ color: '#DC2626' }}>
+          <IconTrash size={28} />
         </div>
 
         <h2 className="delete-modal-title">Delete namespace?</h2>

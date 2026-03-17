@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useMutation } from 'convex/react'
 import { api } from '../../../../../convex/_generated/api'
+import { cleanConvexError } from '../../utils/errors'
 import ModalBackdrop from './ModalBackdrop'
+import { IconPencil, IconClose, IconGlobe } from '../Icons'
 import '../modals/CreateNamespaceModal.css'
 
 function RenameNamespaceModal({ isOpen, onClose, namespaceId, namespaceName, namespaceDescription }) {
@@ -45,12 +47,7 @@ function RenameNamespaceModal({ isOpen, onClose, namespaceId, namespaceName, nam
       await updateNamespace(args)
       onClose()
     } catch (err) {
-      const msg = err.message
-        ?.replace(/\[CONVEX [^\]]*\]\s*/g, '')
-        .replace(/Uncaught Error:\s*/gi, '')
-        .replace(/\s*at handler\s*\(.*$/s, '')
-        .replace(/\s*Called by client\s*$/i, '')
-        .trim()
+      const msg = cleanConvexError(err.message ?? '')
       setError(msg || 'Failed to update namespace')
     } finally {
       setIsSubmitting(false)
@@ -65,9 +62,7 @@ function RenameNamespaceModal({ isOpen, onClose, namespaceId, namespaceName, nam
         <div className="cnm-header">
           <div className="cnm-header-left">
             <div className="cnm-icon-circle">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-              </svg>
+              <IconPencil size={20} />
             </div>
             <div className="cnm-title-group">
               <h2 className="cnm-title">Edit namespace</h2>
@@ -75,10 +70,7 @@ function RenameNamespaceModal({ isOpen, onClose, namespaceId, namespaceName, nam
             </div>
           </div>
           <button type="button" className="cnm-close-btn" onClick={onClose} aria-label="Close">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <IconClose size={18} />
           </button>
         </div>
 
@@ -96,11 +88,7 @@ function RenameNamespaceModal({ isOpen, onClose, namespaceId, namespaceName, nam
         </div>
 
         <div className="cnm-url-preview">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="2" y1="12" x2="22" y2="12" />
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-          </svg>
+          <IconGlobe size={16} />
           <span><span style={{ opacity: 0.5 }}>{window.location.host}/</span>{sanitizedName || '[namespace]'}<span style={{ opacity: 0.5 }}>/your-slug</span></span>
         </div>
 
