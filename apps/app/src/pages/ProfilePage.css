@@ -342,6 +342,18 @@
   gap: 6px;
 }
 
+.pp-custom-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent-secondary);
+  background: color-mix(in srgb, var(--accent-secondary) 12%, transparent);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
 .pp-link-short-url {
   font-size: 13px;
   font-weight: 600;

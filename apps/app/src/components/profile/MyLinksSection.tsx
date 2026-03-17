@@ -90,6 +90,9 @@ function MyLinksSection({
                           >
                             {shortUrl}
                           </a>
+                          {!link.autoSlug && (
+                            <span className="pp-custom-badge">custom</span>
+                          )}
                           <CopyButton
                             text={`${window.location.origin}/${link.shortCode}`}
                           />
