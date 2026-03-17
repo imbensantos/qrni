@@ -33,7 +33,7 @@
   border-radius: var(--radius-sm);
   padding: 12px;
   margin-bottom: 20px;
-  text-align: left;
+  text-align: center;
 }
 
 .delete-modal-preview-short {

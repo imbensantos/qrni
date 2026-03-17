@@ -20,9 +20,7 @@ function DeleteLinkConfirmModal({ isOpen, onClose, link }) {
 
   if (!link) return null
 
-  const shortUrl = link.namespaceSlug
-    ? `${window.location.host}/${link.namespaceSlug}/${link.shortCode}`
-    : `${window.location.host}/${link.shortCode}`
+  const shortUrl = `${window.location.host}/${link.shortCode}`
 
   async function handleDelete() {
     setError(null)
