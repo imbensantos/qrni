@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useQuery } from "convex/react";
+import { getAppOrigin } from "../../utils/url-utils";
 import { api } from "../../../../../convex/_generated/api";
 import {
   IconPencil,
@@ -13,11 +14,7 @@ import {
   IconArrowRight,
 } from "../Icons";
 import { useClickOutside } from "../../hooks/useClickOutside";
-import {
-  getColorFromHash,
-  NAMESPACE_COLORS,
-  NAMESPACE_BG_COLORS,
-} from "../../utils/ui-utils";
+import { getColorFromHash, NAMESPACE_COLORS, NAMESPACE_BG_COLORS } from "../../utils/ui-utils";
 import { formatDateShort } from "../../utils/ui-utils";
 import CopyButton from "./CopyButton";
 import { Id, Doc } from "../../../../../convex/_generated/dataModel";
@@ -34,11 +31,7 @@ interface NamespaceSectionProps {
   onDelete: (link: Link) => void;
   onInvite: (namespaceId: Id<"namespaces">, namespaceSlug: string) => void;
   onViewAll: (namespaceId: Id<"namespaces">, namespaceSlug: string) => void;
-  onRename: (
-    namespaceId: Id<"namespaces">,
-    slug: string,
-    description: string | undefined,
-  ) => void;
+  onRename: (namespaceId: Id<"namespaces">, slug: string, description: string | undefined) => void;
   onDeleteNamespace: (namespaceId: Id<"namespaces">, slug: string) => void;
 }
 
@@ -132,10 +125,7 @@ function NamespaceSection({
                 </div>
               ))}
               {members.length > 4 && (
-                <div
-                  className="pp-member-avatar"
-                  style={{ background: "#999" }}
-                >
+                <div className="pp-member-avatar" style={{ background: "#999" }}>
                   +{members.length - 4}
                 </div>
               )}
@@ -165,10 +155,7 @@ function NamespaceSection({
               </button>
               {kebabOpen && (
                 <div className="pp-kebab-menu">
-                  <button
-                    className="pp-kebab-item"
-                    onClick={handleEditNamespace}
-                  >
+                  <button className="pp-kebab-item" onClick={handleEditNamespace}>
                     <IconPencil size={16} />
                     Edit namespace
                   </button>
@@ -207,7 +194,7 @@ function NamespaceSection({
             ) : (
               previewLinks.map((link, i) => {
                 const slug = extractSlug(link.shortCode, namespace.slug);
-                const fullUrl = `${window.location.origin}/${namespace.slug}/${slug}`;
+                const fullUrl = `${getAppOrigin()}/${namespace.slug}/${slug}`;
                 return (
                   <div key={link._id}>
                     <div className="pp-link-row">
@@ -216,20 +203,14 @@ function NamespaceSection({
                           <span className="pp-ns-link-slug">/{slug}</span>
                           <CopyButton text={fullUrl} />
                         </div>
-                        <div className="pp-link-destination">
-                          {link.destinationUrl}
-                        </div>
+                        <div className="pp-link-destination">{link.destinationUrl}</div>
                       </div>
                       <div className="pp-link-meta">
                         <span className="pp-clicks">
                           <IconClick size={12} />
-                          <span className="pp-clicks-count">
-                            {link.clickCount}
-                          </span>
+                          <span className="pp-clicks-count">{link.clickCount}</span>
                         </span>
-                        <span className="pp-link-date">
-                          {formatDateShort(link.createdAt)}
-                        </span>
+                        <span className="pp-link-date">{formatDateShort(link.createdAt)}</span>
                         {canEdit && (
                           <>
                             <button
@@ -250,9 +231,7 @@ function NamespaceSection({
                         )}
                       </div>
                     </div>
-                    {i < previewLinks.length - 1 && (
-                      <div className="pp-row-divider" />
-                    )}
+                    {i < previewLinks.length - 1 && <div className="pp-row-divider" />}
                   </div>
                 );
               })

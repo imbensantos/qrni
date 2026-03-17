@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "convex/react";
+import { getAppOrigin } from "../../utils/url-utils";
 import { api } from "../../../../../convex/_generated/api";
 import { IconPlus, IconPencil, IconTrash } from "../Icons";
 import { formatDateShort } from "../../utils/ui-utils";
@@ -96,14 +97,14 @@ function AllNamespaceLinksView({
                     <td>
                       <div className="pp-link-short-row">
                         <a
-                          href={`${window.location.origin}/${link.shortCode}`}
+                          href={`${getAppOrigin()}/${link.shortCode}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="pp-link-short-url"
                         >
                           /{link.shortCode}
                         </a>
-                        <CopyButton text={`${window.location.origin}/${link.shortCode}`} />
+                        <CopyButton text={`${getAppOrigin()}/${link.shortCode}`} />
                       </div>
                       <div className="pp-link-destination">{link.destinationUrl}</div>
                     </td>

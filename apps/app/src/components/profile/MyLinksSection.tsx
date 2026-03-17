@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MAX_CUSTOM_LINKS } from "../../utils/constants";
+import { getAppOrigin, getAppHost } from "../../utils/url-utils";
 import { IconLink, IconPlus, IconClick, IconPencil, IconTrash, IconChevronDown } from "../Icons";
 import CopyButton from "./CopyButton";
 import { Doc } from "../../../../../convex/_generated/dataModel";
@@ -62,15 +63,15 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete }: MyLinksSectionProps)
             ) : (
               personalLinks.map((link, i) => {
                 const shortUrl = link.namespaceSlug
-                  ? `${window.location.host}/${link.namespaceSlug}/${link.shortCode}`
-                  : `${window.location.host}/${link.shortCode}`;
+                  ? `${getAppHost()}/${link.namespaceSlug}/${link.shortCode}`
+                  : `${getAppHost()}/${link.shortCode}`;
                 return (
                   <div key={link._id}>
                     <div className="pp-link-row">
                       <div className="pp-link-info">
                         <div className="pp-link-short-row">
                           <a
-                            href={`${window.location.origin}/${link.shortCode}`}
+                            href={`${getAppOrigin()}/${link.shortCode}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="pp-link-short-url"
@@ -78,7 +79,7 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete }: MyLinksSectionProps)
                             {shortUrl}
                           </a>
                           {!link.autoSlug && <span className="pp-custom-badge">custom</span>}
-                          <CopyButton text={`${window.location.origin}/${link.shortCode}`} />
+                          <CopyButton text={`${getAppOrigin()}/${link.shortCode}`} />
                         </div>
                         <div className="pp-link-destination">{link.destinationUrl}</div>
                       </div>
