@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MAX_CUSTOM_LINKS } from "../../utils/constants";
 import {
   IconLink,
   IconPlus,
@@ -41,7 +42,7 @@ function MyLinksSection({
         </div>
         <div className="pp-card-header-right">
           <span className="pp-slug-info">
-            {customSlugCount} of 5 custom slugs used
+            {customSlugCount} of {MAX_CUSTOM_LINKS} custom slugs used
           </span>
           <button
             className="pp-add-btn"

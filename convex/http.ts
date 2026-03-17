@@ -3,6 +3,7 @@ import { httpAction } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { auth } from "./auth";
 import { checkUrlSafety } from "./safeBrowsing";
+import { ERR } from "./lib/constants";
 
 const http = httpRouter();
 
@@ -76,7 +77,14 @@ http.route({
       });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Internal server error";
-      return new Response(JSON.stringify({ error: message }), {
+      const safeMessages: string[] = [
+        ERR.ANONYMOUS_RATE_LIMITED,
+        ERR.INVALID_URL,
+        ERR.URL_TOO_LONG,
+        ERR.UNSAFE_URL,
+      ];
+      const safeMessage = safeMessages.includes(message) ? message : "Something went wrong";
+      return new Response(JSON.stringify({ error: safeMessage }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });

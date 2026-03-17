@@ -18,3 +18,6 @@ export const DOWNLOAD_FILENAME_SINGLE = "qrni-code";
 /** Default download filename prefix for bulk exports */
 export const DOWNLOAD_FILENAME_BULK_ZIP = "qrni-bulk.zip";
 export const DOWNLOAD_FILENAME_BULK_PDF = "qrni-bulk.pdf";
+
+/** Maximum custom (non-auto, non-namespaced) short links per user */
+export const MAX_CUSTOM_LINKS = 5;

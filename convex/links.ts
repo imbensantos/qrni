@@ -1,4 +1,5 @@
 import { action, internalMutation, mutation, query } from "./_generated/server";
+import type { MutationCtx } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
@@ -17,6 +18,27 @@ import {
   checkAuthRateLimit,
 } from "./lib/linkHelpers";
 import { MAX_CUSTOM_LINKS_PER_USER, ERR } from "./lib/constants";
+
+/** Count custom (non-auto, non-namespaced) links owned by user, capped at limit+1. */
+async function countCustomLinks(
+  ctx: { db: MutationCtx["db"] },
+  userId: Id<"users">,
+): Promise<number> {
+  const links = await ctx.db
+    .query("links")
+    .withIndex("by_owner", (q) => q.eq("owner", userId))
+    .filter((q) =>
+      q.and(
+        q.eq(q.field("namespace"), undefined),
+        q.or(
+          q.eq(q.field("autoSlug"), undefined),
+          q.eq(q.field("autoSlug"), false),
+        ),
+      ),
+    )
+    .take(MAX_CUSTOM_LINKS_PER_USER + 1);
+  return links.length;
+}
 
 async function ensureUrlSafe(url: string): Promise<void> {
   const result = await checkUrlSafety(url);
@@ -66,14 +88,14 @@ export const createAnonymousLinkInternal = internalMutation({
 export const createAnonymousLink = action({
   args: {
     destinationUrl: v.string(),
-    creatorIp: v.string(),
+    sessionId: v.string(),
   },
   handler: async (ctx, args): Promise<{ shortCode: string; linkId: Id<"links"> }> => {
     await ensureUrlSafe(args.destinationUrl);
 
     return await ctx.runMutation(internal.links.createAnonymousLinkInternal, {
       destinationUrl: args.destinationUrl,
-      creatorIp: args.creatorIp,
+      creatorIp: args.sessionId,
     });
   },
 });
@@ -169,12 +191,8 @@ export const createCustomSlugLinkInternal = internalMutation({
     await checkAuthRateLimit(ctx, user._id);
 
     // Check limit: custom (non-auto, non-namespaced) short links per user
-    const existingLinks = await ctx.db
-      .query("links")
-      .withIndex("by_owner", (q) => q.eq("owner", user._id))
-      .collect();
-    const flatCustomCount = existingLinks.filter((l) => !l.namespace && !l.autoSlug).length;
-    if (flatCustomCount >= MAX_CUSTOM_LINKS_PER_USER) {
+    const customCount = await countCustomLinks(ctx, user._id);
+    if (customCount >= MAX_CUSTOM_LINKS_PER_USER) {
       throw new Error(ERR.CUSTOM_LINK_LIMIT);
     }
 

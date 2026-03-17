@@ -8,6 +8,7 @@ import { useAuth } from "../hooks/useAuth";
 import { hasCachedUser } from "../utils/cached-user";
 import { getSessionId } from "../utils/session-id";
 import { cleanConvexError } from "../utils/errors";
+import { MAX_CUSTOM_LINKS } from "../utils/constants";
 import { isValidUrl } from "../utils/bulk-utils";
 import ColorPicker from "./ColorPicker";
 import LogoUploader from "./LogoUploader";
@@ -126,7 +127,7 @@ function ControlsPanel({
         if (!isAuthenticated) {
           res = await createAnonymousLink({
             destinationUrl: targetUrl,
-            creatorIp: getSessionId(),
+            sessionId: getSessionId(),
           });
         } else if (selectedNamespace) {
           res = await createNamespacedLink({
@@ -248,7 +249,9 @@ function ControlsPanel({
                     Custom slug
                   </label>
                   {!selectedNamespace && (
-                    <span className="slug-counter">{flatCustomCount} of 5 used</span>
+                    <span className="slug-counter">
+                      {flatCustomCount} of {MAX_CUSTOM_LINKS} used
+                    </span>
                   )}
                 </div>
                 <input

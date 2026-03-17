@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { checkPermission } from "./permissions";
+import { ERR } from "./constants";
 
 // ---------------------------------------------------------------------------
 // Mock helpers
@@ -25,6 +26,18 @@ function createMockCtx(opts: {
     },
   };
 }
+
+// ---------------------------------------------------------------------------
+// Permission error messages — must be generic to prevent enumeration
+// ---------------------------------------------------------------------------
+describe("permission error messages", () => {
+  it("should use a generic NOT_AUTHORIZED message", () => {
+    expect(ERR.NOT_AUTHORIZED).toBe("Not authorized");
+    expect(ERR.NOT_AUTHORIZED.toLowerCase()).not.toContain("namespace");
+    expect(ERR.NOT_AUTHORIZED.toLowerCase()).not.toContain("member");
+    expect(ERR.NOT_AUTHORIZED.toLowerCase()).not.toContain("role");
+  });
+});
 
 // ---------------------------------------------------------------------------
 // checkPermission
@@ -71,14 +84,14 @@ describe("checkPermission", () => {
     expect(result).toEqual({ role: "editor", isOwner: false });
   });
 
-  it("rejects editor for owner-level actions", async () => {
+  it("rejects editor for owner-level actions with generic error", async () => {
     const ctx = createMockCtx({
       namespace: { _id: NAMESPACE_ID, owner: OWNER_ID },
       membership: { role: "editor" },
     });
 
     await expect(checkPermission(ctx as never, NAMESPACE_ID, EDITOR_ID, "owner")).rejects.toThrow(
-      "Requires owner role or higher",
+      ERR.NOT_AUTHORIZED,
     );
   });
 
@@ -92,29 +105,29 @@ describe("checkPermission", () => {
     expect(result).toEqual({ role: "viewer", isOwner: false });
   });
 
-  it("rejects viewer for editor-level actions", async () => {
+  it("rejects viewer for editor-level actions with generic error", async () => {
     const ctx = createMockCtx({
       namespace: { _id: NAMESPACE_ID, owner: OWNER_ID },
       membership: { role: "viewer" },
     });
 
     await expect(checkPermission(ctx as never, NAMESPACE_ID, VIEWER_ID, "editor")).rejects.toThrow(
-      "Requires editor role or higher",
+      ERR.NOT_AUTHORIZED,
     );
   });
 
-  it("rejects viewer for owner-level actions", async () => {
+  it("rejects viewer for owner-level actions with generic error", async () => {
     const ctx = createMockCtx({
       namespace: { _id: NAMESPACE_ID, owner: OWNER_ID },
       membership: { role: "viewer" },
     });
 
     await expect(checkPermission(ctx as never, NAMESPACE_ID, VIEWER_ID, "owner")).rejects.toThrow(
-      "Requires owner role or higher",
+      ERR.NOT_AUTHORIZED,
     );
   });
 
-  it("throws when user is not a member", async () => {
+  it("throws generic error when user is not a member", async () => {
     const ctx = createMockCtx({
       namespace: { _id: NAMESPACE_ID, owner: OWNER_ID },
       membership: null,
@@ -122,14 +135,14 @@ describe("checkPermission", () => {
 
     await expect(
       checkPermission(ctx as never, NAMESPACE_ID, STRANGER_ID, "viewer"),
-    ).rejects.toThrow("Not a member of this namespace");
+    ).rejects.toThrow(ERR.NOT_AUTHORIZED);
   });
 
-  it("throws when namespace does not exist", async () => {
+  it("throws generic error when namespace does not exist", async () => {
     const ctx = createMockCtx({ namespace: null });
 
     await expect(checkPermission(ctx as never, NAMESPACE_ID, OWNER_ID, "viewer")).rejects.toThrow(
-      "Namespace not found",
+      ERR.NOT_AUTHORIZED,
     );
   });
 });

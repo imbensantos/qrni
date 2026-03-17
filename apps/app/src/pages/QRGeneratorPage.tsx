@@ -25,9 +25,13 @@ function QRGeneratorPage() {
   const [size, setSize] = useState(512);
   const [format, setFormat] = useState<ExportFormat>("png");
   const [bulkEntries, setBulkEntries] = useState<BulkEntry[]>([]);
-  const [shortenLink, setShortenLink] = useState(
-    () => localStorage.getItem("qrni-shorten-link") === "true",
-  );
+  const [shortenLink, setShortenLink] = useState(() => {
+    try {
+      return localStorage.getItem("qrni-shorten-link") === "true";
+    } catch {
+      return false;
+    }
+  });
   const [shortLinkResult, setShortLinkResult] =
     useState<ShortLinkResult | null>(null);
   const [qrGenerated, setQrGenerated] = useState(false);
@@ -85,7 +89,11 @@ function QRGeneratorPage() {
             shortenLink={shortenLink}
             onShortenLinkChange={(v) => {
               setShortenLink(v);
-              localStorage.setItem("qrni-shorten-link", String(v));
+              try {
+                localStorage.setItem("qrni-shorten-link", String(v));
+              } catch {
+                /* private browsing */
+              }
             }}
             onShortLinkCreated={setShortLinkResult}
             onGenerate={() => setQrGenerated(true)}
