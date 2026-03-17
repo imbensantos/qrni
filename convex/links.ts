@@ -340,7 +340,7 @@ export const createNamespacedLinkInternal = internalMutation({
   args: {
     destinationUrl: v.string(),
     namespaceId: v.id("namespaces"),
-    slug: v.string(),
+    slug: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -356,39 +356,69 @@ export const createNamespacedLinkInternal = internalMutation({
 
     validateDestinationUrl(args.destinationUrl);
 
-    // Duplicate submission guard: reject same URL + slug within 5 seconds
-    const compositeShortCode = `${namespace.slug}/${args.slug}`;
-    const recentDuplicate = await ctx.db
-      .query("links")
-      .withIndex("by_namespace_slug", (q) =>
-        q.eq("namespace", args.namespaceId).eq("namespaceSlug", args.slug),
-      )
-      .first();
-    if (
-      recentDuplicate &&
-      recentDuplicate.destinationUrl === args.destinationUrl &&
-      Date.now() - recentDuplicate.createdAt < DUPLICATE_WINDOW_MS
-    ) {
-      return { shortCode: compositeShortCode, linkId: recentDuplicate._id };
+    // Auto-generate slug if not provided
+    let slug: string;
+    let isAutoSlug = false;
+    if (!args.slug) {
+      isAutoSlug = true;
+      let attempts = 0;
+      slug = generateShortCode();
+      while (attempts < 5) {
+        const existing = await ctx.db
+          .query("links")
+          .withIndex("by_namespace_slug", (q) =>
+            q.eq("namespace", args.namespaceId).eq("namespaceSlug", slug),
+          )
+          .first();
+        if (!existing) break;
+        slug = generateShortCode();
+        attempts++;
+      }
+      if (attempts >= 5) {
+        throw new Error(
+          "Couldn't create a short link right now. Please try again.",
+        );
+      }
+    } else {
+      slug = args.slug;
+
+      // Duplicate submission guard: reject same URL + slug within 5 seconds
+      const recentDuplicate = await ctx.db
+        .query("links")
+        .withIndex("by_namespace_slug", (q) =>
+          q.eq("namespace", args.namespaceId).eq("namespaceSlug", slug),
+        )
+        .first();
+      if (
+        recentDuplicate &&
+        recentDuplicate.destinationUrl === args.destinationUrl &&
+        Date.now() - recentDuplicate.createdAt < DUPLICATE_WINDOW_MS
+      ) {
+        const compositeShortCode = `${namespace.slug}/${slug}`;
+        return { shortCode: compositeShortCode, linkId: recentDuplicate._id };
+      }
+
+      const existing = await ctx.db
+        .query("links")
+        .withIndex("by_namespace_slug", (q) =>
+          q.eq("namespace", args.namespaceId).eq("namespaceSlug", slug),
+        )
+        .first();
+      if (existing)
+        throw new Error(
+          "That name already exists in this namespace — try another one",
+        );
     }
 
-    const existing = await ctx.db
-      .query("links")
-      .withIndex("by_namespace_slug", (q) =>
-        q.eq("namespace", args.namespaceId).eq("namespaceSlug", args.slug),
-      )
-      .first();
-    if (existing)
-      throw new Error(
-        "That name already exists in this namespace — try another one",
-      );
+    const compositeShortCode = `${namespace.slug}/${slug}`;
 
     const linkId = await ctx.db.insert("links", {
       shortCode: compositeShortCode,
       namespace: args.namespaceId,
-      namespaceSlug: args.slug,
+      namespaceSlug: slug,
       destinationUrl: args.destinationUrl,
       owner: user._id,
+      autoSlug: isAutoSlug || undefined,
       createdAt: Date.now(),
       clickCount: 0,
     });
@@ -400,7 +430,7 @@ export const createNamespacedLinkInternal = internalMutation({
       action: "link.create",
       resourceType: "link",
       resourceId: String(linkId),
-      metadata: { namespace: String(args.namespaceId), slug: args.slug },
+      metadata: { namespace: String(args.namespaceId), slug },
     });
 
     return { shortCode: compositeShortCode, linkId };
@@ -412,7 +442,7 @@ export const createNamespacedLink = action({
   args: {
     destinationUrl: v.string(),
     namespaceId: v.id("namespaces"),
-    slug: v.string(),
+    slug: v.optional(v.string()),
   },
   handler: async (
     ctx,

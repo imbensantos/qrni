@@ -216,8 +216,7 @@ function NamespaceSection({
                           <span className="pp-ns-link-slug">/{slug}</span>
                           <CopyButton text={fullUrl} />
                         </div>
-                        <div className="pp-link-destination pp-link-destination--ns">
-                          {window.location.host}/{namespace.slug}/{slug} →{" "}
+                        <div className="pp-link-destination">
                           {link.destinationUrl}
                         </div>
                       </div>

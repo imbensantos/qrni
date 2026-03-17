@@ -35,16 +35,16 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
   // Sync form state when link prop changes
   useEffect(() => {
     if (link) {
-      setSlug(
-        link.namespaceSlug ? link.namespaceSlug || "" : link.shortCode || "",
-      );
+      setSlug(link.namespaceSlug || link.shortCode || "");
       setDestinationUrl(link.destinationUrl || "");
       setError(null);
     }
   }, [link]);
 
-  const prefix = link?.namespaceSlug
-    ? `${window.location.host}/${link.namespaceSlug}/`
+  // For namespaced links, extract the namespace prefix from shortCode (e.g. "ns/slug" → "ns")
+  const namespacePart = link?.namespace ? link.shortCode.split("/")[0] : null;
+  const prefix = namespacePart
+    ? `${window.location.host}/${namespacePart}/`
     : `${window.location.host}/`;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -158,11 +158,11 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
               <span className="edit-link-info-item">
                 Clicks: {link.clickCount ?? 0}
               </span>
-              {link.namespaceSlug && (
+              {namespacePart && (
                 <>
                   <span className="edit-link-info-separator" />
                   <span className="edit-link-info-item">
-                    Namespace: {link.namespaceSlug}
+                    Namespace: {namespacePart}
                   </span>
                 </>
               )}

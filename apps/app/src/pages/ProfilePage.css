@@ -382,11 +382,6 @@
   max-width: 360px;
 }
 
-.pp-link-destination--ns {
-  font-size: 11px;
-  max-width: 420px;
-}
-
 .pp-link-meta {
   display: flex;
   align-items: center;
@@ -1030,10 +1025,6 @@
   }
 
   .pp-link-destination {
-    max-width: 100%;
-  }
-
-  .pp-link-destination--ns {
     max-width: 100%;
   }
 

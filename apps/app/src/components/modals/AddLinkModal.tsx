@@ -52,10 +52,7 @@ function AddLinkModal({
     let hasError = false;
     const hasSlug = slug.trim().length > 0;
 
-    if (namespaceId && !hasSlug) {
-      setSlugError("Slug is required for namespaced links");
-      hasError = true;
-    } else if (hasSlug && !/^[a-zA-Z0-9_-]{1,60}$/.test(slug)) {
+    if (hasSlug && !/^[a-zA-Z0-9_-]{1,60}$/.test(slug)) {
       setSlugError(
         "Only letters, numbers, and hyphens allowed (max 60 characters)",
       );
@@ -78,7 +75,11 @@ function AddLinkModal({
     setSubmitting(true);
     try {
       if (namespaceId) {
-        await createNamespacedLink({ destinationUrl, namespaceId, slug });
+        await createNamespacedLink({
+          destinationUrl,
+          namespaceId,
+          slug: hasSlug ? slug : undefined,
+        });
       } else if (hasSlug) {
         await createCustomSlugLink({ destinationUrl, customSlug: slug });
       } else {
@@ -162,9 +163,7 @@ function AddLinkModal({
           <div className="alm-field">
             <label className="alm-label" htmlFor="alm-slug">
               Short link slug
-              {!namespaceId && (
-                <span className="alm-optional"> (optional)</span>
-              )}
+              <span className="alm-optional"> (optional)</span>
             </label>
             <div className={`alm-slug-row ${slugError ? "has-error" : ""}`}>
               <span className="alm-slug-prefix">{prefix}</span>
@@ -177,18 +176,14 @@ function AddLinkModal({
                   setSlug(e.target.value);
                   setSlugError("");
                 }}
-                placeholder={
-                  namespaceId ? "my-link" : "my-link (auto-generated if empty)"
-                }
+                placeholder="my-link (auto-generated if empty)"
               />
             </div>
             {slugError ? (
               <p className="alm-error">{slugError}</p>
             ) : (
               <p className="alm-hint">
-                {namespaceId
-                  ? "Only letters, numbers, and hyphens allowed"
-                  : "Leave empty to auto-generate, or enter a custom slug"}
+                Leave empty to auto-generate, or enter a custom slug
               </p>
             )}
           </div>

@@ -164,7 +164,7 @@ function ControlsPanel({
           res = await createNamespacedLink({
             destinationUrl: targetUrl,
             namespaceId: selectedNamespace._id,
-            slug: customSlug.trim(),
+            slug: customSlug.trim() || undefined,
           });
         } else if (customSlug.trim()) {
           res = await createCustomSlugLink({
