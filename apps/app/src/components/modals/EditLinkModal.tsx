@@ -1,10 +1,19 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import ModalBackdrop from "./ModalBackdrop";
 import { IconPencil, IconLink, IconClose } from "../Icons";
 import { formatDate } from "../../utils/ui-utils";
+import { Doc } from "../../../../../convex/_generated/dataModel";
 import "./EditLinkModal.css";
+
+type Link = Doc<"links">;
+
+interface EditLinkModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  link: Link | null;
+}
 
 function PencilCircleIcon() {
   return (
@@ -14,10 +23,10 @@ function PencilCircleIcon() {
   );
 }
 
-function EditLinkModal({ isOpen, onClose, link }) {
+function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
   const [slug, setSlug] = useState("");
   const [destinationUrl, setDestinationUrl] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const updateLink = useMutation(api.links.updateLink);
@@ -37,7 +46,7 @@ function EditLinkModal({ isOpen, onClose, link }) {
     ? `${window.location.host}/${link.namespaceSlug}/`
     : `${window.location.host}/`;
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (submitting || !link) return;
 
@@ -70,7 +79,7 @@ function EditLinkModal({ isOpen, onClose, link }) {
       });
       onClose();
     } catch (err) {
-      setError(err.message || "Failed to update link");
+      setError((err as Error).message || "Failed to update link");
     } finally {
       setSubmitting(false);
     }

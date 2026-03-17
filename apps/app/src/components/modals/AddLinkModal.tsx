@@ -1,11 +1,24 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import ModalBackdrop from "./ModalBackdrop";
 import { IconPlus, IconClose, IconLink } from "../Icons";
+import { Id } from "../../../../../convex/_generated/dataModel";
 import "./AddLinkModal.css";
 
-function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
+interface AddLinkModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  namespaceId?: Id<"namespaces"> | null;
+  namespaceSlug?: string | null;
+}
+
+function AddLinkModal({
+  isOpen,
+  onClose,
+  namespaceId,
+  namespaceSlug,
+}: AddLinkModalProps) {
   const [slug, setSlug] = useState("");
   const [destinationUrl, setDestinationUrl] = useState("");
   const [slugError, setSlugError] = useState("");
@@ -29,7 +42,7 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
     ? `${window.location.host}/${namespaceSlug}/`
     : `${window.location.host}/s/`;
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSlugError("");
     setUrlError("");
@@ -67,7 +80,7 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
       }
       onClose();
     } catch (err) {
-      const message = err.message || "Something went wrong";
+      const message = (err as Error).message || "Something went wrong";
       if (
         message.toLowerCase().includes("slug") ||
         message.toLowerCase().includes("short")

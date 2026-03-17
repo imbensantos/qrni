@@ -1,7 +1,22 @@
 import { IconLink, IconPlus, IconClick, IconPencil, IconTrash } from "../Icons";
 import CopyButton from "./CopyButton";
+import { Doc } from "../../../../../convex/_generated/dataModel";
 
-function MyLinksSection({ links, onAdd, onEdit, onDelete }) {
+type Link = Doc<"links">;
+
+interface MyLinksSectionProps {
+  links: Link[] | undefined;
+  onAdd: (namespaceId: null, namespaceSlug: null) => void;
+  onEdit: (link: Link) => void;
+  onDelete: (link: Link) => void;
+}
+
+function MyLinksSection({
+  links,
+  onAdd,
+  onEdit,
+  onDelete,
+}: MyLinksSectionProps) {
   const personalLinks = links ? links.filter((l) => !l.namespace) : [];
   const customSlugCount = personalLinks.filter(
     (l) => l.shortCode && l.shortCode.length > 6,

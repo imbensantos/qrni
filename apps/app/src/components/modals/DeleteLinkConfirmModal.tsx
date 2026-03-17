@@ -4,10 +4,23 @@ import { api } from "../../../../../convex/_generated/api";
 import ModalBackdrop from "./ModalBackdrop";
 import { IconTrash } from "../Icons";
 import { buildShortLinkUrl } from "../../utils/url-utils";
+import { Doc } from "../../../../../convex/_generated/dataModel";
 import "./DeleteLinkConfirmModal.css";
 
-function DeleteLinkConfirmModal({ isOpen, onClose, link }) {
-  const [error, setError] = useState(null);
+type Link = Doc<"links">;
+
+interface DeleteLinkConfirmModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  link: Link | null;
+}
+
+function DeleteLinkConfirmModal({
+  isOpen,
+  onClose,
+  link,
+}: DeleteLinkConfirmModalProps) {
+  const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const deleteLink = useMutation(api.links.deleteLink);
 
@@ -22,7 +35,7 @@ function DeleteLinkConfirmModal({ isOpen, onClose, link }) {
       await deleteLink({ linkId: link._id });
       onClose();
     } catch (err) {
-      setError(err.message || "Failed to delete link");
+      setError((err as Error).message || "Failed to delete link");
     } finally {
       setSubmitting(false);
     }

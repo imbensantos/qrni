@@ -1,10 +1,19 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { cleanConvexError } from "../../utils/errors";
 import ModalBackdrop from "./ModalBackdrop";
 import { IconPencil, IconClose, IconGlobe } from "../Icons";
+import { Id } from "../../../../../convex/_generated/dataModel";
 import "../modals/CreateNamespaceModal.css";
+
+interface RenameNamespaceModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  namespaceId: Id<"namespaces"> | null;
+  namespaceName: string | undefined;
+  namespaceDescription: string | undefined;
+}
 
 function RenameNamespaceModal({
   isOpen,
@@ -12,7 +21,7 @@ function RenameNamespaceModal({
   namespaceId,
   namespaceName,
   namespaceDescription,
-}) {
+}: RenameNamespaceModalProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
@@ -31,7 +40,7 @@ function RenameNamespaceModal({
 
   const sanitizedName = name.toLowerCase().replace(/[^a-z0-9-]/g, "");
 
-  function handleNameChange(e) {
+  function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
     setName(value);
     setError("");
@@ -41,7 +50,7 @@ function RenameNamespaceModal({
     sanitizedName !== namespaceName ||
     description !== (namespaceDescription || "");
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!sanitizedName || isSubmitting || !hasChanges) return;
 
@@ -49,14 +58,17 @@ function RenameNamespaceModal({
     setError("");
 
     try {
-      const args = { namespaceId };
-      if (sanitizedName !== namespaceName) args.newSlug = sanitizedName;
-      if (description !== (namespaceDescription || ""))
-        args.description = description;
-      await updateNamespace(args);
+      await updateNamespace({
+        namespaceId: namespaceId!,
+        newSlug: sanitizedName !== namespaceName ? sanitizedName : undefined,
+        description:
+          description !== (namespaceDescription || "")
+            ? description
+            : undefined,
+      });
       onClose();
     } catch (err) {
-      const msg = cleanConvexError(err.message ?? "");
+      const msg = cleanConvexError((err as Error).message ?? "");
       setError(msg || "Failed to update namespace");
     } finally {
       setIsSubmitting(false);

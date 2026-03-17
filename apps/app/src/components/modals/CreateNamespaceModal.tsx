@@ -1,11 +1,16 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import ModalBackdrop from "./ModalBackdrop";
 import { IconFolderOpen, IconClose, IconGlobe } from "../Icons";
 import "./CreateNamespaceModal.css";
 
-function CreateNamespaceModal({ isOpen, onClose }) {
+interface CreateNamespaceModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function CreateNamespaceModal({ isOpen, onClose }: CreateNamespaceModalProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
@@ -24,13 +29,13 @@ function CreateNamespaceModal({ isOpen, onClose }) {
 
   const sanitizedName = name.toLowerCase().replace(/[^a-z0-9-]/g, "");
 
-  function handleNameChange(e) {
+  function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
     setName(value);
     setError("");
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!sanitizedName || isSubmitting) return;
 
@@ -41,7 +46,7 @@ function CreateNamespaceModal({ isOpen, onClose }) {
       await createNamespace({ slug: sanitizedName });
       onClose();
     } catch (err) {
-      setError(err.message || "Failed to create namespace");
+      setError((err as Error).message || "Failed to create namespace");
     } finally {
       setIsSubmitting(false);
     }

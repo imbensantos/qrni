@@ -20,8 +20,29 @@ import {
 } from "../../utils/ui-utils";
 import { formatDateShort } from "../../utils/ui-utils";
 import CopyButton from "./CopyButton";
+import { Id, Doc } from "../../../../../convex/_generated/dataModel";
 
-function extractSlug(shortCode, namespaceSlug) {
+type Namespace = Doc<"namespaces">;
+type Link = Doc<"links">;
+
+interface NamespaceSectionProps {
+  namespace: Namespace;
+  role: "owner" | "editor" | "viewer";
+  colorIndex: number;
+  onAdd: (namespaceId: Id<"namespaces">, namespaceSlug: string) => void;
+  onEdit: (link: Link) => void;
+  onDelete: (link: Link) => void;
+  onInvite: (namespaceId: Id<"namespaces">, namespaceSlug: string) => void;
+  onViewAll: (namespaceId: Id<"namespaces">, namespaceSlug: string) => void;
+  onRename: (
+    namespaceId: Id<"namespaces">,
+    slug: string,
+    description: string | undefined,
+  ) => void;
+  onDeleteNamespace: (namespaceId: Id<"namespaces">, slug: string) => void;
+}
+
+function extractSlug(shortCode: string, namespaceSlug: string): string {
   if (namespaceSlug && shortCode.startsWith(namespaceSlug + "/")) {
     return shortCode.slice(namespaceSlug.length + 1);
   }
@@ -39,7 +60,7 @@ function NamespaceSection({
   onViewAll,
   onRename,
   onDeleteNamespace,
-}) {
+}: NamespaceSectionProps) {
   const [expanded, setExpanded] = useState(true);
   const [kebabOpen, setKebabOpen] = useState(false);
   const kebabRef = useRef(null);
@@ -104,13 +125,10 @@ function NamespaceSection({
                   style={{
                     background: getColorFromHash(i + 1, NAMESPACE_COLORS),
                   }}
-                  title={member.name || "Member"}
+                  title={member.user?.name || "Member"}
                 >
-                  {member.image ? (
-                    <img src={member.image} alt={member.name || "Member"} />
-                  ) : (
-                    (member.name || "?").charAt(0).toUpperCase()
-                  )}
+                  {/* listMembers does not return image; show initials only */}
+                  {(member.user?.name || "?").charAt(0).toUpperCase()}
                 </div>
               ))}
               {members.length > 4 && (

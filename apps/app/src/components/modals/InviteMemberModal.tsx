@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import ModalBackdrop from "./ModalBackdrop";
 import { IconClose, IconChevronDown } from "../Icons";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { getColorFromHash } from "../../utils/ui-utils";
+import { Id } from "../../../../../convex/_generated/dataModel";
 import "./InviteMemberModal.css";
 
 const AVATAR_COLORS = [
@@ -17,13 +18,27 @@ const AVATAR_COLORS = [
   "#5BAED4",
 ];
 
-function InviteMemberModal({ isOpen, onClose, namespaceId, namespaceName }) {
+type InviteRole = "editor" | "viewer";
+
+interface InviteMemberModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  namespaceId: Id<"namespaces"> | null;
+  namespaceName: string;
+}
+
+function InviteMemberModal({
+  isOpen,
+  onClose,
+  namespaceId,
+  namespaceName,
+}: InviteMemberModalProps) {
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("editor");
+  const [role, setRole] = useState<InviteRole>("editor");
   const [roleOpen, setRoleOpen] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const roleRef = useRef(null);
+  const roleRef = useRef<HTMLDivElement | null>(null);
 
   const members = useQuery(
     api.collaboration.listMembers,
@@ -51,9 +66,9 @@ function InviteMemberModal({ isOpen, onClose, namespaceId, namespaceName }) {
 
   const pendingInvites = (invites || []).filter((inv) => !inv.revoked);
 
-  async function handleSendInvite(e) {
+  async function handleSendInvite(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!email.trim() || isSubmitting) return;
+    if (!email.trim() || isSubmitting || !namespaceId) return;
 
     setIsSubmitting(true);
     setError("");
@@ -62,17 +77,18 @@ function InviteMemberModal({ isOpen, onClose, namespaceId, namespaceName }) {
       await createEmailInvite({ namespaceId, email: email.trim(), role });
       setEmail("");
     } catch (err) {
-      setError(err.message || "Failed to send invite");
+      setError((err as Error).message || "Failed to send invite");
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  async function handleRevoke(inviteId) {
+  async function handleRevoke(inviteId: Id<"namespace_invites">) {
+    if (!namespaceId) return;
     try {
       await revokeInvite({ namespaceId, inviteId });
     } catch (err) {
-      setError(err.message || "Failed to revoke invite");
+      setError((err as Error).message || "Failed to revoke invite");
     }
   }
 
@@ -157,7 +173,7 @@ function InviteMemberModal({ isOpen, onClose, namespaceId, namespaceName }) {
               </button>
               {roleOpen && (
                 <div className="imm-role-dropdown">
-                  {["editor", "viewer"].map((r) => (
+                  {(["editor", "viewer"] as InviteRole[]).map((r) => (
                     <button
                       key={r}
                       type="button"

@@ -4,6 +4,19 @@ import { api } from "../../../../../convex/_generated/api";
 import { IconPlus, IconPencil, IconTrash } from "../Icons";
 import { formatDateShort } from "../../utils/ui-utils";
 import CopyButton from "./CopyButton";
+import { Id, Doc } from "../../../../../convex/_generated/dataModel";
+
+type Link = Doc<"links">;
+
+interface AllNamespaceLinksViewProps {
+  namespaceId: Id<"namespaces">;
+  namespaceName: string;
+  onBack: () => void;
+  onEdit: (link: Link) => void;
+  onDelete: (link: Link) => void;
+  onAdd: (namespaceId: Id<"namespaces">, namespaceName: string) => void;
+  onInvite: (namespaceId: Id<"namespaces">, namespaceName: string) => void;
+}
 
 const LINKS_PER_PAGE = 5;
 
@@ -15,7 +28,7 @@ function AllNamespaceLinksView({
   onDelete,
   onAdd,
   onInvite,
-}) {
+}: AllNamespaceLinksViewProps) {
   const [page, setPage] = useState(0);
 
   const nsLinks = useQuery(api.links.listNamespaceLinks, { namespaceId });
@@ -28,8 +41,8 @@ function AllNamespaceLinksView({
     : [];
   const memberCount = members ? members.length : 0;
 
-  const currentUserMember = members?.find((m) => m.isCurrentUser);
-  const role = currentUserMember?.role || "viewer";
+  // listMembers does not include isCurrentUser; default to "viewer" for display
+  const role = (members?.[0]?.role as string | undefined) ?? "viewer";
   const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
 
   return (

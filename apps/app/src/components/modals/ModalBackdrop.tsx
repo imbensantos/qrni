@@ -1,12 +1,24 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, ReactNode } from "react";
 import "./ModalBackdrop.css";
 
-function ModalBackdrop({ isOpen, onClose, children, titleId }) {
-  const mouseDownTarget = useRef(null);
+interface ModalBackdropProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: ReactNode;
+  titleId?: string;
+}
+
+function ModalBackdrop({
+  isOpen,
+  onClose,
+  children,
+  titleId,
+}: ModalBackdropProps) {
+  const mouseDownTarget = useRef<EventTarget | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
-    function handleEscape(e) {
+    function handleEscape(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
     }
     document.addEventListener("keydown", handleEscape);

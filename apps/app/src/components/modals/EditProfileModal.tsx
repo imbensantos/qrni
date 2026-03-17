@@ -1,10 +1,23 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import ModalBackdrop from "./ModalBackdrop";
 import "./EditProfileModal.css";
 
-function EditProfileModal({ isOpen, onClose, user }) {
+interface ProfileUser {
+  name?: string;
+  email?: string;
+  image?: string;
+  avatarUrl?: string;
+}
+
+interface EditProfileModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  user: ProfileUser | null | undefined;
+}
+
+function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProps) {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -22,7 +35,7 @@ function EditProfileModal({ isOpen, onClose, user }) {
 
   const avatarUrl = user?.avatarUrl || user?.image;
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
 
@@ -36,7 +49,7 @@ function EditProfileModal({ isOpen, onClose, user }) {
       await updateProfile({ name: name.trim() });
       onClose();
     } catch (err) {
-      setError(err.message || "Something went wrong");
+      setError((err as Error).message || "Something went wrong");
     } finally {
       setSubmitting(false);
     }

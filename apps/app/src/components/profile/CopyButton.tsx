@@ -1,7 +1,11 @@
 import { useState, useCallback } from "react";
 import { IconCopy, IconCheck } from "../Icons";
 
-function CopyButton({ text }) {
+interface CopyButtonProps {
+  text: string;
+}
+
+function CopyButton({ text }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(async () => {

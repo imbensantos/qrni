@@ -4,9 +4,22 @@ import { api } from "../../../../../convex/_generated/api";
 import { cleanConvexError } from "../../utils/errors";
 import ModalBackdrop from "./ModalBackdrop";
 import { IconTrash } from "../Icons";
+import { Id } from "../../../../../convex/_generated/dataModel";
 
-function DeleteNamespaceModal({ isOpen, onClose, namespaceId, namespaceName }) {
-  const [error, setError] = useState(null);
+interface DeleteNamespaceModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  namespaceId: Id<"namespaces"> | null;
+  namespaceName: string | undefined;
+}
+
+function DeleteNamespaceModal({
+  isOpen,
+  onClose,
+  namespaceId,
+  namespaceName,
+}: DeleteNamespaceModalProps) {
+  const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const removeNamespace = useMutation(api.namespaces.remove);
 
@@ -19,7 +32,7 @@ function DeleteNamespaceModal({ isOpen, onClose, namespaceId, namespaceName }) {
       await removeNamespace({ namespaceId });
       onClose();
     } catch (err) {
-      const msg = cleanConvexError(err.message ?? "");
+      const msg = cleanConvexError((err as Error).message ?? "");
       setError(msg || "Failed to delete namespace");
     } finally {
       setSubmitting(false);
