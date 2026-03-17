@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react'
-import { useQuery } from 'convex/react'
-import { api } from '../../../../../convex/_generated/api'
+import { useState, useRef } from "react";
+import { useQuery } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
 import {
   IconPencil,
   IconTrash,
@@ -11,44 +11,63 @@ import {
   IconUserPlus,
   IconEllipsis,
   IconArrowRight,
-} from '../Icons'
-import { useClickOutside } from '../../hooks/useClickOutside'
-import { getColorFromHash, NAMESPACE_COLORS, NAMESPACE_BG_COLORS } from '../../utils/ui-utils'
-import { formatDateShort } from '../../utils/ui-utils'
-import CopyButton from './CopyButton'
+} from "../Icons";
+import { useClickOutside } from "../../hooks/useClickOutside";
+import {
+  getColorFromHash,
+  NAMESPACE_COLORS,
+  NAMESPACE_BG_COLORS,
+} from "../../utils/ui-utils";
+import { formatDateShort } from "../../utils/ui-utils";
+import CopyButton from "./CopyButton";
 
 function extractSlug(shortCode, namespaceSlug) {
-  if (namespaceSlug && shortCode.startsWith(namespaceSlug + '/')) {
-    return shortCode.slice(namespaceSlug.length + 1)
+  if (namespaceSlug && shortCode.startsWith(namespaceSlug + "/")) {
+    return shortCode.slice(namespaceSlug.length + 1);
   }
-  return shortCode
+  return shortCode;
 }
 
-function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete, onInvite, onViewAll, onRename, onDeleteNamespace }) {
-  const [expanded, setExpanded] = useState(true)
-  const [kebabOpen, setKebabOpen] = useState(false)
-  const kebabRef = useRef(null)
+function NamespaceSection({
+  namespace,
+  role,
+  colorIndex,
+  onAdd,
+  onEdit,
+  onDelete,
+  onInvite,
+  onViewAll,
+  onRename,
+  onDeleteNamespace,
+}) {
+  const [expanded, setExpanded] = useState(true);
+  const [kebabOpen, setKebabOpen] = useState(false);
+  const kebabRef = useRef(null);
 
-  const nsLinks = useQuery(api.links.listNamespaceLinks, { namespaceId: namespace._id })
-  const members = useQuery(api.collaboration.listMembers, { namespaceId: namespace._id })
+  const nsLinks = useQuery(api.links.listNamespaceLinks, {
+    namespaceId: namespace._id,
+  });
+  const members = useQuery(api.collaboration.listMembers, {
+    namespaceId: namespace._id,
+  });
 
-  useClickOutside(kebabRef, () => setKebabOpen(false), kebabOpen)
+  useClickOutside(kebabRef, () => setKebabOpen(false), kebabOpen);
 
-  const iconColor = getColorFromHash(colorIndex, NAMESPACE_COLORS)
-  const iconBg = getColorFromHash(colorIndex, NAMESPACE_BG_COLORS)
-  const canEdit = role === 'owner' || role === 'editor'
-  const isOwner = role === 'owner'
-  const previewLinks = nsLinks ? nsLinks.slice(0, 3) : []
-  const totalLinks = nsLinks ? nsLinks.length : 0
+  const iconColor = getColorFromHash(colorIndex, NAMESPACE_COLORS);
+  const iconBg = getColorFromHash(colorIndex, NAMESPACE_BG_COLORS);
+  const canEdit = role === "owner" || role === "editor";
+  const isOwner = role === "owner";
+  const previewLinks = nsLinks ? nsLinks.slice(0, 3) : [];
+  const totalLinks = nsLinks ? nsLinks.length : 0;
 
   function handleEditNamespace() {
-    setKebabOpen(false)
-    onRename(namespace._id, namespace.slug, namespace.description)
+    setKebabOpen(false);
+    onRename(namespace._id, namespace.slug, namespace.description);
   }
 
   function handleDeleteNamespace() {
-    setKebabOpen(false)
-    onDeleteNamespace(namespace._id, namespace.slug)
+    setKebabOpen(false);
+    onDeleteNamespace(namespace._id, namespace.slug);
   }
 
   return (
@@ -82,18 +101,23 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
                 <div
                   key={member._id}
                   className="pp-member-avatar"
-                  style={{ background: getColorFromHash(i + 1, NAMESPACE_COLORS) }}
-                  title={member.name || 'Member'}
+                  style={{
+                    background: getColorFromHash(i + 1, NAMESPACE_COLORS),
+                  }}
+                  title={member.name || "Member"}
                 >
                   {member.image ? (
-                    <img src={member.image} alt={member.name || 'Member'} />
+                    <img src={member.image} alt={member.name || "Member"} />
                   ) : (
-                    (member.name || '?').charAt(0).toUpperCase()
+                    (member.name || "?").charAt(0).toUpperCase()
                   )}
                 </div>
               ))}
               {members.length > 4 && (
-                <div className="pp-member-avatar" style={{ background: '#999' }}>
+                <div
+                  className="pp-member-avatar"
+                  style={{ background: "#999" }}
+                >
                   +{members.length - 4}
                 </div>
               )}
@@ -102,7 +126,10 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
 
           {/* Invite (owner only) */}
           {isOwner && (
-            <button className="pp-invite-btn" onClick={() => onInvite(namespace._id, namespace.slug)}>
+            <button
+              className="pp-invite-btn"
+              onClick={() => onInvite(namespace._id, namespace.slug)}
+            >
               <IconUserPlus size={13} />
               Invite
             </button>
@@ -114,18 +141,24 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
               <button
                 className="pp-icon-btn"
                 title="More options"
-                onClick={() => setKebabOpen(o => !o)}
+                onClick={() => setKebabOpen((o) => !o)}
               >
                 <IconEllipsis size={16} />
               </button>
               {kebabOpen && (
                 <div className="pp-kebab-menu">
-                  <button className="pp-kebab-item" onClick={handleEditNamespace}>
+                  <button
+                    className="pp-kebab-item"
+                    onClick={handleEditNamespace}
+                  >
                     <IconPencil size={16} />
                     Edit namespace
                   </button>
                   <div className="pp-kebab-divider" />
-                  <button className="pp-kebab-item pp-kebab-item--danger" onClick={handleDeleteNamespace}>
+                  <button
+                    className="pp-kebab-item pp-kebab-item--danger"
+                    onClick={handleDeleteNamespace}
+                  >
                     <IconTrash size={16} />
                     Delete namespace
                   </button>
@@ -136,9 +169,9 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
 
           {/* Expand/Collapse */}
           <button
-            className={`pp-icon-btn pp-chevron-toggle${expanded ? ' pp-chevron-toggle--open' : ''}`}
-            onClick={() => setExpanded(e => !e)}
-            title={expanded ? 'Collapse' : 'Expand'}
+            className={`pp-icon-btn pp-chevron-toggle${expanded ? " pp-chevron-toggle--open" : ""}`}
+            onClick={() => setExpanded((e) => !e)}
+            title={expanded ? "Collapse" : "Expand"}
           >
             <IconChevronDown size={16} />
           </button>
@@ -146,7 +179,7 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
       </div>
 
       {/* Expandable content */}
-      <div className={`pp-collapse${expanded ? ' pp-collapse--open' : ''}`}>
+      <div className={`pp-collapse${expanded ? " pp-collapse--open" : ""}`}>
         <div className="pp-collapse-inner">
           <div className="pp-divider" />
 
@@ -155,8 +188,8 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
               <div className="pp-empty">No links in this namespace yet.</div>
             ) : (
               previewLinks.map((link, i) => {
-                const slug = extractSlug(link.shortCode, namespace.slug)
-                const fullUrl = `${window.location.origin}/${namespace.slug}/${slug}`
+                const slug = extractSlug(link.shortCode, namespace.slug);
+                const fullUrl = `${window.location.origin}/${namespace.slug}/${slug}`;
                 return (
                   <div key={link._id}>
                     <div className="pp-link-row">
@@ -166,30 +199,45 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
                           <CopyButton text={fullUrl} />
                         </div>
                         <div className="pp-link-destination pp-link-destination--ns">
-                          {window.location.host}/{namespace.slug}/{slug} → {link.destinationUrl}
+                          {window.location.host}/{namespace.slug}/{slug} →{" "}
+                          {link.destinationUrl}
                         </div>
                       </div>
                       <div className="pp-link-meta">
                         <span className="pp-clicks">
                           <IconClick size={12} />
-                          <span className="pp-clicks-count">{link.clickCount}</span>
+                          <span className="pp-clicks-count">
+                            {link.clickCount}
+                          </span>
                         </span>
-                        <span className="pp-link-date">{formatDateShort(link.createdAt)}</span>
+                        <span className="pp-link-date">
+                          {formatDateShort(link.createdAt)}
+                        </span>
                         {canEdit && (
                           <>
-                            <button className="pp-icon-btn" onClick={() => onEdit(link)} title="Edit link">
+                            <button
+                              className="pp-icon-btn"
+                              onClick={() => onEdit(link)}
+                              title="Edit link"
+                            >
                               <IconPencil size={14} />
                             </button>
-                            <button className="pp-icon-btn pp-icon-btn--delete" onClick={() => onDelete(link)} title="Delete link">
+                            <button
+                              className="pp-icon-btn pp-icon-btn--delete"
+                              onClick={() => onDelete(link)}
+                              title="Delete link"
+                            >
                               <IconTrash size={14} />
                             </button>
                           </>
                         )}
                       </div>
                     </div>
-                    {i < previewLinks.length - 1 && <div className="pp-row-divider" />}
+                    {i < previewLinks.length - 1 && (
+                      <div className="pp-row-divider" />
+                    )}
                   </div>
-                )
+                );
               })
             )}
           </div>
@@ -201,14 +249,20 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
               <div className="pp-ns-footer">
                 <div className="pp-ns-footer-left">
                   {totalLinks > 3 && (
-                    <button className="pp-view-all-btn" onClick={() => onViewAll(namespace._id, namespace.slug)}>
+                    <button
+                      className="pp-view-all-btn"
+                      onClick={() => onViewAll(namespace._id, namespace.slug)}
+                    >
                       View all {totalLinks} links
                       <IconArrowRight size={12} />
                     </button>
                   )}
                 </div>
                 {canEdit && (
-                  <button className="pp-add-link-btn" onClick={() => onAdd(namespace._id, namespace.slug)}>
+                  <button
+                    className="pp-add-link-btn"
+                    onClick={() => onAdd(namespace._id, namespace.slug)}
+                  >
                     <IconPlus size={12} />
                     Add link
                   </button>
@@ -219,7 +273,7 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default NamespaceSection
+export default NamespaceSection;

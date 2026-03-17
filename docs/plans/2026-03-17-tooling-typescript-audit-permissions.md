@@ -13,6 +13,7 @@
 ### Task 1: Set up Prettier + root ESLint
 
 **Files:**
+
 - Create: `.prettierrc`
 - Create: `eslint.config.js` (root)
 - Modify: `package.json` (add devDeps + scripts)
@@ -85,6 +86,7 @@ git commit -m "chore: add Prettier + root ESLint, format entire codebase"
 ### Task 2: Set up Husky + lint-staged
 
 **Files:**
+
 - Modify: `package.json` (add devDeps + lint-staged config)
 - Create: `.husky/pre-commit`
 
@@ -141,6 +143,7 @@ git commit -m "chore: add Husky + lint-staged pre-commit hook"
 ### Task 3: Add TypeScript config to apps/app
 
 **Files:**
+
 - Create: `apps/app/tsconfig.json`
 - Create: `apps/app/tsconfig.app.json`
 - Modify: `apps/app/package.json` (add typescript devDep)
@@ -202,6 +205,7 @@ git commit -m "chore: add TypeScript config with allowJs for incremental migrati
 ### Task 4: Migrate utils to TypeScript
 
 **Files:**
+
 - Rename: `apps/app/src/utils/bulk-utils.js` → `.ts`
 - Rename: `apps/app/src/utils/bulk-export.js` → `.ts`
 - Rename: `apps/app/src/utils/session-id.js` → `.ts`
@@ -267,6 +271,7 @@ git commit -m "refactor: migrate utils to TypeScript"
 ### Task 5: Migrate hooks to TypeScript
 
 **Files:**
+
 - Rename: `apps/app/src/hooks/useClickOutside.js` → `.ts`
 - Rename: `apps/app/src/hooks/useAuth.js` → `.ts`
 
@@ -307,6 +312,7 @@ git commit -m "refactor: migrate hooks to TypeScript"
 ### Task 6: Migrate shared components to TypeScript
 
 **Files:**
+
 - Rename all `.jsx` files in `apps/app/src/components/` (top-level only, not modals/ or profile/) to `.tsx`
 - Files: `Icons.jsx`, `ErrorBoundary.jsx`, `ProfileDropdown.jsx`, `PreviewPanel.jsx`, `BulkPreview.jsx`, `BulkPanel.jsx`, `ControlsPanel.jsx`, `Doodles.jsx`
 
@@ -357,6 +363,7 @@ git commit -m "refactor: migrate shared components to TypeScript"
 ### Task 7: Migrate profile components + modals to TypeScript
 
 **Files:**
+
 - Rename all `.jsx` in `apps/app/src/components/profile/` → `.tsx`
 - Rename all `.jsx` in `apps/app/src/components/modals/` → `.tsx`
 
@@ -429,6 +436,7 @@ git commit -m "refactor: migrate profile + modal components to TypeScript"
 ### Task 8: Migrate pages + App + router to TypeScript
 
 **Files:**
+
 - Rename: `apps/app/src/pages/QRGeneratorPage.jsx` → `.tsx`
 - Rename: `apps/app/src/pages/ProfilePage.jsx` → `.tsx`
 - Rename: `apps/app/src/App.jsx` → `.tsx`
@@ -478,6 +486,7 @@ git commit -m "refactor: complete TypeScript migration for apps/app"
 ### Task 9: Add audit logging
 
 **Files:**
+
 - Modify: `convex/schema.ts` (add `audit_log` table)
 - Create: `convex/lib/auditLog.ts` (helper function)
 - Modify: `convex/links.ts` (add audit calls)
@@ -518,7 +527,7 @@ export async function logAudit(
     resourceType: string;
     resourceId: string;
     metadata?: Record<string, unknown>;
-  }
+  },
 ) {
   await ctx.db.insert("audit_log", {
     userId: args.userId,
@@ -534,6 +543,7 @@ export async function logAudit(
 **Step 3: Add audit calls to link mutations**
 
 In `convex/links.ts`, after successful operations:
+
 - `createCustomSlugLink`: `logAudit(ctx, { userId: user._id, action: "link.create", resourceType: "link", resourceId: linkId, metadata: { slug: args.customSlug } })`
 - `createNamespacedLink`: `logAudit(ctx, { ..., action: "link.create", resourceId: linkId, metadata: { namespace: namespace.slug, slug: args.slug } })`
 - `deleteLink`: `logAudit(ctx, { ..., action: "link.delete", resourceId: args.linkId })`
@@ -542,6 +552,7 @@ In `convex/links.ts`, after successful operations:
 **Step 4: Add audit calls to namespace mutations**
 
 In `convex/namespaces.ts`:
+
 - `create`: `logAudit(ctx, { ..., action: "namespace.create", resourceId: nsId, metadata: { slug } })`
 - `update`: `logAudit(ctx, { ..., action: "namespace.update", resourceId: args.namespaceId, metadata: updates })`
 - `remove`: `logAudit(ctx, { ..., action: "namespace.delete", resourceId: args.namespaceId })`
@@ -549,6 +560,7 @@ In `convex/namespaces.ts`:
 **Step 5: Add audit calls to collaboration mutations**
 
 In `convex/collaboration.ts`:
+
 - `createEmailInvite`: `logAudit(ctx, { ..., action: "member.invite", resourceType: "invite" })`
 - `acceptInvite`: `logAudit(ctx, { ..., action: "member.invite", resourceType: "member" })`
 - `revokeInvite`: `logAudit(ctx, { ..., action: "member.invite", resourceType: "invite" })`
@@ -557,6 +569,7 @@ In `convex/collaboration.ts`:
 **Step 6: Add audit call to user mutations**
 
 In `convex/users.ts`:
+
 - `updateProfile`: `logAudit(ctx, { ..., action: "user.update", resourceType: "user" })`
 
 **Step 7: Verify typecheck**
@@ -577,6 +590,7 @@ git commit -m "feat: add audit logging for all mutations"
 ### Task 10: Enforce role-based permissions
 
 **Files:**
+
 - Create: `convex/lib/permissions.ts` (helper)
 - Modify: `convex/namespaces.ts` (enforce owner-only on edit/delete)
 - Modify: `convex/collaboration.ts` (enforce owner-only on member management, editor+ on invites)
@@ -603,7 +617,7 @@ export async function checkPermission(
   ctx: QueryCtx,
   namespaceId: Id<"namespaces">,
   userId: Id<"users">,
-  requiredRole: Role
+  requiredRole: Role,
 ): Promise<{ role: Role; isOwner: boolean }> {
   const namespace = await ctx.db.get(namespaceId);
   if (!namespace) throw new Error("Namespace not found");
@@ -615,7 +629,7 @@ export async function checkPermission(
   const membership = await ctx.db
     .query("namespace_members")
     .withIndex("by_namespace_user", (q) =>
-      q.eq("namespace", namespaceId).eq("user", userId)
+      q.eq("namespace", namespaceId).eq("user", userId),
     )
     .first();
 
@@ -633,12 +647,14 @@ export async function checkPermission(
 **Step 2: Update namespace mutations**
 
 In `convex/namespaces.ts`:
+
 - `update`: Already checks `namespace.owner !== user._id` — replace with `checkPermission(ctx, args.namespaceId, user._id, "owner")`
 - `remove`: Same — replace with `checkPermission(ctx, args.namespaceId, user._id, "owner")`
 
 **Step 3: Update link mutations**
 
 In `convex/links.ts`:
+
 - `createNamespacedLink`: Already checks owner/editor — replace with `checkPermission(ctx, args.namespaceId, user._id, "editor")`
 - `deleteLink`: If link has a namespace, check `checkPermission(ctx, link.namespace, user._id, "editor")`
 - `updateLink`: Same as deleteLink
@@ -647,6 +663,7 @@ In `convex/links.ts`:
 **Step 4: Update collaboration mutations**
 
 In `convex/collaboration.ts`:
+
 - `createEmailInvite`: Replace owner check with `checkPermission(ctx, args.namespaceId, user._id, "editor")`
 - `createInviteLink`: Same — `checkPermission(ctx, args.namespaceId, user._id, "editor")`
 - `revokeInvite`: Keep owner-only — `checkPermission(ctx, args.namespaceId, user._id, "owner")`
@@ -670,18 +687,21 @@ export const transferOwnership = mutation({
 
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== userId) throw new Error("Only the owner can transfer ownership");
+    if (namespace.owner !== userId)
+      throw new Error("Only the owner can transfer ownership");
 
-    if (args.newOwnerId === userId) throw new Error("You already own this namespace");
+    if (args.newOwnerId === userId)
+      throw new Error("You already own this namespace");
 
     // Verify target is an existing member
     const membership = await ctx.db
       .query("namespace_members")
       .withIndex("by_namespace_user", (q) =>
-        q.eq("namespace", args.namespaceId).eq("user", args.newOwnerId)
+        q.eq("namespace", args.namespaceId).eq("user", args.newOwnerId),
       )
       .first();
-    if (!membership) throw new Error("Target user must be a member of this namespace");
+    if (!membership)
+      throw new Error("Target user must be a member of this namespace");
 
     // Transfer: set new owner on namespace
     await ctx.db.patch(args.namespaceId, { owner: args.newOwnerId });
@@ -728,6 +748,7 @@ git commit -m "feat: enforce role-based permissions with ownership transfer"
 ### Task 11: Document homograph protection
 
 **Files:**
+
 - Modify: `convex/lib/shortCode.ts`
 
 **Step 1: Add comments**

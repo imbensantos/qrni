@@ -13,41 +13,42 @@
 ### Task 1: Create ProfileDropdown component
 
 **Files:**
+
 - Create: `apps/app/src/components/ProfileDropdown.jsx`
 - Create: `apps/app/src/components/ProfileDropdown.css`
 
 **Step 1: Create ProfileDropdown.jsx**
 
 ```jsx
-import { useState, useRef, useEffect } from 'react'
-import { useAuthActions } from '@convex-dev/auth/react'
-import './ProfileDropdown.css'
+import { useState, useRef, useEffect } from "react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import "./ProfileDropdown.css";
 
 function ProfileDropdown({ user }) {
-  const [open, setOpen] = useState(false)
-  const { signOut } = useAuthActions()
-  const dropdownRef = useRef(null)
+  const [open, setOpen] = useState(false);
+  const { signOut } = useAuthActions();
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setOpen(false)
+        setOpen(false);
       }
     }
     function handleEscape(e) {
-      if (e.key === 'Escape') setOpen(false)
+      if (e.key === "Escape") setOpen(false);
     }
     if (open) {
-      document.addEventListener('mousedown', handleClickOutside)
-      document.addEventListener('keydown', handleEscape)
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscape);
     }
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('keydown', handleEscape)
-    }
-  }, [open])
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [open]);
 
-  const initial = (user.name || user.email || '?')[0].toUpperCase()
+  const initial = (user.name || user.email || "?")[0].toUpperCase();
 
   return (
     <div className="profile-dropdown" ref={dropdownRef}>
@@ -76,17 +77,20 @@ function ProfileDropdown({ user }) {
           <button
             className="profile-menu-item"
             role="menuitem"
-            onClick={() => { signOut(); setOpen(false) }}
+            onClick={() => {
+              signOut();
+              setOpen(false);
+            }}
           >
             Sign out
           </button>
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default ProfileDropdown
+export default ProfileDropdown;
 ```
 
 **Step 2: Create ProfileDropdown.css**
@@ -122,7 +126,7 @@ export default ProfileDropdown
 }
 
 .profile-avatar-fallback {
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
@@ -171,7 +175,7 @@ export default ProfileDropdown
   padding: 8px 14px;
   border: none;
   background: none;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   color: var(--text-secondary);
   cursor: pointer;
@@ -196,23 +200,27 @@ git commit -m "feat: add ProfileDropdown component with avatar and sign-out menu
 ### Task 2: Add sign-in button and ProfileDropdown to header
 
 **Files:**
+
 - Modify: `apps/app/src/App.jsx`
 - Modify: `apps/app/src/App.css`
 
 **Step 1: Update App.jsx header**
 
 Add imports at top:
+
 ```jsx
-import { useAuthActions } from '@convex-dev/auth/react'
-import ProfileDropdown from './components/ProfileDropdown'
+import { useAuthActions } from "@convex-dev/auth/react";
+import ProfileDropdown from "./components/ProfileDropdown";
 ```
 
 Inside the `App` function, add:
+
 ```jsx
-const { signIn } = useAuthActions()
+const { signIn } = useAuthActions();
 ```
 
 Replace the header JSX (lines 31-36) with:
+
 ```jsx
 <header className="header">
   <h1 className="logo">QRni ✨</h1>
@@ -229,6 +237,7 @@ Replace the header JSX (lines 31-36) with:
 **Step 2: Add sign-in button styles to App.css**
 
 After the `.user-name` block (which will be removed), add:
+
 ```css
 .signin-btn {
   padding: 6px 16px;
@@ -236,7 +245,7 @@ After the `.user-name` block (which will be removed), add:
   border-radius: var(--radius-pill);
   background: var(--accent-primary);
   color: white;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -262,6 +271,7 @@ git commit -m "feat: add sign-in button and profile dropdown to header"
 ### Task 3: Remove inline sign-in buttons from child components
 
 **Files:**
+
 - Modify: `apps/app/src/components/ControlsPanel.jsx`
 - Modify: `apps/app/src/components/ShortenPanel.jsx`
 - Modify: `apps/app/src/components/ShortenPreview.jsx`
@@ -278,11 +288,13 @@ git commit -m "feat: add sign-in button and profile dropdown to header"
 
 - Remove the sign-in hint block (lines 290-295):
   ```jsx
-  {!isAuthenticated && (
-    <p className="shorten-hint">
-      Sign in for custom slugs and namespaces — perfect for events!
-    </p>
-  )}
+  {
+    !isAuthenticated && (
+      <p className="shorten-hint">
+        Sign in for custom slugs and namespaces — perfect for events!
+      </p>
+    );
+  }
   ```
 
 **Step 3: Clean up ShortenPreview.jsx**
@@ -310,6 +322,7 @@ cd apps/app && npm run dev
 ```
 
 Check in browser:
+
 - [ ] Unauthenticated: "Sign in" button visible in header (right side, terracotta pill)
 - [ ] Click sign in → Google OAuth opens (popup or redirect depending on Convex auth config)
 - [ ] Authenticated: avatar shows in header, no sign-in button

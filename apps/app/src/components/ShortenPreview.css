@@ -49,7 +49,7 @@
 .links-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
 }
 
 .links-table th {
@@ -103,11 +103,13 @@
   padding: 4px 10px;
   border: none;
   border-radius: var(--radius-sm);
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 .action-btn:focus-visible {
@@ -132,7 +134,7 @@
 }
 
 .action-btn.delete:hover {
-  color: #D85555;
+  color: #d85555;
 }
 
 /* Mobile */

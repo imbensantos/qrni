@@ -25,11 +25,11 @@ Domain-agnostic design. Target domain is `qrni.to` (pending purchase). Falls bac
 
 ## Link Types
 
-| Type | Auth Required? | Limit | Example |
-|------|---------------|-------|---------|
-| Anonymous random | No | 10/hr per IP | `qrni.to/a3Xk9` |
-| Flat custom slug | Yes | 5 per user | `qrni.to/myresume` |
-| Namespaced | Yes | Unlimited links (5 namespaces) | `qrni.to/benandmaria/rsvp` |
+| Type             | Auth Required? | Limit                          | Example                    |
+| ---------------- | -------------- | ------------------------------ | -------------------------- |
+| Anonymous random | No             | 10/hr per IP                   | `qrni.to/a3Xk9`            |
+| Flat custom slug | Yes            | 5 per user                     | `qrni.to/myresume`         |
+| Namespaced       | Yes            | Unlimited links (5 namespaces) | `qrni.to/benandmaria/rsvp` |
 
 ### Short Code Generation
 
@@ -42,6 +42,7 @@ Domain-agnostic design. Target domain is `qrni.to` (pending purchase). Falls bac
 Namespaces let users group links under a shared prefix — ideal for events.
 
 **Examples:**
+
 ```
 qrni.to/benandmaria/rsvp
 qrni.to/benandmaria/photos
@@ -65,11 +66,11 @@ Multiple users can manage links within a shared namespace — ideal for event pl
 
 ### Roles
 
-| Role | Add/edit links | Delete links | View click counts | Manage members | Delete namespace |
-|------|---------------|-------------|-------------------|----------------|-----------------|
-| Owner | Yes | Yes | Yes | Yes | Yes |
-| Editor | Yes | Yes | Yes | No | No |
-| Viewer | No | No | Yes | No | No |
+| Role   | Add/edit links | Delete links | View click counts | Manage members | Delete namespace |
+| ------ | -------------- | ------------ | ----------------- | -------------- | ---------------- |
+| Owner  | Yes            | Yes          | Yes               | Yes            | Yes              |
+| Editor | Yes            | Yes          | Yes               | No             | No               |
+| Viewer | No             | No           | Yes               | No             | No               |
 
 ### Invite System
 
@@ -89,11 +90,13 @@ Two invite methods:
 ## Schema (Convex)
 
 ### users
+
 - `_id` (auto)
 - Google identity (via Convex Auth)
 - `created_at`
 
 ### namespaces
+
 - `_id` (auto)
 - `owner` (user ref)
 - `slug` (unique, indexed)
@@ -101,6 +104,7 @@ Two invite methods:
 - `last_active_at`
 
 ### namespace_members
+
 - `_id` (auto)
 - `namespace` (namespace ref, indexed)
 - `user` (user ref, indexed)
@@ -109,6 +113,7 @@ Two invite methods:
 - `joined_at`
 
 ### namespace_invites
+
 - `_id` (auto)
 - `namespace` (namespace ref, indexed)
 - `role` ("editor" | "viewer")
@@ -120,6 +125,7 @@ Two invite methods:
 - `revoked` (boolean, default false)
 
 ### links
+
 - `_id` (auto)
 - `short_code` (unique, indexed)
 - `namespace` (optional ref)

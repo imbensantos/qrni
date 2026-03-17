@@ -58,7 +58,7 @@
 }
 
 .bulk-summary-invalid {
-  color: #C0392B;
+  color: #c0392b;
 }
 
 .bulk-summary-total {
@@ -117,7 +117,7 @@
   width: 100%;
   border: none;
   background: transparent;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   color: var(--text-primary);
   outline: none;
@@ -139,7 +139,7 @@
 }
 
 .bulk-row-invalid {
-  background: #FFF5F5;
+  background: #fff5f5;
 }
 
 .bulk-status-valid {
@@ -148,7 +148,7 @@
 }
 
 .bulk-status-invalid {
-  color: #C0392B;
+  color: #c0392b;
   font-size: 12px;
   font-weight: 500;
 }
@@ -158,7 +158,7 @@
   align-self: flex-start;
   background: none;
   border: none;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   font-weight: 500;
   color: var(--accent-primary);

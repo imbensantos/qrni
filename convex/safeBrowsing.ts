@@ -8,7 +8,7 @@ export const checkUrl = action({
     if (!apiKey) {
       console.warn(
         "GOOGLE_SAFE_BROWSING_API_KEY is not set — URL threat checking is disabled. " +
-          "Configure the env var in the Convex dashboard to enable it."
+          "Configure the env var in the Convex dashboard to enable it.",
       );
       return { safe: true, unchecked: true };
     }
@@ -27,7 +27,7 @@ export const checkUrl = action({
             threatEntries: [{ url: args.url }],
           },
         }),
-      }
+      },
     );
 
     const data = await response.json();

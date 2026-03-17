@@ -2,7 +2,7 @@
 
 .profile-page {
   min-height: 100vh;
-  background: #F5F4F1;
+  background: #f5f4f1;
 }
 
 .pp-body {
@@ -21,7 +21,7 @@
   align-items: center;
   justify-content: center;
   min-height: 60vh;
-  color: #9C9B99;
+  color: #9c9b99;
   font-size: 15px;
 }
 
@@ -32,12 +32,12 @@
   justify-content: center;
   min-height: 60vh;
   gap: 16px;
-  color: #9C9B99;
+  color: #9c9b99;
   font-size: 16px;
 }
 
 .profile-auth-guard a {
-  color: #D89575;
+  color: #d89575;
   text-decoration: none;
   font-weight: 500;
 }
@@ -73,7 +73,7 @@
 }
 
 .pp-avatar--fallback {
-  background: #D89575;
+  background: #d89575;
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -99,7 +99,7 @@
 .pp-user-name {
   font-size: 22px;
   font-weight: 700;
-  color: #1A1918;
+  color: #1a1918;
   letter-spacing: -0.3px;
   line-height: 1.1;
 }
@@ -108,28 +108,30 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #9C9B99;
+  color: #9c9b99;
   padding: 4px;
   border-radius: 6px;
   display: flex;
   align-items: center;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 
 .pp-edit-profile-btn:hover {
-  color: #D89575;
-  background: #FFF0E8;
+  color: #d89575;
+  background: #fff0e8;
 }
 
 .pp-user-email {
   font-size: 14px;
-  color: #9C9B99;
+  color: #9c9b99;
 }
 
 .pp-user-since {
   font-size: 12px;
   font-weight: 500;
-  color: #9C9B99;
+  color: #9c9b99;
 }
 
 /* Stats row */
@@ -144,7 +146,7 @@
   flex-direction: column;
   align-items: center;
   background: #ffffff;
-  border: 1px solid #E5E4E1;
+  border: 1px solid #e5e4e1;
   border-radius: 12px;
   padding: 12px 20px;
 }
@@ -152,14 +154,14 @@
 .pp-stat-number {
   font-size: 22px;
   font-weight: 700;
-  color: #D89575;
+  color: #d89575;
   line-height: 1.1;
 }
 
 .pp-stat-label {
   font-size: 12px;
   font-weight: 500;
-  color: #9C9B99;
+  color: #9c9b99;
   margin-top: 2px;
 }
 
@@ -168,7 +170,7 @@
 .pp-card {
   background: #ffffff;
   border-radius: 16px;
-  border: 1px solid #E5E4E1;
+  border: 1px solid #e5e4e1;
   box-shadow: 0 2px 8px rgba(26, 25, 24, 0.03);
   overflow: hidden;
 }
@@ -196,7 +198,7 @@
 }
 
 .pp-card-icon {
-  color: #D89575;
+  color: #d89575;
   display: flex;
   align-items: center;
 }
@@ -204,15 +206,15 @@
 .pp-card-title {
   font-size: 15px;
   font-weight: 700;
-  color: #1A1918;
+  color: #1a1918;
 }
 
 .pp-count-badge {
   width: 22px;
   height: 22px;
   border-radius: 100px;
-  background: #FFF0E8;
-  color: #D89575;
+  background: #fff0e8;
+  color: #d89575;
   font-size: 11px;
   font-weight: 700;
   display: inline-flex;
@@ -223,7 +225,7 @@
 .pp-slug-info {
   font-size: 12px;
   font-weight: 500;
-  color: #9C9B99;
+  color: #9c9b99;
 }
 
 /* Add button (terracotta) */
@@ -231,7 +233,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: #D89575;
+  background: #d89575;
   color: #ffffff;
   border: none;
   border-radius: 8px;
@@ -275,19 +277,19 @@
 
 .pp-divider {
   height: 1px;
-  background: #E5E4E1;
+  background: #e5e4e1;
 }
 
 .pp-row-divider {
   height: 1px;
-  background: #E5E4E1;
+  background: #e5e4e1;
   margin: 0 20px;
 }
 
 /* ─── Link List ──────────────────────────────────────────────────────────────── */
 
 .pp-link-list {
-  background: #FAFAF8;
+  background: #fafaf8;
 }
 
 .pp-link-row {
@@ -299,11 +301,21 @@
   animation: pp-row-in 0.3s ease both;
 }
 
-.pp-link-list > div:nth-child(1) .pp-link-row { animation-delay: 0ms; }
-.pp-link-list > div:nth-child(2) .pp-link-row { animation-delay: 50ms; }
-.pp-link-list > div:nth-child(3) .pp-link-row { animation-delay: 100ms; }
-.pp-link-list > div:nth-child(4) .pp-link-row { animation-delay: 150ms; }
-.pp-link-list > div:nth-child(5) .pp-link-row { animation-delay: 200ms; }
+.pp-link-list > div:nth-child(1) .pp-link-row {
+  animation-delay: 0ms;
+}
+.pp-link-list > div:nth-child(2) .pp-link-row {
+  animation-delay: 50ms;
+}
+.pp-link-list > div:nth-child(3) .pp-link-row {
+  animation-delay: 100ms;
+}
+.pp-link-list > div:nth-child(4) .pp-link-row {
+  animation-delay: 150ms;
+}
+.pp-link-list > div:nth-child(5) .pp-link-row {
+  animation-delay: 200ms;
+}
 
 @keyframes pp-row-in {
   from {
@@ -333,7 +345,7 @@
 .pp-link-short-url {
   font-size: 13px;
   font-weight: 600;
-  color: #D89575;
+  color: #d89575;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -346,12 +358,12 @@
 .pp-ns-link-slug {
   font-size: 13px;
   font-weight: 600;
-  color: #1A1918;
+  color: #1a1918;
 }
 
 .pp-link-destination {
   font-size: 12px;
-  color: #9C9B99;
+  color: #9c9b99;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -374,19 +386,19 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #9C9B99;
+  color: #9c9b99;
 }
 
 .pp-clicks-count {
   font-size: 12px;
   font-weight: 600;
-  color: #6D6C6A;
+  color: #6d6c6a;
 }
 
 .pp-link-date {
   font-size: 11px;
   font-weight: 500;
-  color: #9C9B99;
+  color: #9c9b99;
 }
 
 /* ─── Icon Buttons ───────────────────────────────────────────────────────────── */
@@ -395,17 +407,19 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #9C9B99;
+  color: #9c9b99;
   padding: 6px;
   display: flex;
   align-items: center;
   border-radius: 6px;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 
 .pp-icon-btn:hover {
-  color: #D89575;
-  background: #FFF0E8;
+  color: #d89575;
+  background: #fff0e8;
 }
 
 .pp-icon-btn--delete:hover {
@@ -418,7 +432,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #9C9B99;
+  color: #9c9b99;
   padding: 2px;
   display: flex;
   align-items: center;
@@ -427,18 +441,24 @@
 }
 
 .pp-copy-btn:hover {
-  color: #D89575;
+  color: #d89575;
 }
 
 .pp-copy-btn.copied {
-  color: #3D8A5A;
+  color: #3d8a5a;
   animation: pp-copy-pop 0.3s ease;
 }
 
 @keyframes pp-copy-pop {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.35); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* ─── Empty State ────────────────────────────────────────────────────────────── */
@@ -446,9 +466,9 @@
 .pp-empty {
   text-align: center;
   padding: 24px 16px;
-  color: #9C9B99;
+  color: #9c9b99;
   font-size: 14px;
-  background: #FAFAF8;
+  background: #fafaf8;
 }
 
 /* ─── Namespace Card Header ──────────────────────────────────────────────────── */
@@ -491,7 +511,7 @@
 .pp-ns-name {
   font-size: 15px;
   font-weight: 700;
-  color: #1A1918;
+  color: #1a1918;
 }
 
 .pp-ns-meta-row {
@@ -503,12 +523,12 @@
 .pp-ns-link-count {
   font-size: 12px;
   font-weight: 500;
-  color: #9C9B99;
+  color: #9c9b99;
 }
 
 .pp-ns-dot {
   font-size: 12px;
-  color: #9C9B99;
+  color: #9c9b99;
 }
 
 /* Role badge */
@@ -521,13 +541,13 @@
 
 .pp-role-badge--owner,
 .pp-role-badge--editor {
-  background: #E8F5E9;
-  color: #3D8A5A;
+  background: #e8f5e9;
+  color: #3d8a5a;
 }
 
 .pp-role-badge--viewer {
-  background: #EDECEA;
-  color: #6D6C6A;
+  background: #edecea;
+  color: #6d6c6a;
 }
 
 /* NS Actions */
@@ -575,20 +595,22 @@
   align-items: center;
   gap: 5px;
   background: none;
-  border: 1px solid #E5E4E1;
+  border: 1px solid #e5e4e1;
   border-radius: 8px;
   padding: 8px 14px;
   font-size: 13px;
   font-weight: 500;
-  color: #6D6C6A;
+  color: #6d6c6a;
   font-family: inherit;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .pp-invite-btn:hover {
-  border-color: #D89575;
-  color: #D89575;
+  border-color: #d89575;
+  color: #d89575;
 }
 
 /* ─── Kebab Dropdown ─────────────────────────────────────────────────────────── */
@@ -603,7 +625,7 @@
   right: 0;
   width: 180px;
   background: #ffffff;
-  border: 1px solid #E5E4E1;
+  border: 1px solid #e5e4e1;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(26, 25, 24, 0.08);
   padding: 6px;
@@ -636,17 +658,17 @@
   font-family: inherit;
   font-size: 13px;
   font-weight: 500;
-  color: #6D6C6A;
+  color: #6d6c6a;
   cursor: pointer;
   transition: background 0.15s;
 }
 
 .pp-kebab-item:hover {
-  background: #F5F4F1;
+  background: #f5f4f1;
 }
 
 .pp-kebab-item--danger {
-  color: #DC3545;
+  color: #dc3545;
 }
 
 .pp-kebab-item--danger:hover {
@@ -655,7 +677,7 @@
 
 .pp-kebab-divider {
   height: 1px;
-  background: #E5E4E1;
+  background: #e5e4e1;
   margin: 2px 0;
 }
 
@@ -666,7 +688,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  background: #FAFAF8;
+  background: #fafaf8;
 }
 
 .pp-ns-footer-left {
@@ -680,7 +702,7 @@
   gap: 4px;
   font-size: 12px;
   font-weight: 600;
-  color: #D89575;
+  color: #d89575;
   background: none;
   border: none;
   cursor: pointer;
@@ -698,13 +720,13 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: #FFF0E8;
+  background: #fff0e8;
   border: none;
   border-radius: 8px;
   padding: 8px 14px;
   font-size: 13px;
   font-weight: 600;
-  color: #D89575;
+  color: #d89575;
   font-family: inherit;
   cursor: pointer;
   transition: background 0.15s;
@@ -723,21 +745,24 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1.5px dashed #E5E4E1;
+  border: 1.5px dashed #e5e4e1;
   border-radius: 16px;
   background: transparent;
-  color: #9C9B99;
+  color: #9c9b99;
   font-size: 14px;
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: border-color 0.3s, color 0.3s, background 0.3s;
+  transition:
+    border-color 0.3s,
+    color 0.3s,
+    background 0.3s;
 }
 
 .pp-create-namespace-btn:hover {
-  border-color: #D89575;
-  color: #D89575;
-  background: #FFF0E8;
+  border-color: #d89575;
+  color: #d89575;
+  background: #fff0e8;
 }
 
 .pp-create-namespace-btn:active {
@@ -754,7 +779,7 @@
 
 .all-links-back {
   margin-bottom: 16px;
-  color: #9C9B99;
+  color: #9c9b99;
   cursor: pointer;
   background: none;
   border: none;
@@ -766,7 +791,7 @@
 }
 
 .all-links-back:hover {
-  color: #D89575;
+  color: #d89575;
 }
 
 .all-links-header {
@@ -794,12 +819,12 @@
 .namespace-name {
   font-size: 16px;
   font-weight: 600;
-  color: #1A1918;
+  color: #1a1918;
 }
 
 .all-links-meta {
   font-size: 13px;
-  color: #9C9B99;
+  color: #9c9b99;
 }
 
 .all-links-header-actions {
@@ -811,24 +836,26 @@
 
 .namespace-invite-btn {
   background: none;
-  border: 1px solid #E5E4E1;
+  border: 1px solid #e5e4e1;
   cursor: pointer;
-  color: #6D6C6A;
+  color: #6d6c6a;
   font-size: 13px;
   font-weight: 500;
   padding: 4px 12px;
   border-radius: 8px;
   font-family: inherit;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .namespace-invite-btn:hover {
-  border-color: #D89575;
-  color: #D89575;
+  border-color: #d89575;
+  color: #d89575;
 }
 
 .section-add-btn {
-  background: #D89575;
+  background: #d89575;
   color: white;
   border: none;
   cursor: pointer;
@@ -853,26 +880,26 @@
   border-spacing: 0;
   background: #ffffff;
   border-radius: 16px;
-  border: 1px solid #E5E4E1;
+  border: 1px solid #e5e4e1;
   box-shadow: 0 2px 8px rgba(26, 25, 24, 0.03);
   overflow: hidden;
 }
 
 .all-links-table th {
   text-align: left;
-  color: #9C9B99;
+  color: #9c9b99;
   font-weight: 500;
   font-size: 13px;
   padding: 12px 16px;
-  border-bottom: 1px solid #E5E4E1;
-  background: #FAFAF8;
+  border-bottom: 1px solid #e5e4e1;
+  background: #fafaf8;
 }
 
 .all-links-table td {
   padding: 12px 16px;
-  border-bottom: 1px solid #E5E4E1;
+  border-bottom: 1px solid #e5e4e1;
   font-size: 14px;
-  color: #1A1918;
+  color: #1a1918;
   vertical-align: top;
 }
 
@@ -895,7 +922,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  border: 1px solid #E5E4E1;
+  border: 1px solid #e5e4e1;
   background: white;
   cursor: pointer;
   display: flex;
@@ -903,13 +930,16 @@
   justify-content: center;
   font-size: 14px;
   font-family: inherit;
-  color: #1A1918;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  color: #1a1918;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
 }
 
 .page-btn:hover:not(:disabled) {
-  border-color: #D89575;
-  color: #D89575;
+  border-color: #d89575;
+  color: #d89575;
 }
 
 .page-btn:disabled {
@@ -918,9 +948,9 @@
 }
 
 .page-btn.active {
-  background: #D89575;
+  background: #d89575;
   color: white;
-  border-color: #D89575;
+  border-color: #d89575;
 }
 
 /* ─── Mobile Responsive ──────────────────────────────────────────────────────── */
@@ -1034,7 +1064,7 @@
     display: flex;
     flex-direction: column;
     padding: 12px 0;
-    border-bottom: 1px solid #E5E4E1;
+    border-bottom: 1px solid #e5e4e1;
   }
 
   .all-links-table td {

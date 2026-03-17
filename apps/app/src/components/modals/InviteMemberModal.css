@@ -22,8 +22,8 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #FFF0E8;
-  color: #D89575;
+  background: #fff0e8;
+  color: #d89575;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,7 +52,9 @@
   padding: 4px;
   color: var(--text-secondary);
   border-radius: var(--radius-sm);
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 
 .imm-close:hover {
@@ -89,7 +91,7 @@
 
 .imm-email-input {
   width: 100%;
-  border: 1px solid #E5E4E1;
+  border: 1px solid #e5e4e1;
   border-radius: 12px;
   padding: 10px 12px 10px 36px;
   font-size: 0.875rem;
@@ -120,14 +122,14 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid #E5E4E1;
+  border: 1px solid #e5e4e1;
   border-radius: 12px;
   padding: 0 12px;
   font-size: 0.8125rem;
   font-weight: 500;
   font-family: inherit;
-  color: #1A1918;
-  background: #FFFFFF;
+  color: #1a1918;
+  background: #ffffff;
   cursor: pointer;
   height: 44px;
   box-sizing: border-box;
@@ -136,7 +138,7 @@
 }
 
 .imm-role-trigger:hover {
-  border-color: #D89575;
+  border-color: #d89575;
 }
 
 .imm-role-dropdown {
@@ -144,8 +146,8 @@
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: #FFFFFF;
-  border: 1px solid #E5E4E1;
+  background: #ffffff;
+  border: 1px solid #e5e4e1;
   border-radius: 10px;
   box-shadow: 0 4px 16px rgba(26, 25, 24, 0.1);
   z-index: 10;
@@ -173,7 +175,7 @@
   font-size: 0.8125rem;
   font-weight: 500;
   font-family: inherit;
-  color: #1A1918;
+  color: #1a1918;
   background: none;
   border: none;
   cursor: pointer;
@@ -182,16 +184,16 @@
 }
 
 .imm-role-option:hover {
-  background: #FAFAF8;
+  background: #fafaf8;
 }
 
 .imm-role-option--active {
-  color: #D89575;
+  color: #d89575;
   font-weight: 600;
 }
 
 .imm-send-btn {
-  background: #D89575;
+  background: #d89575;
   color: #fff;
   border: none;
   border-radius: 12px;
@@ -201,13 +203,15 @@
   font-family: inherit;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s, opacity 0.15s;
+  transition:
+    background 0.15s,
+    opacity 0.15s;
   height: 44px;
   box-sizing: border-box;
 }
 
 .imm-send-btn:hover:not(:disabled) {
-  background: #C4825F;
+  background: #c4825f;
 }
 
 .imm-send-btn:disabled {
@@ -228,7 +232,7 @@
 /* Divider */
 .imm-divider {
   height: 1px;
-  background: #E5E4E1;
+  background: #e5e4e1;
   border: none;
   margin: 0;
 }
@@ -243,7 +247,7 @@
 .imm-members-heading {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #9C9B99;
+  color: #9c9b99;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0;
@@ -264,7 +268,7 @@
 }
 
 .imm-member-row:hover {
-  background: #FAFAF8;
+  background: #fafaf8;
   border-radius: 8px;
   margin: 0 -8px;
   padding: 10px 8px;
@@ -285,9 +289,9 @@
 }
 
 .imm-avatar--pending {
-  background: #EDECEA !important;
-  color: #9C9B99;
-  border: 1.5px solid #E5E4E1;
+  background: #edecea !important;
+  color: #9c9b99;
+  border: 1.5px solid #e5e4e1;
 }
 
 /* Member info */
@@ -302,7 +306,7 @@
 .imm-member-name {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1A1918;
+  color: #1a1918;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -310,7 +314,7 @@
 
 .imm-member-email {
   font-size: 0.75rem;
-  color: #9C9B99;
+  color: #9c9b99;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -319,7 +323,7 @@
 .imm-pending-email {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #6D6C6A;
+  color: #6d6c6a;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -327,7 +331,7 @@
 
 .imm-pending-status {
   font-size: 0.75rem;
-  color: #9C9B99;
+  color: #9c9b99;
 }
 
 /* Role badges */
@@ -341,23 +345,23 @@
 }
 
 .imm-role-owner {
-  background: #FFF0E8;
-  color: #D89575;
+  background: #fff0e8;
+  color: #d89575;
 }
 
 .imm-role-editor {
-  background: #FAFAF8;
-  color: #6D6C6A;
+  background: #fafaf8;
+  color: #6d6c6a;
 }
 
 .imm-role-viewer {
-  background: #EDECEA;
-  color: #6D6C6A;
+  background: #edecea;
+  color: #6d6c6a;
 }
 
 .imm-role-pending {
-  background: #FFF8E1;
-  color: #B8860B;
+  background: #fff8e1;
+  color: #b8860b;
 }
 
 /* Role + remove wrapper */
@@ -375,7 +379,9 @@
   padding: 4px;
   color: var(--text-secondary);
   border-radius: var(--radius-sm);
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
   flex-shrink: 0;
 }
 

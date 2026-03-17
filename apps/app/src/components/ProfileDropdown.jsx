@@ -1,18 +1,18 @@
-import { useState, useRef } from 'react'
-import { useAuthActions } from '@convex-dev/auth/react'
-import { Link } from '@tanstack/react-router'
-import { useClickOutside } from '../hooks/useClickOutside'
-import './ProfileDropdown.css'
+import { useState, useRef } from "react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { Link } from "@tanstack/react-router";
+import { useClickOutside } from "../hooks/useClickOutside";
+import "./ProfileDropdown.css";
 
 function ProfileDropdown({ user }) {
-  const [open, setOpen] = useState(false)
-  const { signOut } = useAuthActions()
-  const dropdownRef = useRef(null)
+  const [open, setOpen] = useState(false);
+  const { signOut } = useAuthActions();
+  const dropdownRef = useRef(null);
 
-  useClickOutside(dropdownRef, () => setOpen(false), open)
+  useClickOutside(dropdownRef, () => setOpen(false), open);
 
-  const initial = (user.name || user.email || '?')[0].toUpperCase()
-  const firstName = (user.name || user.email || 'User').split(' ')[0]
+  const initial = (user.name || user.email || "?")[0].toUpperCase();
+  const firstName = (user.name || user.email || "User").split(" ")[0];
 
   return (
     <div className="pd" ref={dropdownRef}>
@@ -24,12 +24,31 @@ function ProfileDropdown({ user }) {
         aria-label="Profile menu"
       >
         {user.image ? (
-          <img src={user.image} alt="" className="pd-trigger-avatar-img" referrerPolicy="no-referrer" />
+          <img
+            src={user.image}
+            alt=""
+            className="pd-trigger-avatar-img"
+            referrerPolicy="no-referrer"
+          />
         ) : (
           <span className="pd-trigger-avatar-fallback">{initial}</span>
         )}
         <span className="pd-trigger-name">{firstName}</span>
-        <svg className="pd-trigger-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+        <svg
+          className="pd-trigger-chevron"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            transform: open ? "rotate(180deg)" : "none",
+            transition: "transform 0.2s",
+          }}
+        >
           <polyline points="6 9 12 15 18 9" />
         </svg>
       </button>
@@ -41,16 +60,30 @@ function ProfileDropdown({ user }) {
             className="pd-menu-info"
             onClick={() => setOpen(false)}
           >
-            <span className="pd-menu-name">{user.name || user.email || 'User'}</span>
+            <span className="pd-menu-name">
+              {user.name || user.email || "User"}
+            </span>
             {user.email && <span className="pd-menu-email">{user.email}</span>}
           </Link>
           <div className="pd-menu-divider" />
           <button
             className="pd-menu-item"
             role="menuitem"
-            onClick={() => { signOut(); setOpen(false) }}
+            onClick={() => {
+              signOut();
+              setOpen(false);
+            }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
@@ -60,7 +93,7 @@ function ProfileDropdown({ user }) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default ProfileDropdown
+export default ProfileDropdown;

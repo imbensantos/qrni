@@ -1,0 +1,41 @@
+{
+  "planPath": "docs/plans/2026-03-15-auth-flow.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 1: Create AuthModal component",
+      "status": "pending"
+    },
+    {
+      "id": 1,
+      "subject": "Task 2: Wire AuthModal into App.jsx and add header profile dropdown",
+      "status": "pending",
+      "blockedBy": [0]
+    },
+    {
+      "id": 2,
+      "subject": "Task 3: Update ControlsPanel to use onRequestAuth",
+      "status": "pending",
+      "blockedBy": [1]
+    },
+    {
+      "id": 3,
+      "subject": "Task 4: Update ShortenPanel to use onRequestAuth",
+      "status": "pending",
+      "blockedBy": [1]
+    },
+    {
+      "id": 4,
+      "subject": "Task 5: Update ShortenPreview to use onRequestAuth",
+      "status": "pending",
+      "blockedBy": [1]
+    },
+    {
+      "id": 5,
+      "subject": "Task 6: Visual verification and cleanup",
+      "status": "pending",
+      "blockedBy": [2, 3, 4]
+    }
+  ],
+  "lastUpdated": "2026-03-15T00:00:00Z"
+}

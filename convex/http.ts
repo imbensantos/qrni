@@ -26,10 +26,13 @@ http.route({
     }
 
     if (!body.destinationUrl || typeof body.destinationUrl !== "string") {
-      return new Response(JSON.stringify({ error: "destinationUrl is required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ error: "destinationUrl is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
 
     // Extract real IP from standard proxy headers; fall back to a placeholder
@@ -40,16 +43,20 @@ http.route({
       "unknown";
 
     try {
-      const result = await ctx.runMutation(internal.links.createAnonymousLinkInternal, {
-        destinationUrl: body.destinationUrl,
-        creatorIp,
-      });
+      const result = await ctx.runMutation(
+        internal.links.createAnonymousLinkInternal,
+        {
+          destinationUrl: body.destinationUrl,
+          creatorIp,
+        },
+      );
       return new Response(JSON.stringify(result), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       });
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Internal server error";
+      const message =
+        err instanceof Error ? err.message : "Internal server error";
       return new Response(JSON.stringify({ error: message }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -84,23 +91,36 @@ http.route({
 
     if (parts.length >= 2) {
       const [namespaceSlug, slug] = parts;
-      const namespace = await ctx.runQuery(internal.redirects.getNamespaceBySlug, { slug: namespaceSlug });
+      const namespace = await ctx.runQuery(
+        internal.redirects.getNamespaceBySlug,
+        { slug: namespaceSlug },
+      );
       if (namespace) {
-        link = await ctx.runQuery(internal.redirects.getNamespacedLink, { namespaceId: namespace._id, slug });
+        link = await ctx.runQuery(internal.redirects.getNamespacedLink, {
+          namespaceId: namespace._id,
+          slug,
+        });
       }
     }
 
     if (!link && parts.length === 1) {
-      link = await ctx.runQuery(internal.redirects.getLinkByCode, { shortCode: parts[0] });
+      link = await ctx.runQuery(internal.redirects.getLinkByCode, {
+        shortCode: parts[0],
+      });
     }
 
     if (!link) {
       return new Response(null, { status: 302, headers: { Location: "/" } });
     }
 
-    await ctx.runMutation(internal.redirects.incrementClickCount, { linkId: link._id });
+    await ctx.runMutation(internal.redirects.incrementClickCount, {
+      linkId: link._id,
+    });
 
-    return new Response(null, { status: 302, headers: { Location: link.destinationUrl } });
+    return new Response(null, {
+      status: 302,
+      headers: { Location: link.destinationUrl },
+    });
   }),
 });
 

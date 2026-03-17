@@ -8,7 +8,7 @@
   align-items: center;
   gap: 8px;
   padding: 5px 14px 5px 5px;
-  background: #EDECEA;
+  background: #edecea;
   border: none;
   border-radius: 100px;
   cursor: pointer;
@@ -16,7 +16,7 @@
 }
 
 .pd-trigger:hover {
-  background: #E5E4E1;
+  background: #e5e4e1;
 }
 
 /* Avatar inside trigger */
@@ -33,25 +33,25 @@
 }
 
 .pd-trigger-avatar-fallback {
-  background: #D89575;
+  background: #d89575;
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   font-weight: 700;
 }
 
 .pd-trigger-name {
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #1A1918;
+  color: #1a1918;
 }
 
 .pd-trigger-chevron {
-  color: #9C9B99;
+  color: #9c9b99;
   flex-shrink: 0;
 }
 
@@ -62,7 +62,7 @@
   right: 0;
   width: 200px;
   background: #ffffff;
-  border: 1px solid #E5E4E1;
+  border: 1px solid #e5e4e1;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(26, 25, 24, 0.08);
   padding: 6px;
@@ -94,25 +94,25 @@
 }
 
 .pd-menu-info:hover {
-  background: #F5F4F1;
+  background: #f5f4f1;
 }
 
 .pd-menu-name {
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #1A1918;
+  color: #1a1918;
 }
 
 .pd-menu-email {
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 12px;
-  color: #9C9B99;
+  color: #9c9b99;
 }
 
 .pd-menu-divider {
   height: 1px;
-  background: #E5E4E1;
+  background: #e5e4e1;
   margin: 2px 0;
 }
 
@@ -126,15 +126,15 @@
   border: none;
   background: none;
   border-radius: 8px;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   font-weight: 500;
-  color: #6D6C6A;
+  color: #6d6c6a;
   cursor: pointer;
   text-decoration: none;
   transition: background 0.15s;
 }
 
 .pd-menu-item:hover {
-  background: #F5F4F1;
+  background: #f5f4f1;
 }

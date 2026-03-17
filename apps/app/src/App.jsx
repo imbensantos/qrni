@@ -1,30 +1,30 @@
-import { useEffect } from 'react'
-import { useQuery } from 'convex/react'
-import { useAuthActions } from '@convex-dev/auth/react'
-import { Outlet, Link } from '@tanstack/react-router'
-import { api } from '../../../convex/_generated/api'
-import { useAuth } from './hooks/useAuth'
-import { getCachedUser, cacheUser, clearCachedUser } from './utils/cached-user'
-import ProfileDropdown from './components/ProfileDropdown'
-import ErrorBoundary from './components/ErrorBoundary'
-import './App.css'
+import { useEffect } from "react";
+import { useQuery } from "convex/react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { Outlet, Link } from "@tanstack/react-router";
+import { api } from "../../../convex/_generated/api";
+import { useAuth } from "./hooks/useAuth";
+import { getCachedUser, cacheUser, clearCachedUser } from "./utils/cached-user";
+import ProfileDropdown from "./components/ProfileDropdown";
+import ErrorBoundary from "./components/ErrorBoundary";
+import "./App.css";
 
 function App() {
-  const { signIn } = useAuthActions()
-  const { isLoading } = useAuth()
-  const user = useQuery(api.users.currentUser)
-  const cachedUser = getCachedUser()
+  const { signIn } = useAuthActions();
+  const { isLoading } = useAuth();
+  const user = useQuery(api.users.currentUser);
+  const cachedUser = getCachedUser();
 
   // Keep cache in sync with real auth state
   useEffect(() => {
     if (!isLoading) {
-      if (user) cacheUser(user)
-      else clearCachedUser()
+      if (user) cacheUser(user);
+      else clearCachedUser();
     }
-  }, [isLoading, user])
+  }, [isLoading, user]);
 
   // While loading: show cached user optimistically, or empty placeholder if no cache
-  const displayUser = isLoading ? cachedUser : user
+  const displayUser = isLoading ? cachedUser : user;
 
   return (
     <ErrorBoundary>
@@ -46,7 +46,7 @@ function App() {
         <Outlet />
       </div>
     </ErrorBoundary>
-  )
+  );
 }
 
-export default App
+export default App;

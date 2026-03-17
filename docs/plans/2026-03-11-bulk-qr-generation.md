@@ -13,6 +13,7 @@
 ### Task 0: Install dependencies
 
 **Files:**
+
 - Modify: `apps/app/package.json`
 
 **Step 1: Install jszip and papaparse**
@@ -36,56 +37,61 @@ git commit -m "chore: add jszip and papaparse dependencies for bulk QR generatio
 ### Task 1: Implement bulk-utils.js (parsing, validation, sanitization)
 
 **Files:**
+
 - Create: `apps/app/src/utils/bulk-utils.js`
 
 **Step 1: Create the utility module**
 
 ```js
-import Papa from 'papaparse'
+import Papa from "papaparse";
 
-const MAX_ENTRIES = 500
+const MAX_ENTRIES = 500;
 
 export function isValidUrl(url) {
-  return typeof url === 'string' &&
-    (url.startsWith('http://') || url.startsWith('https://'))
+  return (
+    typeof url === "string" &&
+    (url.startsWith("http://") || url.startsWith("https://"))
+  );
 }
 
 export function sanitizeLabel(label) {
-  return String(label)
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9\-]/g, '')
-    .slice(0, 80) || 'qr-code'
+  return (
+    String(label)
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9\-]/g, "")
+      .slice(0, 80) || "qr-code"
+  );
 }
 
 export function deduplicateLabels(entries) {
-  const counts = {}
+  const counts = {};
   return entries.map((entry) => {
-    const base = entry.filename
-    counts[base] = (counts[base] || 0) + 1
-    const filename = counts[base] > 1 ? `${base}-${counts[base]}` : base
-    return { ...entry, filename }
-  })
+    const base = entry.filename;
+    counts[base] = (counts[base] || 0) + 1;
+    const filename = counts[base] > 1 ? `${base}-${counts[base]}` : base;
+    return { ...entry, filename };
+  });
 }
 
 export function parseCSV(text) {
   const result = Papa.parse(text.trim(), {
     header: true,
     skipEmptyLines: true,
-  })
+  });
 
   const entries = result.data.slice(0, MAX_ENTRIES).map((row, i) => {
-    const label = row.label || row.Label || row.name || row.Name || ''
-    const url = row.url || row.URL || row.link || row.Link || ''
-    const valid = isValidUrl(url)
+    const label = row.label || row.Label || row.name || row.Name || "";
+    const url = row.url || row.URL || row.link || row.Link || "";
+    const valid = isValidUrl(url);
     const error = !label.trim()
-      ? 'Missing label'
+      ? "Missing label"
       : !url.trim()
-        ? 'Missing URL'
+        ? "Missing URL"
         : !valid
-          ? 'Invalid URL (must start with http:// or https://)'
-          : null
+          ? "Invalid URL (must start with http:// or https://)"
+          : null;
     return {
       index: i + 1,
       label: label.trim(),
@@ -93,35 +99,53 @@ export function parseCSV(text) {
       filename: sanitizeLabel(label),
       valid: !!label.trim() && valid,
       error,
-    }
-  })
+    };
+  });
 
-  return deduplicateLabels(entries)
+  return deduplicateLabels(entries);
 }
 
 export function parseJSON(text) {
-  let data
+  let data;
   try {
-    data = JSON.parse(text.trim())
+    data = JSON.parse(text.trim());
   } catch {
-    return [{ index: 1, label: '', url: '', filename: '', valid: false, error: 'Invalid JSON' }]
+    return [
+      {
+        index: 1,
+        label: "",
+        url: "",
+        filename: "",
+        valid: false,
+        error: "Invalid JSON",
+      },
+    ];
   }
 
   if (!Array.isArray(data)) {
-    return [{ index: 1, label: '', url: '', filename: '', valid: false, error: 'JSON must be an array' }]
+    return [
+      {
+        index: 1,
+        label: "",
+        url: "",
+        filename: "",
+        valid: false,
+        error: "JSON must be an array",
+      },
+    ];
   }
 
   const entries = data.slice(0, MAX_ENTRIES).map((item, i) => {
-    const label = item.label || item.name || ''
-    const url = item.url || item.link || ''
-    const valid = isValidUrl(url)
+    const label = item.label || item.name || "";
+    const url = item.url || item.link || "";
+    const valid = isValidUrl(url);
     const error = !label.trim()
-      ? 'Missing label'
+      ? "Missing label"
       : !url.trim()
-        ? 'Missing URL'
+        ? "Missing URL"
         : !valid
-          ? 'Invalid URL (must start with http:// or https://)'
-          : null
+          ? "Invalid URL (must start with http:// or https://)"
+          : null;
     return {
       index: i + 1,
       label: label.trim(),
@@ -129,15 +153,15 @@ export function parseJSON(text) {
       filename: sanitizeLabel(label),
       valid: !!label.trim() && valid,
       error,
-    }
-  })
+    };
+  });
 
-  return deduplicateLabels(entries)
+  return deduplicateLabels(entries);
 }
 
 export function parseFile(text, filename) {
-  if (filename.endsWith('.json')) return parseJSON(text)
-  return parseCSV(text)
+  if (filename.endsWith(".json")) return parseJSON(text);
+  return parseCSV(text);
 }
 ```
 
@@ -158,142 +182,150 @@ git commit -m "feat: add bulk-utils with CSV/JSON parsing, validation, and label
 ### Task 2: Implement bulk export logic (ZIP + PDF generation)
 
 **Files:**
+
 - Create: `apps/app/src/utils/bulk-export.js`
 
 **Step 1: Create the export module**
 
 ```js
-import QRCodeStyling from 'qr-code-styling'
-import JSZip from 'jszip'
-import { jsPDF } from 'jspdf'
+import QRCodeStyling from "qr-code-styling";
+import JSZip from "jszip";
+import { jsPDF } from "jspdf";
 
 function createQRCode(url, { fgColor, bgColor, dotStyle, logo, size }) {
   return new QRCodeStyling({
     width: size,
     height: size,
-    type: 'canvas',
+    type: "canvas",
     data: url,
     dotsOptions: { color: fgColor, type: dotStyle },
     backgroundOptions: { color: bgColor },
-    cornersSquareOptions: { type: 'extra-rounded' },
-    imageOptions: { crossOrigin: 'anonymous', margin: 6, imageSize: 0.35 },
+    cornersSquareOptions: { type: "extra-rounded" },
+    imageOptions: { crossOrigin: "anonymous", margin: 6, imageSize: 0.35 },
     image: logo || undefined,
-    qrOptions: { errorCorrectionLevel: 'H' },
-  })
+    qrOptions: { errorCorrectionLevel: "H" },
+  });
 }
 
 async function renderToBlob(qr, format) {
-  const container = document.createElement('div')
-  qr.append(container)
+  const container = document.createElement("div");
+  qr.append(container);
 
   // Wait for rendering
-  await new Promise((r) => setTimeout(r, 100))
+  await new Promise((r) => setTimeout(r, 100));
 
-  if (format === 'svg') {
-    const svgEl = container.querySelector('svg')
-    if (!svgEl) throw new Error('SVG not found')
-    const svgData = new XMLSerializer().serializeToString(svgEl)
-    return new Blob([svgData], { type: 'image/svg+xml' })
+  if (format === "svg") {
+    const svgEl = container.querySelector("svg");
+    if (!svgEl) throw new Error("SVG not found");
+    const svgData = new XMLSerializer().serializeToString(svgEl);
+    return new Blob([svgData], { type: "image/svg+xml" });
   }
 
-  const canvas = container.querySelector('canvas')
-  if (!canvas) throw new Error('Canvas not found')
+  const canvas = container.querySelector("canvas");
+  if (!canvas) throw new Error("Canvas not found");
 
   return new Promise((resolve) => {
     canvas.toBlob(
       (blob) => resolve(blob),
-      format === 'webp' ? 'image/webp' : 'image/png'
-    )
-  })
+      format === "webp" ? "image/webp" : "image/png",
+    );
+  });
 }
 
-const CHUNK_SIZE = 10
+const CHUNK_SIZE = 10;
 
 export async function generateZip(entries, options, format, onProgress) {
-  const zip = new JSZip()
-  const validEntries = entries.filter((e) => e.valid)
-  const ext = format === 'svg' ? 'svg' : format === 'webp' ? 'webp' : 'png'
+  const zip = new JSZip();
+  const validEntries = entries.filter((e) => e.valid);
+  const ext = format === "svg" ? "svg" : format === "webp" ? "webp" : "png";
 
   for (let i = 0; i < validEntries.length; i += CHUNK_SIZE) {
-    const chunk = validEntries.slice(i, i + CHUNK_SIZE)
+    const chunk = validEntries.slice(i, i + CHUNK_SIZE);
     const promises = chunk.map(async (entry) => {
-      const qr = createQRCode(entry.url, options)
-      const blob = await renderToBlob(qr, format)
-      zip.file(`${entry.filename}.${ext}`, blob)
-    })
-    await Promise.all(promises)
-    onProgress?.(Math.min(i + CHUNK_SIZE, validEntries.length), validEntries.length)
+      const qr = createQRCode(entry.url, options);
+      const blob = await renderToBlob(qr, format);
+      zip.file(`${entry.filename}.${ext}`, blob);
+    });
+    await Promise.all(promises);
+    onProgress?.(
+      Math.min(i + CHUNK_SIZE, validEntries.length),
+      validEntries.length,
+    );
 
     // Yield to UI between chunks
-    await new Promise((r) => setTimeout(r, 0))
+    await new Promise((r) => setTimeout(r, 0));
   }
 
-  const blob = await zip.generateAsync({ type: 'blob' })
-  downloadBlob(blob, 'qrni-bulk.zip')
+  const blob = await zip.generateAsync({ type: "blob" });
+  downloadBlob(blob, "qrni-bulk.zip");
 }
 
 export async function generatePdf(entries, options, onProgress) {
-  const validEntries = entries.filter((e) => e.valid)
-  const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
+  const validEntries = entries.filter((e) => e.valid);
+  const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
-  const pageW = 210
-  const pageH = 297
-  const margin = 15
-  const cols = 3
-  const cellW = (pageW - margin * 2) / cols
-  const qrSize = cellW - 10
-  const cellH = qrSize + 16 // QR + label space
-  const rows = Math.floor((pageH - margin * 2) / cellH)
-  const perPage = cols * rows
+  const pageW = 210;
+  const pageH = 297;
+  const margin = 15;
+  const cols = 3;
+  const cellW = (pageW - margin * 2) / cols;
+  const qrSize = cellW - 10;
+  const cellH = qrSize + 16; // QR + label space
+  const rows = Math.floor((pageH - margin * 2) / cellH);
+  const perPage = cols * rows;
 
   for (let i = 0; i < validEntries.length; i += CHUNK_SIZE) {
-    const chunk = validEntries.slice(i, i + CHUNK_SIZE)
+    const chunk = validEntries.slice(i, i + CHUNK_SIZE);
 
     for (const entry of chunk) {
-      const idx = validEntries.indexOf(entry)
-      const pageIdx = Math.floor(idx / perPage)
-      const posOnPage = idx % perPage
-      const col = posOnPage % cols
-      const row = Math.floor(posOnPage / cols)
+      const idx = validEntries.indexOf(entry);
+      const pageIdx = Math.floor(idx / perPage);
+      const posOnPage = idx % perPage;
+      const col = posOnPage % cols;
+      const row = Math.floor(posOnPage / cols);
 
-      if (posOnPage === 0 && pageIdx > 0) pdf.addPage()
+      if (posOnPage === 0 && pageIdx > 0) pdf.addPage();
 
-      const x = margin + col * cellW + (cellW - qrSize) / 2
-      const y = margin + row * cellH
+      const x = margin + col * cellW + (cellW - qrSize) / 2;
+      const y = margin + row * cellH;
 
-      const qr = createQRCode(entry.url, { ...options, size: 512 })
-      const container = document.createElement('div')
-      qr.append(container)
-      await new Promise((r) => setTimeout(r, 100))
+      const qr = createQRCode(entry.url, { ...options, size: 512 });
+      const container = document.createElement("div");
+      qr.append(container);
+      await new Promise((r) => setTimeout(r, 100));
 
-      const canvas = container.querySelector('canvas')
+      const canvas = container.querySelector("canvas");
       if (canvas) {
-        const imgData = canvas.toDataURL('image/png')
-        pdf.addImage(imgData, 'PNG', x, y, qrSize, qrSize)
+        const imgData = canvas.toDataURL("image/png");
+        pdf.addImage(imgData, "PNG", x, y, qrSize, qrSize);
       }
 
-      pdf.setFontSize(8)
-      pdf.setTextColor(100)
-      const labelText = entry.label.length > 25
-        ? entry.label.slice(0, 22) + '...'
-        : entry.label
-      pdf.text(labelText, x + qrSize / 2, y + qrSize + 6, { align: 'center' })
+      pdf.setFontSize(8);
+      pdf.setTextColor(100);
+      const labelText =
+        entry.label.length > 25
+          ? entry.label.slice(0, 22) + "..."
+          : entry.label;
+      pdf.text(labelText, x + qrSize / 2, y + qrSize + 6, { align: "center" });
     }
 
-    onProgress?.(Math.min(i + CHUNK_SIZE, validEntries.length), validEntries.length)
-    await new Promise((r) => setTimeout(r, 0))
+    onProgress?.(
+      Math.min(i + CHUNK_SIZE, validEntries.length),
+      validEntries.length,
+    );
+    await new Promise((r) => setTimeout(r, 0));
   }
 
-  pdf.save('qrni-bulk.pdf')
+  pdf.save("qrni-bulk.pdf");
 }
 
 function downloadBlob(blob, filename) {
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  URL.revokeObjectURL(url)
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 ```
 
@@ -314,72 +346,79 @@ git commit -m "feat: add bulk export with chunked ZIP and PDF generation"
 ### Task 3: Implement BulkPanel component
 
 **Files:**
+
 - Create: `apps/app/src/components/BulkPanel.jsx`
 - Create: `apps/app/src/components/BulkPanel.css`
 
 **Step 1: Create BulkPanel.jsx**
 
 ```jsx
-import { useRef, useState } from 'react'
-import { parseFile } from '../utils/bulk-utils'
-import './BulkPanel.css'
+import { useRef, useState } from "react";
+import { parseFile } from "../utils/bulk-utils";
+import "./BulkPanel.css";
 
 const DOT_STYLES = [
-  { id: 'square', label: 'Square' },
-  { id: 'rounded', label: 'Rounded' },
-  { id: 'dots', label: 'Dots' },
-  { id: 'classy-rounded', label: 'Classy' },
-]
+  { id: "square", label: "Square" },
+  { id: "rounded", label: "Rounded" },
+  { id: "dots", label: "Dots" },
+  { id: "classy-rounded", label: "Classy" },
+];
 
-const FORMATS = ['png', 'svg', 'webp']
+const FORMATS = ["png", "svg", "webp"];
 
 function BulkPanel({
-  fgColor, onFgColorChange,
-  bgColor, onBgColorChange,
-  logo, onLogoChange,
-  dotStyle, onDotStyleChange,
-  size, onSizeChange,
-  format, onFormatChange,
+  fgColor,
+  onFgColorChange,
+  bgColor,
+  onBgColorChange,
+  logo,
+  onLogoChange,
+  dotStyle,
+  onDotStyleChange,
+  size,
+  onSizeChange,
+  format,
+  onFormatChange,
   onEntriesParsed,
 }) {
-  const fileInputRef = useRef(null)
-  const logoInputRef = useRef(null)
-  const [showPaste, setShowPaste] = useState(false)
-  const [pasteText, setPasteText] = useState('')
-  const [fileName, setFileName] = useState(null)
+  const fileInputRef = useRef(null);
+  const logoInputRef = useRef(null);
+  const [showPaste, setShowPaste] = useState(false);
+  const [pasteText, setPasteText] = useState("");
+  const [fileName, setFileName] = useState(null);
 
   const handleFile = (file) => {
-    if (!file) return
-    const reader = new FileReader()
+    if (!file) return;
+    const reader = new FileReader();
     reader.onload = (e) => {
-      const entries = parseFile(e.target.result, file.name)
-      setFileName(file.name)
-      onEntriesParsed(entries)
-    }
-    reader.readAsText(file)
-  }
+      const entries = parseFile(e.target.result, file.name);
+      setFileName(file.name);
+      onEntriesParsed(entries);
+    };
+    reader.readAsText(file);
+  };
 
   const handleDrop = (e) => {
-    e.preventDefault()
-    const file = e.dataTransfer.files[0]
-    handleFile(file)
-  }
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    handleFile(file);
+  };
 
   const handlePaste = () => {
-    if (!pasteText.trim()) return
-    const isJson = pasteText.trim().startsWith('[')
-    const entries = parseFile(pasteText, isJson ? 'data.json' : 'data.csv')
-    setFileName('pasted data')
-    onEntriesParsed(entries)
-  }
+    if (!pasteText.trim()) return;
+    const isJson = pasteText.trim().startsWith("[");
+    const entries = parseFile(pasteText, isJson ? "data.json" : "data.csv");
+    setFileName("pasted data");
+    onEntriesParsed(entries);
+  };
 
   const handleLogoUpload = (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = (ev) => onLogoChange(ev.target.result)
-    reader.readAsDataURL(file)
-  }
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => onLogoChange(ev.target.result);
+    reader.readAsDataURL(file);
+  };
 
   return (
     <aside className="bulk-panel">
@@ -399,23 +438,45 @@ function BulkPanel({
             onChange={(e) => handleFile(e.target.files[0])}
             hidden
           />
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <span>{fileName ? `Loaded: ${fileName}` : 'Drop CSV or JSON file here'}</span>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <span>
+            {fileName ? `Loaded: ${fileName}` : "Drop CSV or JSON file here"}
+          </span>
           <span className="dropzone-hint">or click to browse</span>
         </div>
-        <button className="paste-toggle" onClick={() => setShowPaste(!showPaste)}>
-          {showPaste ? 'Hide paste' : 'Or paste data'}
+        <button
+          className="paste-toggle"
+          onClick={() => setShowPaste(!showPaste)}
+        >
+          {showPaste ? "Hide paste" : "Or paste data"}
         </button>
         {showPaste && (
           <div className="paste-area">
             <textarea
               className="paste-input"
-              placeholder={'label,url\nHomepage,https://example.com'}
+              placeholder={"label,url\nHomepage,https://example.com"}
               value={pasteText}
               onChange={(e) => setPasteText(e.target.value)}
               rows={6}
             />
-            <button className="paste-btn" onClick={handlePaste} disabled={!pasteText.trim()}>
+            <button
+              className="paste-btn"
+              onClick={handlePaste}
+              disabled={!pasteText.trim()}
+            >
               Parse Data
             </button>
           </div>
@@ -431,7 +492,7 @@ function BulkPanel({
           {FORMATS.map((f) => (
             <button
               key={f}
-              className={`format-option ${format === f ? 'active' : ''}`}
+              className={`format-option ${format === f ? "active" : ""}`}
               onClick={() => onFormatChange(f)}
             >
               {f.toUpperCase()}
@@ -449,7 +510,11 @@ function BulkPanel({
           <div className="color-group">
             <span className="color-sublabel">Foreground</span>
             <label className="color-picker">
-              <input type="color" value={fgColor} onChange={(e) => onFgColorChange(e.target.value)} />
+              <input
+                type="color"
+                value={fgColor}
+                onChange={(e) => onFgColorChange(e.target.value)}
+              />
               <span className="color-swatch" style={{ background: fgColor }} />
               <span className="color-value">{fgColor.toUpperCase()}</span>
             </label>
@@ -457,7 +522,11 @@ function BulkPanel({
           <div className="color-group">
             <span className="color-sublabel">Background</span>
             <label className="color-picker">
-              <input type="color" value={bgColor} onChange={(e) => onBgColorChange(e.target.value)} />
+              <input
+                type="color"
+                value={bgColor}
+                onChange={(e) => onBgColorChange(e.target.value)}
+              />
               <span className="color-swatch" style={{ background: bgColor }} />
               <span className="color-value">{bgColor.toUpperCase()}</span>
             </label>
@@ -473,11 +542,22 @@ function BulkPanel({
         {logo ? (
           <div className="logo-preview">
             <img src={logo} alt="Logo" className="logo-thumb" />
-            <button className="logo-remove" onClick={() => onLogoChange(null)}>Remove</button>
+            <button className="logo-remove" onClick={() => onLogoChange(null)}>
+              Remove
+            </button>
           </div>
         ) : (
-          <div className="upload-zone" onClick={() => logoInputRef.current?.click()}>
-            <input ref={logoInputRef} type="file" accept="image/*" onChange={handleLogoUpload} hidden />
+          <div
+            className="upload-zone"
+            onClick={() => logoInputRef.current?.click()}
+          >
+            <input
+              ref={logoInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleLogoUpload}
+              hidden
+            />
             <span>Add logo</span>
           </div>
         )}
@@ -492,7 +572,7 @@ function BulkPanel({
           {DOT_STYLES.map((ds) => (
             <button
               key={ds.id}
-              className={`dot-option ${dotStyle === ds.id ? 'active' : ''}`}
+              className={`dot-option ${dotStyle === ds.id ? "active" : ""}`}
               onClick={() => onDotStyleChange(ds.id)}
             >
               <span className={`dot-icon dot-icon-${ds.id}`} />
@@ -525,10 +605,10 @@ function BulkPanel({
         </div>
       </section>
     </aside>
-  )
+  );
 }
 
-export default BulkPanel
+export default BulkPanel;
 ```
 
 **Step 2: Create BulkPanel.css**
@@ -561,7 +641,9 @@ export default BulkPanel
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
 }
 
 .dropzone:hover {
@@ -578,7 +660,7 @@ export default BulkPanel
 .paste-toggle {
   background: none;
   border: none;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   font-weight: 500;
   color: var(--accent-primary);
@@ -603,7 +685,7 @@ export default BulkPanel
   border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-md);
   background: var(--bg-page);
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   color: var(--text-primary);
   outline: none;
@@ -626,7 +708,7 @@ export default BulkPanel
   border-radius: var(--radius-sm);
   background: var(--accent-primary);
   color: white;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -670,64 +752,85 @@ git commit -m "feat: add BulkPanel component with file upload and paste input"
 ### Task 4: Implement BulkPreview component
 
 **Files:**
+
 - Create: `apps/app/src/components/BulkPreview.jsx`
 - Create: `apps/app/src/components/BulkPreview.css`
 
 **Step 1: Create BulkPreview.jsx**
 
 ```jsx
-import { useState } from 'react'
-import { generateZip, generatePdf } from '../utils/bulk-export'
-import './BulkPreview.css'
+import { useState } from "react";
+import { generateZip, generatePdf } from "../utils/bulk-export";
+import "./BulkPreview.css";
 
 function BulkPreview({
   entries,
-  fgColor, bgColor, logo, dotStyle, size, format,
+  fgColor,
+  bgColor,
+  logo,
+  dotStyle,
+  size,
+  format,
 }) {
-  const [generating, setGenerating] = useState(false)
-  const [progress, setProgress] = useState({ current: 0, total: 0 })
+  const [generating, setGenerating] = useState(false);
+  const [progress, setProgress] = useState({ current: 0, total: 0 });
 
-  const validCount = entries.filter((e) => e.valid).length
-  const invalidCount = entries.length - validCount
+  const validCount = entries.filter((e) => e.valid).length;
+  const invalidCount = entries.length - validCount;
 
-  const styleOptions = { fgColor, bgColor, dotStyle, logo, size }
+  const styleOptions = { fgColor, bgColor, dotStyle, logo, size };
 
   const handleZip = async () => {
-    setGenerating(true)
+    setGenerating(true);
     try {
       await generateZip(entries, styleOptions, format, (current, total) => {
-        setProgress({ current, total })
-      })
+        setProgress({ current, total });
+      });
     } finally {
-      setGenerating(false)
-      setProgress({ current: 0, total: 0 })
+      setGenerating(false);
+      setProgress({ current: 0, total: 0 });
     }
-  }
+  };
 
   const handlePdf = async () => {
-    setGenerating(true)
+    setGenerating(true);
     try {
       await generatePdf(entries, styleOptions, (current, total) => {
-        setProgress({ current, total })
-      })
+        setProgress({ current, total });
+      });
     } finally {
-      setGenerating(false)
-      setProgress({ current: 0, total: 0 })
+      setGenerating(false);
+      setProgress({ current: 0, total: 0 });
     }
-  }
+  };
 
   if (entries.length === 0) {
     return (
       <section className="bulk-preview">
         <div className="bulk-empty">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>
           <p>Upload a CSV or JSON file to get started</p>
           <p className="bulk-empty-hint">
-            Format: each row needs a <strong>label</strong> and a <strong>url</strong>
+            Format: each row needs a <strong>label</strong> and a{" "}
+            <strong>url</strong>
           </p>
         </div>
       </section>
-    )
+    );
   }
 
   return (
@@ -755,10 +858,13 @@ function BulkPreview({
             </thead>
             <tbody>
               {entries.map((entry) => (
-                <tr key={entry.index} className={entry.valid ? '' : 'bulk-row-invalid'}>
+                <tr
+                  key={entry.index}
+                  className={entry.valid ? "" : "bulk-row-invalid"}
+                >
                   <td>{entry.index}</td>
-                  <td className="bulk-cell-label">{entry.label || '—'}</td>
-                  <td className="bulk-cell-url">{entry.url || '—'}</td>
+                  <td className="bulk-cell-label">{entry.label || "—"}</td>
+                  <td className="bulk-cell-url">{entry.url || "—"}</td>
                   <td>
                     {entry.valid ? (
                       <span className="bulk-status-valid">Valid</span>
@@ -780,7 +886,9 @@ function BulkPreview({
             <div className="bulk-progress-bar">
               <div
                 className="bulk-progress-fill"
-                style={{ width: `${(progress.current / progress.total) * 100}%` }}
+                style={{
+                  width: `${(progress.current / progress.total) * 100}%`,
+                }}
               />
             </div>
             <span className="bulk-progress-text">
@@ -797,7 +905,20 @@ function BulkPreview({
               onClick={handleZip}
               disabled={validCount === 0}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
               Download ZIP
             </button>
             <button
@@ -805,17 +926,29 @@ function BulkPreview({
               onClick={handlePdf}
               disabled={validCount === 0}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
               Download PDF
             </button>
           </div>
         )}
       </div>
     </section>
-  )
+  );
 }
 
-export default BulkPreview
+export default BulkPreview;
 ```
 
 **Step 2: Create BulkPreview.css**
@@ -875,7 +1008,7 @@ export default BulkPreview
 }
 
 .bulk-summary-invalid {
-  color: #D86B6B;
+  color: #d86b6b;
 }
 
 .bulk-summary-total {
@@ -940,7 +1073,7 @@ export default BulkPreview
 }
 
 .bulk-row-invalid {
-  background: #FFF5F5;
+  background: #fff5f5;
 }
 
 .bulk-status-valid {
@@ -949,7 +1082,7 @@ export default BulkPreview
 }
 
 .bulk-status-invalid {
-  color: #D86B6B;
+  color: #d86b6b;
   font-size: 12px;
   font-weight: 500;
   cursor: help;
@@ -1032,6 +1165,7 @@ git commit -m "feat: add BulkPreview component with entries table and export but
 ### Task 5: Wire up App.jsx with mode toggle
 
 **Files:**
+
 - Modify: `apps/app/src/App.jsx`
 - Modify: `apps/app/src/App.css`
 
@@ -1040,25 +1174,25 @@ git commit -m "feat: add BulkPreview component with entries table and export but
 Replace the entire content of `apps/app/src/App.jsx` with:
 
 ```jsx
-import { useState } from 'react'
-import ControlsPanel from './components/ControlsPanel'
-import PreviewPanel from './components/PreviewPanel'
-import BulkPanel from './components/BulkPanel'
-import BulkPreview from './components/BulkPreview'
-import './App.css'
+import { useState } from "react";
+import ControlsPanel from "./components/ControlsPanel";
+import PreviewPanel from "./components/PreviewPanel";
+import BulkPanel from "./components/BulkPanel";
+import BulkPreview from "./components/BulkPreview";
+import "./App.css";
 
 function App() {
-  const [mode, setMode] = useState('single')
-  const [url, setUrl] = useState('')
-  const [fgColor, setFgColor] = useState('#1A1918')
-  const [bgColor, setBgColor] = useState('#FFFFFF')
-  const [logo, setLogo] = useState(null)
-  const [dotStyle, setDotStyle] = useState('square')
-  const [size, setSize] = useState(512)
-  const [format, setFormat] = useState('png')
-  const [bulkEntries, setBulkEntries] = useState([])
+  const [mode, setMode] = useState("single");
+  const [url, setUrl] = useState("");
+  const [fgColor, setFgColor] = useState("#1A1918");
+  const [bgColor, setBgColor] = useState("#FFFFFF");
+  const [logo, setLogo] = useState(null);
+  const [dotStyle, setDotStyle] = useState("square");
+  const [size, setSize] = useState(512);
+  const [format, setFormat] = useState("png");
+  const [bulkEntries, setBulkEntries] = useState([]);
 
-  const isValidUrl = url.startsWith('http://') || url.startsWith('https://')
+  const isValidUrl = url.startsWith("http://") || url.startsWith("https://");
 
   return (
     <div className="app">
@@ -1066,29 +1200,35 @@ function App() {
         <h1 className="logo">QRni ✨</h1>
         <div className="mode-toggle">
           <button
-            className={`mode-btn ${mode === 'single' ? 'active' : ''}`}
-            onClick={() => setMode('single')}
+            className={`mode-btn ${mode === "single" ? "active" : ""}`}
+            onClick={() => setMode("single")}
           >
             Single
           </button>
           <button
-            className={`mode-btn ${mode === 'bulk' ? 'active' : ''}`}
-            onClick={() => setMode('bulk')}
+            className={`mode-btn ${mode === "bulk" ? "active" : ""}`}
+            onClick={() => setMode("bulk")}
           >
             Bulk
           </button>
         </div>
       </header>
       <main className="body">
-        {mode === 'single' ? (
+        {mode === "single" ? (
           <>
             <ControlsPanel
-              url={url} onUrlChange={setUrl}
-              fgColor={fgColor} onFgColorChange={setFgColor}
-              bgColor={bgColor} onBgColorChange={setBgColor}
-              logo={logo} onLogoChange={setLogo}
-              dotStyle={dotStyle} onDotStyleChange={setDotStyle}
-              size={size} onSizeChange={setSize}
+              url={url}
+              onUrlChange={setUrl}
+              fgColor={fgColor}
+              onFgColorChange={setFgColor}
+              bgColor={bgColor}
+              onBgColorChange={setBgColor}
+              logo={logo}
+              onLogoChange={setLogo}
+              dotStyle={dotStyle}
+              onDotStyleChange={setDotStyle}
+              size={size}
+              onSizeChange={setSize}
             />
             <PreviewPanel
               url={url}
@@ -1105,12 +1245,18 @@ function App() {
         ) : (
           <>
             <BulkPanel
-              fgColor={fgColor} onFgColorChange={setFgColor}
-              bgColor={bgColor} onBgColorChange={setBgColor}
-              logo={logo} onLogoChange={setLogo}
-              dotStyle={dotStyle} onDotStyleChange={setDotStyle}
-              size={size} onSizeChange={setSize}
-              format={format} onFormatChange={setFormat}
+              fgColor={fgColor}
+              onFgColorChange={setFgColor}
+              bgColor={bgColor}
+              onBgColorChange={setBgColor}
+              logo={logo}
+              onLogoChange={setLogo}
+              dotStyle={dotStyle}
+              onDotStyleChange={setDotStyle}
+              size={size}
+              onSizeChange={setSize}
+              format={format}
+              onFormatChange={setFormat}
               onEntriesParsed={setBulkEntries}
             />
             <BulkPreview
@@ -1126,10 +1272,10 @@ function App() {
         )}
       </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
 ```
 
 **Step 2: Add mode toggle styles to App.css**
@@ -1150,7 +1296,7 @@ Add the following after the `.tagline` block (replace the `.tagline` rule):
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   font-weight: 500;
   color: var(--text-tertiary);

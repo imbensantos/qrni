@@ -25,7 +25,7 @@
   border: none;
   border-radius: var(--radius-md);
   background: transparent;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   color: var(--text-primary);
   outline: none;
@@ -53,7 +53,6 @@
   pointer-events: none;
 }
 
-
 /* File upload button */
 .file-upload-btn {
   display: flex;
@@ -65,13 +64,15 @@
   border: none;
   border-radius: var(--radius-pill);
   background: var(--accent-primary);
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   font-weight: 600;
   color: white;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(216, 149, 117, 0.25);
-  transition: transform 0.15s ease, box-shadow 0.2s;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s;
 }
 
 .file-upload-btn:hover {
@@ -93,4 +94,3 @@
     font-size: 16px;
   }
 }
-

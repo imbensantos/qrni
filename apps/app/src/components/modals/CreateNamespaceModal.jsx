@@ -1,49 +1,49 @@
-import { useState, useEffect } from 'react'
-import { useMutation } from 'convex/react'
-import { api } from '../../../../../convex/_generated/api'
-import ModalBackdrop from './ModalBackdrop'
-import { IconFolderOpen, IconClose, IconGlobe } from '../Icons'
-import './CreateNamespaceModal.css'
+import { useState, useEffect } from "react";
+import { useMutation } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import ModalBackdrop from "./ModalBackdrop";
+import { IconFolderOpen, IconClose, IconGlobe } from "../Icons";
+import "./CreateNamespaceModal.css";
 
 function CreateNamespaceModal({ isOpen, onClose }) {
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [error, setError] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const createNamespace = useMutation(api.namespaces.create)
+  const createNamespace = useMutation(api.namespaces.create);
 
   useEffect(() => {
     if (isOpen) {
-      setName('')
-      setDescription('')
-      setError('')
-      setIsSubmitting(false)
+      setName("");
+      setDescription("");
+      setError("");
+      setIsSubmitting(false);
     }
-  }, [isOpen])
+  }, [isOpen]);
 
-  const sanitizedName = name.toLowerCase().replace(/[^a-z0-9-]/g, '')
+  const sanitizedName = name.toLowerCase().replace(/[^a-z0-9-]/g, "");
 
   function handleNameChange(e) {
-    const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '')
-    setName(value)
-    setError('')
+    const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
+    setName(value);
+    setError("");
   }
 
   async function handleSubmit(e) {
-    e.preventDefault()
-    if (!sanitizedName || isSubmitting) return
+    e.preventDefault();
+    if (!sanitizedName || isSubmitting) return;
 
-    setIsSubmitting(true)
-    setError('')
+    setIsSubmitting(true);
+    setError("");
 
     try {
-      await createNamespace({ slug: sanitizedName })
-      onClose()
+      await createNamespace({ slug: sanitizedName });
+      onClose();
     } catch (err) {
-      setError(err.message || 'Failed to create namespace')
+      setError(err.message || "Failed to create namespace");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
 
@@ -56,17 +56,28 @@ function CreateNamespaceModal({ isOpen, onClose }) {
               <IconFolderOpen size={20} />
             </div>
             <div className="cnm-title-group">
-              <h2 id="cnm-title" className="cnm-title">Create namespace</h2>
-              <p className="cnm-subtitle">Organize your links under a custom path</p>
+              <h2 id="cnm-title" className="cnm-title">
+                Create namespace
+              </h2>
+              <p className="cnm-subtitle">
+                Organize your links under a custom path
+              </p>
             </div>
           </div>
-          <button type="button" className="cnm-close-btn" onClick={onClose} aria-label="Close">
+          <button
+            type="button"
+            className="cnm-close-btn"
+            onClick={onClose}
+            aria-label="Close"
+          >
             <IconClose size={18} />
           </button>
         </div>
 
         <div className="cnm-field">
-          <label className="cnm-label" htmlFor="namespace-name">Namespace name</label>
+          <label className="cnm-label" htmlFor="namespace-name">
+            Namespace name
+          </label>
           <input
             id="namespace-name"
             className="cnm-input"
@@ -80,11 +91,17 @@ function CreateNamespaceModal({ isOpen, onClose }) {
 
         <div className="cnm-url-preview">
           <IconGlobe size={16} />
-          <span><span style={{ opacity: 0.5 }}>{window.location.host}/</span>{sanitizedName || '[namespace]'}<span style={{ opacity: 0.5 }}>/your-slug</span></span>
+          <span>
+            <span style={{ opacity: 0.5 }}>{window.location.host}/</span>
+            {sanitizedName || "[namespace]"}
+            <span style={{ opacity: 0.5 }}>/your-slug</span>
+          </span>
         </div>
 
         <div className="cnm-field">
-          <label className="cnm-label" htmlFor="namespace-desc">Description (optional)</label>
+          <label className="cnm-label" htmlFor="namespace-desc">
+            Description (optional)
+          </label>
           <textarea
             id="namespace-desc"
             className="cnm-textarea"
@@ -106,12 +123,12 @@ function CreateNamespaceModal({ isOpen, onClose }) {
             className="cnm-btn-create"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Creating...' : 'Create namespace'}
+            {isSubmitting ? "Creating..." : "Create namespace"}
           </button>
         </div>
       </form>
     </ModalBackdrop>
-  )
+  );
 }
 
-export default CreateNamespaceModal
+export default CreateNamespaceModal;

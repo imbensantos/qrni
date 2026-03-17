@@ -9,12 +9,17 @@
     "dev:app": "npm run dev --workspace=apps/app",
     "dev:landing": "npm run dev --workspace=apps/landing",
     "build:app": "npm run build --workspace=apps/app",
-    "build:landing": "npm run build --workspace=apps/landing"
+    "build:landing": "npm run build --workspace=apps/landing",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint ."
   },
   "dependencies": {
     "convex": "^1.33.0"
   },
   "devDependencies": {
-    "@types/node": "^25.5.0"
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.5.0",
+    "prettier": "^3.8.1"
   }
 }

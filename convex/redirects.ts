@@ -27,7 +27,7 @@ export const getNamespacedLink = internalQuery({
     return await ctx.db
       .query("links")
       .withIndex("by_namespace_slug", (q) =>
-        q.eq("namespace", args.namespaceId).eq("namespaceSlug", args.slug)
+        q.eq("namespace", args.namespaceId).eq("namespaceSlug", args.slug),
       )
       .first();
   },

@@ -5,9 +5,24 @@ import { isValidSlug } from "./lib/shortCode";
 
 const RESERVED_SLUGS = [
   // App routes
-  "admin", "app", "www", "help", "support", "about", "blog", "settings", "dashboard",
+  "admin",
+  "app",
+  "www",
+  "help",
+  "support",
+  "about",
+  "blog",
+  "settings",
+  "dashboard",
   // Auth routes (used by Convex auth HTTP handlers)
-  "api", "login", "signup", "signin", "signout", "auth", "oauth", "callback",
+  "api",
+  "login",
+  "signup",
+  "signin",
+  "signout",
+  "auth",
+  "oauth",
+  "callback",
   ".well-known",
 ];
 
@@ -23,7 +38,9 @@ export const create = mutation({
     const slug = args.slug.toLowerCase();
 
     if (!isValidSlug(slug)) {
-      throw new Error("Namespace must be 3-30 chars: lowercase letters, numbers, hyphens");
+      throw new Error(
+        "Namespace must be 3-30 chars: lowercase letters, numbers, hyphens",
+      );
     }
 
     if (RESERVED_SLUGS.includes(slug)) {
@@ -34,16 +51,26 @@ export const create = mutation({
       throw new Error("Description must be 500 characters or fewer");
     }
 
-    const ownedNamespaces = await ctx.db.query("namespaces").withIndex("by_owner", (q) => q.eq("owner", user._id)).take(100);
+    const ownedNamespaces = await ctx.db
+      .query("namespaces")
+      .withIndex("by_owner", (q) => q.eq("owner", user._id))
+      .take(100);
     if (ownedNamespaces.length >= 5) {
       throw new Error("You can create up to 5 namespaces");
     }
 
-    const existing = await ctx.db.query("namespaces").withIndex("by_slug", (q) => q.eq("slug", slug)).first();
+    const existing = await ctx.db
+      .query("namespaces")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .first();
     if (existing) throw new Error("This namespace is already taken");
 
-    const linkConflict = await ctx.db.query("links").withIndex("by_short_code", (q) => q.eq("shortCode", slug)).first();
-    if (linkConflict) throw new Error("This name conflicts with an existing short link");
+    const linkConflict = await ctx.db
+      .query("links")
+      .withIndex("by_short_code", (q) => q.eq("shortCode", slug))
+      .first();
+    if (linkConflict)
+      throw new Error("This name conflicts with an existing short link");
 
     return await ctx.db.insert("namespaces", {
       owner: user._id,
@@ -70,7 +97,8 @@ export const update = mutation({
 
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== user._id) throw new Error("Only the owner can edit a namespace");
+    if (namespace.owner !== user._id)
+      throw new Error("Only the owner can edit a namespace");
 
     const updates: Record<string, unknown> = {};
 
@@ -87,7 +115,9 @@ export const update = mutation({
       const slug = args.newSlug.toLowerCase();
 
       if (!isValidSlug(slug)) {
-        throw new Error("Namespace must be 3-30 chars: lowercase letters, numbers, hyphens");
+        throw new Error(
+          "Namespace must be 3-30 chars: lowercase letters, numbers, hyphens",
+        );
       }
 
       if (RESERVED_SLUGS.includes(slug)) {
@@ -98,14 +128,26 @@ export const update = mutation({
         // Safe: Convex mutations are fully serialized (OCC-based transactions),
         // so this check-then-update is atomic — no concurrent rename can claim
         // the same slug between the uniqueness check and the patch below.
-        const existing = await ctx.db.query("namespaces").withIndex("by_slug", (q) => q.eq("slug", slug)).first();
+        const existing = await ctx.db
+          .query("namespaces")
+          .withIndex("by_slug", (q) => q.eq("slug", slug))
+          .first();
         if (existing) throw new Error("This namespace is already taken");
 
-        const linkConflict = await ctx.db.query("links").withIndex("by_short_code", (q) => q.eq("shortCode", slug)).first();
-        if (linkConflict) throw new Error("This name conflicts with an existing short link");
+        const linkConflict = await ctx.db
+          .query("links")
+          .withIndex("by_short_code", (q) => q.eq("shortCode", slug))
+          .first();
+        if (linkConflict)
+          throw new Error("This name conflicts with an existing short link");
 
         // Update all links in this namespace to use the new slug prefix
-        const links = await ctx.db.query("links").withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId)).take(500);
+        const links = await ctx.db
+          .query("links")
+          .withIndex("by_namespace_slug", (q) =>
+            q.eq("namespace", args.namespaceId),
+          )
+          .take(500);
         for (const link of links) {
           if (link.namespaceSlug) {
             await ctx.db.patch(link._id, {
@@ -132,15 +174,21 @@ export const listMine = query({
     const user = await ctx.db.get(userId);
     if (!user) return { owned: [], collaborated: [] };
 
-    const owned = await ctx.db.query("namespaces").withIndex("by_owner", (q) => q.eq("owner", user._id)).take(100);
+    const owned = await ctx.db
+      .query("namespaces")
+      .withIndex("by_owner", (q) => q.eq("owner", user._id))
+      .take(100);
 
-    const memberships = await ctx.db.query("namespace_members").withIndex("by_user", (q) => q.eq("user", user._id)).take(100);
+    const memberships = await ctx.db
+      .query("namespace_members")
+      .withIndex("by_user", (q) => q.eq("user", user._id))
+      .take(100);
 
     const collaborated = await Promise.all(
       memberships.map(async (m) => {
         const ns = await ctx.db.get(m.namespace);
         return ns ? { ...ns, role: m.role } : null;
-      })
+      }),
     );
 
     return { owned, collaborated: collaborated.filter(Boolean) };
@@ -158,16 +206,28 @@ export const remove = mutation({
 
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== user._id) throw new Error("Only the owner can delete a namespace");
+    if (namespace.owner !== user._id)
+      throw new Error("Only the owner can delete a namespace");
 
     // Cascade delete: links, members, invites
-    const links = await ctx.db.query("links").withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId)).take(500);
+    const links = await ctx.db
+      .query("links")
+      .withIndex("by_namespace_slug", (q) =>
+        q.eq("namespace", args.namespaceId),
+      )
+      .take(500);
     for (const link of links) await ctx.db.delete(link._id);
 
-    const members = await ctx.db.query("namespace_members").withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId)).take(100);
+    const members = await ctx.db
+      .query("namespace_members")
+      .withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId))
+      .take(100);
     for (const member of members) await ctx.db.delete(member._id);
 
-    const invites = await ctx.db.query("namespace_invites").withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId)).take(50);
+    const invites = await ctx.db
+      .query("namespace_invites")
+      .withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId))
+      .take(50);
     for (const invite of invites) await ctx.db.delete(invite._id);
 
     await ctx.db.delete(args.namespaceId);

@@ -1,60 +1,69 @@
-import { useState, useEffect } from 'react'
-import { useMutation } from 'convex/react'
-import { api } from '../../../../../convex/_generated/api'
-import { cleanConvexError } from '../../utils/errors'
-import ModalBackdrop from './ModalBackdrop'
-import { IconPencil, IconClose, IconGlobe } from '../Icons'
-import '../modals/CreateNamespaceModal.css'
+import { useState, useEffect } from "react";
+import { useMutation } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import { cleanConvexError } from "../../utils/errors";
+import ModalBackdrop from "./ModalBackdrop";
+import { IconPencil, IconClose, IconGlobe } from "../Icons";
+import "../modals/CreateNamespaceModal.css";
 
-function RenameNamespaceModal({ isOpen, onClose, namespaceId, namespaceName, namespaceDescription }) {
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [error, setError] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+function RenameNamespaceModal({
+  isOpen,
+  onClose,
+  namespaceId,
+  namespaceName,
+  namespaceDescription,
+}) {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const updateNamespace = useMutation(api.namespaces.update)
+  const updateNamespace = useMutation(api.namespaces.update);
 
   useEffect(() => {
     if (isOpen) {
-      setName(namespaceName || '')
-      setDescription(namespaceDescription || '')
-      setError('')
-      setIsSubmitting(false)
+      setName(namespaceName || "");
+      setDescription(namespaceDescription || "");
+      setError("");
+      setIsSubmitting(false);
     }
-  }, [isOpen, namespaceName, namespaceDescription])
+  }, [isOpen, namespaceName, namespaceDescription]);
 
-  const sanitizedName = name.toLowerCase().replace(/[^a-z0-9-]/g, '')
+  const sanitizedName = name.toLowerCase().replace(/[^a-z0-9-]/g, "");
 
   function handleNameChange(e) {
-    const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '')
-    setName(value)
-    setError('')
+    const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
+    setName(value);
+    setError("");
   }
 
-  const hasChanges = sanitizedName !== namespaceName || description !== (namespaceDescription || '')
+  const hasChanges =
+    sanitizedName !== namespaceName ||
+    description !== (namespaceDescription || "");
 
   async function handleSubmit(e) {
-    e.preventDefault()
-    if (!sanitizedName || isSubmitting || !hasChanges) return
+    e.preventDefault();
+    if (!sanitizedName || isSubmitting || !hasChanges) return;
 
-    setIsSubmitting(true)
-    setError('')
+    setIsSubmitting(true);
+    setError("");
 
     try {
-      const args = { namespaceId }
-      if (sanitizedName !== namespaceName) args.newSlug = sanitizedName
-      if (description !== (namespaceDescription || '')) args.description = description
-      await updateNamespace(args)
-      onClose()
+      const args = { namespaceId };
+      if (sanitizedName !== namespaceName) args.newSlug = sanitizedName;
+      if (description !== (namespaceDescription || ""))
+        args.description = description;
+      await updateNamespace(args);
+      onClose();
     } catch (err) {
-      const msg = cleanConvexError(err.message ?? '')
-      setError(msg || 'Failed to update namespace')
+      const msg = cleanConvexError(err.message ?? "");
+      setError(msg || "Failed to update namespace");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
 
-  if (!namespaceId) return null
+  if (!namespaceId) return null;
 
   return (
     <ModalBackdrop isOpen={isOpen} onClose={onClose} titleId="rnm-title">
@@ -65,17 +74,26 @@ function RenameNamespaceModal({ isOpen, onClose, namespaceId, namespaceName, nam
               <IconPencil size={20} />
             </div>
             <div className="cnm-title-group">
-              <h2 id="rnm-title" className="cnm-title">Edit namespace</h2>
+              <h2 id="rnm-title" className="cnm-title">
+                Edit namespace
+              </h2>
               <p className="cnm-subtitle">Update the name or description</p>
             </div>
           </div>
-          <button type="button" className="cnm-close-btn" onClick={onClose} aria-label="Close">
+          <button
+            type="button"
+            className="cnm-close-btn"
+            onClick={onClose}
+            aria-label="Close"
+          >
             <IconClose size={18} />
           </button>
         </div>
 
         <div className="cnm-field">
-          <label className="cnm-label" htmlFor="edit-namespace-name">Namespace name</label>
+          <label className="cnm-label" htmlFor="edit-namespace-name">
+            Namespace name
+          </label>
           <input
             id="edit-namespace-name"
             className="cnm-input"
@@ -89,16 +107,25 @@ function RenameNamespaceModal({ isOpen, onClose, namespaceId, namespaceName, nam
 
         <div className="cnm-url-preview">
           <IconGlobe size={16} />
-          <span><span style={{ opacity: 0.5 }}>{window.location.host}/</span>{sanitizedName || '[namespace]'}<span style={{ opacity: 0.5 }}>/your-slug</span></span>
+          <span>
+            <span style={{ opacity: 0.5 }}>{window.location.host}/</span>
+            {sanitizedName || "[namespace]"}
+            <span style={{ opacity: 0.5 }}>/your-slug</span>
+          </span>
         </div>
 
         <div className="cnm-field">
-          <label className="cnm-label" htmlFor="edit-namespace-desc">Description (optional)</label>
+          <label className="cnm-label" htmlFor="edit-namespace-desc">
+            Description (optional)
+          </label>
           <textarea
             id="edit-namespace-desc"
             className="cnm-textarea"
             value={description}
-            onChange={(e) => { setDescription(e.target.value); setError('') }}
+            onChange={(e) => {
+              setDescription(e.target.value);
+              setError("");
+            }}
             placeholder="What is this namespace for?"
             rows={3}
           />
@@ -115,12 +142,12 @@ function RenameNamespaceModal({ isOpen, onClose, namespaceId, namespaceName, nam
             className="cnm-btn-create"
             disabled={isSubmitting || !hasChanges}
           >
-            {isSubmitting ? 'Saving...' : 'Save changes'}
+            {isSubmitting ? "Saving..." : "Save changes"}
           </button>
         </div>
       </form>
     </ModalBackdrop>
-  )
+  );
 }
 
-export default RenameNamespaceModal
+export default RenameNamespaceModal;

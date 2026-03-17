@@ -19,7 +19,7 @@
   border-radius: 100px;
   background: var(--accent-primary);
   color: white;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -52,7 +52,7 @@
 }
 
 .mode-toggle::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 3px;
   left: 3px;
@@ -74,12 +74,14 @@
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   font-weight: 500;
   color: var(--text-tertiary);
   cursor: pointer;
-  transition: color 0.2s ease, font-weight 0.2s ease;
+  transition:
+    color 0.2s ease,
+    font-weight 0.2s ease;
   position: relative;
   z-index: 1;
 }

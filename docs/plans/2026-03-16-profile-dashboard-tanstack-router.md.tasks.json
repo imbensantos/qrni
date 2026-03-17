@@ -1,0 +1,115 @@
+{
+  "planPath": "docs/plans/2026-03-16-profile-dashboard-tanstack-router.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 0: Install TanStack Router",
+      "status": "pending"
+    },
+    {
+      "id": 1,
+      "subject": "Task 1: Set up router with root layout and two routes",
+      "status": "pending",
+      "blockedBy": [0]
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Add View profile link to ProfileDropdown",
+      "status": "pending",
+      "blockedBy": [1]
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Backend — add updateLink mutation",
+      "status": "pending"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Backend — add listNamespaceLinks query",
+      "status": "pending"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Backend — add updateProfile and getUserStats",
+      "status": "pending"
+    },
+    {
+      "id": 6,
+      "subject": "Task 6: Build ProfilePage header and stats",
+      "status": "pending",
+      "blockedBy": [1, 5]
+    },
+    {
+      "id": 7,
+      "subject": "Task 7: Build MyLinksSection",
+      "status": "pending",
+      "blockedBy": [6]
+    },
+    {
+      "id": 8,
+      "subject": "Task 8: Build NamespaceSection",
+      "status": "pending",
+      "blockedBy": [6]
+    },
+    {
+      "id": 9,
+      "subject": "Task 9: Build AddLinkModal",
+      "status": "pending",
+      "blockedBy": [6]
+    },
+    {
+      "id": 10,
+      "subject": "Task 10: Build EditLinkModal",
+      "status": "pending",
+      "blockedBy": [6, 3]
+    },
+    {
+      "id": 11,
+      "subject": "Task 11: Build DeleteLinkConfirmModal",
+      "status": "pending",
+      "blockedBy": [6]
+    },
+    {
+      "id": 12,
+      "subject": "Task 12: Build CreateNamespaceModal",
+      "status": "pending",
+      "blockedBy": [6]
+    },
+    {
+      "id": 13,
+      "subject": "Task 13: Build InviteMemberModal",
+      "status": "pending",
+      "blockedBy": [6]
+    },
+    {
+      "id": 14,
+      "subject": "Task 14: Build EditProfileModal",
+      "status": "pending",
+      "blockedBy": [6, 5]
+    },
+    {
+      "id": 15,
+      "subject": "Task 15: Build AllNamespaceLinksView",
+      "status": "pending",
+      "blockedBy": [8, 4]
+    },
+    {
+      "id": 16,
+      "subject": "Task 16: Mobile responsive styles",
+      "status": "pending",
+      "blockedBy": [15]
+    },
+    {
+      "id": 17,
+      "subject": "Task 17: SPA routing fallback for production",
+      "status": "pending"
+    },
+    {
+      "id": 18,
+      "subject": "Task 18: Final integration smoke test",
+      "status": "pending",
+      "blockedBy": [16, 17]
+    }
+  ],
+  "lastUpdated": "2026-03-16T00:00:00Z"
+}

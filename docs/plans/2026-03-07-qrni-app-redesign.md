@@ -15,6 +15,7 @@
 ### Task 0: Set up design tokens and global styles
 
 **Files:**
+
 - Modify: `apps/app/src/index.css`
 - Modify: `apps/app/src/App.css`
 
@@ -23,7 +24,7 @@
 Replace the Nunito font import with Outfit. Add CSS custom properties for the design system.
 
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap");
 
 * {
   margin: 0;
@@ -32,24 +33,24 @@ Replace the Nunito font import with Outfit. Add CSS custom properties for the de
 }
 
 :root {
-  --bg-page: #F5F4F1;
-  --bg-card: #FFFFFF;
-  --bg-surface: #FAFAF8;
-  --bg-preview: #F8F6F3;
-  --bg-muted: #EDECEA;
+  --bg-page: #f5f4f1;
+  --bg-card: #ffffff;
+  --bg-surface: #fafaf8;
+  --bg-preview: #f8f6f3;
+  --bg-muted: #edecea;
 
-  --text-primary: #1A1918;
-  --text-secondary: #6D6C6A;
-  --text-tertiary: #9C9B99;
+  --text-primary: #1a1918;
+  --text-secondary: #6d6c6a;
+  --text-tertiary: #9c9b99;
 
-  --accent-primary: #D89575;
-  --accent-primary-hover: #C8845F;
-  --accent-secondary: #3D8A5A;
-  --accent-light: #C8F0D8;
-  --accent-warm: #FFF0E8;
+  --accent-primary: #d89575;
+  --accent-primary-hover: #c8845f;
+  --accent-secondary: #3d8a5a;
+  --accent-light: #c8f0d8;
+  --accent-warm: #fff0e8;
 
-  --border-subtle: #E5E4E1;
-  --border-strong: #D1D0CD;
+  --border-subtle: #e5e4e1;
+  --border-strong: #d1d0cd;
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -63,7 +64,7 @@ Replace the Nunito font import with Outfit. Add CSS custom properties for the de
 }
 
 body {
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   min-height: 100vh;
   background: var(--bg-page);
 }
@@ -86,27 +87,28 @@ git commit -m "feat: replace design tokens with warm pastel system"
 ### Task 1: Restructure App layout to split-panel
 
 **Files:**
+
 - Modify: `apps/app/src/App.jsx`
 - Modify: `apps/app/src/App.css`
 
 **Step 1: Rewrite App.jsx with split-panel layout**
 
 ```jsx
-import { useState } from 'react'
-import ControlsPanel from './components/ControlsPanel'
-import PreviewPanel from './components/PreviewPanel'
-import './App.css'
+import { useState } from "react";
+import ControlsPanel from "./components/ControlsPanel";
+import PreviewPanel from "./components/PreviewPanel";
+import "./App.css";
 
 function App() {
-  const [url, setUrl] = useState('')
-  const [fgColor, setFgColor] = useState('#1A1918')
-  const [bgColor, setBgColor] = useState('#FFFFFF')
-  const [logo, setLogo] = useState(null)
-  const [dotStyle, setDotStyle] = useState('square')
-  const [size, setSize] = useState(512)
-  const [format, setFormat] = useState('png')
+  const [url, setUrl] = useState("");
+  const [fgColor, setFgColor] = useState("#1A1918");
+  const [bgColor, setBgColor] = useState("#FFFFFF");
+  const [logo, setLogo] = useState(null);
+  const [dotStyle, setDotStyle] = useState("square");
+  const [size, setSize] = useState(512);
+  const [format, setFormat] = useState("png");
 
-  const isValidUrl = url.startsWith('http://') || url.startsWith('https://')
+  const isValidUrl = url.startsWith("http://") || url.startsWith("https://");
 
   return (
     <div className="app">
@@ -116,12 +118,18 @@ function App() {
       </header>
       <main className="body">
         <ControlsPanel
-          url={url} onUrlChange={setUrl}
-          fgColor={fgColor} onFgColorChange={setFgColor}
-          bgColor={bgColor} onBgColorChange={setBgColor}
-          logo={logo} onLogoChange={setLogo}
-          dotStyle={dotStyle} onDotStyleChange={setDotStyle}
-          size={size} onSizeChange={setSize}
+          url={url}
+          onUrlChange={setUrl}
+          fgColor={fgColor}
+          onFgColorChange={setFgColor}
+          bgColor={bgColor}
+          onBgColorChange={setBgColor}
+          logo={logo}
+          onLogoChange={setLogo}
+          dotStyle={dotStyle}
+          onDotStyleChange={setDotStyle}
+          size={size}
+          onSizeChange={setSize}
         />
         <PreviewPanel
           url={url}
@@ -136,10 +144,10 @@ function App() {
         />
       </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
 ```
 
 **Step 2: Rewrite App.css for split-panel layout**
@@ -200,6 +208,7 @@ git commit -m "feat: restructure app layout to split-panel"
 ### Task 2: Build ControlsPanel component
 
 **Files:**
+
 - Create: `apps/app/src/components/ControlsPanel.jsx`
 - Create: `apps/app/src/components/ControlsPanel.css`
 
@@ -208,30 +217,36 @@ git commit -m "feat: restructure app layout to split-panel"
 Component receives all control state as props. Sections: URL input, Colors (fg/bg pickers), Logo upload, Dot Style toggles, Size slider.
 
 ```jsx
-import './ControlsPanel.css'
+import "./ControlsPanel.css";
 
 const DOT_STYLES = [
-  { id: 'square', label: 'Square' },
-  { id: 'rounded', label: 'Rounded' },
-  { id: 'dots', label: 'Dots' },
-  { id: 'diamond', label: 'Diamond' },
-]
+  { id: "square", label: "Square" },
+  { id: "rounded", label: "Rounded" },
+  { id: "dots", label: "Dots" },
+  { id: "diamond", label: "Diamond" },
+];
 
 function ControlsPanel({
-  url, onUrlChange,
-  fgColor, onFgColorChange,
-  bgColor, onBgColorChange,
-  logo, onLogoChange,
-  dotStyle, onDotStyleChange,
-  size, onSizeChange,
+  url,
+  onUrlChange,
+  fgColor,
+  onFgColorChange,
+  bgColor,
+  onBgColorChange,
+  logo,
+  onLogoChange,
+  dotStyle,
+  onDotStyleChange,
+  size,
+  onSizeChange,
 }) {
   const handleLogoUpload = (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = (ev) => onLogoChange(ev.target.result)
-    reader.readAsDataURL(file)
-  }
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => onLogoChange(ev.target.result);
+    reader.readAsDataURL(file);
+  };
 
   return (
     <aside className="controls-panel">
@@ -259,7 +274,11 @@ function ControlsPanel({
           <div className="color-group">
             <span className="color-sublabel">Foreground</span>
             <label className="color-picker">
-              <input type="color" value={fgColor} onChange={(e) => onFgColorChange(e.target.value)} />
+              <input
+                type="color"
+                value={fgColor}
+                onChange={(e) => onFgColorChange(e.target.value)}
+              />
               <span className="color-swatch" style={{ background: fgColor }} />
               <span className="color-value">{fgColor.toUpperCase()}</span>
             </label>
@@ -267,7 +286,11 @@ function ControlsPanel({
           <div className="color-group">
             <span className="color-sublabel">Background</span>
             <label className="color-picker">
-              <input type="color" value={bgColor} onChange={(e) => onBgColorChange(e.target.value)} />
+              <input
+                type="color"
+                value={bgColor}
+                onChange={(e) => onBgColorChange(e.target.value)}
+              />
               <span className="color-swatch" style={{ background: bgColor }} />
               <span className="color-value">{bgColor.toUpperCase()}</span>
             </label>
@@ -285,11 +308,18 @@ function ControlsPanel({
         {logo ? (
           <div className="logo-preview">
             <img src={logo} alt="Logo" className="logo-thumb" />
-            <button className="logo-remove" onClick={() => onLogoChange(null)}>Remove</button>
+            <button className="logo-remove" onClick={() => onLogoChange(null)}>
+              Remove
+            </button>
           </div>
         ) : (
           <label className="upload-zone">
-            <input type="file" accept="image/*" onChange={handleLogoUpload} hidden />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleLogoUpload}
+              hidden
+            />
             <span>Add logo</span>
           </label>
         )}
@@ -306,7 +336,7 @@ function ControlsPanel({
           {DOT_STYLES.map((ds) => (
             <button
               key={ds.id}
-              className={`dot-option ${dotStyle === ds.id ? 'active' : ''}`}
+              className={`dot-option ${dotStyle === ds.id ? "active" : ""}`}
               onClick={() => onDotStyleChange(ds.id)}
             >
               <span className={`dot-icon dot-icon-${ds.id}`} />
@@ -339,10 +369,10 @@ function ControlsPanel({
         </div>
       </section>
     </aside>
-  )
+  );
 }
 
-export default ControlsPanel
+export default ControlsPanel;
 ```
 
 **Step 2: Create ControlsPanel.css**
@@ -395,7 +425,7 @@ Style the controls panel with warm design tokens. Key styles: 380px width, verti
   border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-md);
   background: var(--bg-page);
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 15px;
   color: var(--text-primary);
   outline: none;
@@ -498,7 +528,7 @@ Style the controls panel with warm design tokens. Key styles: 380px width, verti
 }
 
 .logo-remove {
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   font-weight: 500;
   color: var(--text-tertiary);
@@ -559,9 +589,15 @@ Style the controls panel with warm design tokens. Key styles: 380px width, verti
   background: var(--accent-primary);
 }
 
-.dot-icon-square { border-radius: 2px; }
-.dot-icon-rounded { border-radius: 6px; }
-.dot-icon-dots { border-radius: 50%; }
+.dot-icon-square {
+  border-radius: 2px;
+}
+.dot-icon-rounded {
+  border-radius: 6px;
+}
+.dot-icon-dots {
+  border-radius: 50%;
+}
 .dot-icon-diamond {
   width: 12px;
   height: 12px;
@@ -626,6 +662,7 @@ git commit -m "feat: add ControlsPanel with all customization options"
 ### Task 3: Build PreviewPanel component
 
 **Files:**
+
 - Create: `apps/app/src/components/PreviewPanel.jsx`
 - Create: `apps/app/src/components/PreviewPanel.css`
 - Create: `apps/app/src/components/Doodles.jsx`
@@ -639,42 +676,239 @@ export default function Doodles() {
   return (
     <div className="doodles" aria-hidden="true">
       {/* Sparkles */}
-      <svg className="doodle doodle-sparkle-1" width="32" height="32" viewBox="0 0 32 32"><path d="M16 0L18 12L26 6L20 14L32 16L20 18L26 26L18 20L16 32L14 20L6 26L12 18L0 16L12 14L6 6L14 12Z" fill="currentColor"/></svg>
-      <svg className="doodle doodle-sparkle-2" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0L14 9L20 4L15 11L24 12L15 13L20 20L14 15L12 24L10 15L4 20L9 13L0 12L9 11L4 4L10 9Z" fill="currentColor"/></svg>
-      <svg className="doodle doodle-sparkle-3" width="18" height="18" viewBox="0 0 18 18"><path d="M9 0L10 7L15 3L11 8L18 9L11 10L15 15L10 11L9 18L8 11L3 15L7 10L0 9L7 8L3 3L8 7Z" fill="currentColor"/></svg>
+      <svg
+        className="doodle doodle-sparkle-1"
+        width="32"
+        height="32"
+        viewBox="0 0 32 32"
+      >
+        <path
+          d="M16 0L18 12L26 6L20 14L32 16L20 18L26 26L18 20L16 32L14 20L6 26L12 18L0 16L12 14L6 6L14 12Z"
+          fill="currentColor"
+        />
+      </svg>
+      <svg
+        className="doodle doodle-sparkle-2"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M12 0L14 9L20 4L15 11L24 12L15 13L20 20L14 15L12 24L10 15L4 20L9 13L0 12L9 11L4 4L10 9Z"
+          fill="currentColor"
+        />
+      </svg>
+      <svg
+        className="doodle doodle-sparkle-3"
+        width="18"
+        height="18"
+        viewBox="0 0 18 18"
+      >
+        <path
+          d="M9 0L10 7L15 3L11 8L18 9L11 10L15 15L10 11L9 18L8 11L3 15L7 10L0 9L7 8L3 3L8 7Z"
+          fill="currentColor"
+        />
+      </svg>
 
       {/* Hearts */}
-      <svg className="doodle doodle-heart-1" width="20" height="18" viewBox="0 0 20 18"><path d="M10 18L8.5 16.6C3.4 12 0 9 0 5.2C0 2.3 2.3 0 5.2 0C6.8 0 8.4 .7 10 2.1C11.6 .7 13.2 0 14.8 0C17.7 0 20 2.3 20 5.2C20 9 16.6 12 11.5 16.6L10 18Z" fill="currentColor"/></svg>
-      <svg className="doodle doodle-heart-2" width="16" height="14" viewBox="0 0 16 14"><path d="M8 14L6.8 13C2.7 9.6 0 7.2 0 4.2C0 1.8 1.8 0 4.2 0C5.4 0 6.7 .6 8 1.7C9.3 .6 10.6 0 11.8 0C14.2 0 16 1.8 16 4.2C16 7.2 13.3 9.6 9.2 13L8 14Z" fill="currentColor"/></svg>
+      <svg
+        className="doodle doodle-heart-1"
+        width="20"
+        height="18"
+        viewBox="0 0 20 18"
+      >
+        <path
+          d="M10 18L8.5 16.6C3.4 12 0 9 0 5.2C0 2.3 2.3 0 5.2 0C6.8 0 8.4 .7 10 2.1C11.6 .7 13.2 0 14.8 0C17.7 0 20 2.3 20 5.2C20 9 16.6 12 11.5 16.6L10 18Z"
+          fill="currentColor"
+        />
+      </svg>
+      <svg
+        className="doodle doodle-heart-2"
+        width="16"
+        height="14"
+        viewBox="0 0 16 14"
+      >
+        <path
+          d="M8 14L6.8 13C2.7 9.6 0 7.2 0 4.2C0 1.8 1.8 0 4.2 0C5.4 0 6.7 .6 8 1.7C9.3 .6 10.6 0 11.8 0C14.2 0 16 1.8 16 4.2C16 7.2 13.3 9.6 9.2 13L8 14Z"
+          fill="currentColor"
+        />
+      </svg>
 
       {/* Corner brackets around QR card */}
-      <svg className="doodle doodle-corner-tl" width="16" height="16" viewBox="0 0 16 16"><path d="M0 16L0 4C0 2 2 0 4 0L16 0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-      <svg className="doodle doodle-corner-tr" width="16" height="16" viewBox="0 0 16 16"><path d="M0 0L12 0C14 0 16 2 16 4L16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-      <svg className="doodle doodle-corner-bl" width="16" height="16" viewBox="0 0 16 16"><path d="M16 16L4 16C2 16 0 14 0 12L0 0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-      <svg className="doodle doodle-corner-br" width="16" height="16" viewBox="0 0 16 16"><path d="M0 16L12 16C14 16 16 14 16 12L16 0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+      <svg
+        className="doodle doodle-corner-tl"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M0 16L0 4C0 2 2 0 4 0L16 0"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+      <svg
+        className="doodle doodle-corner-tr"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M0 0L12 0C14 0 16 2 16 4L16 16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+      <svg
+        className="doodle doodle-corner-bl"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M16 16L4 16C2 16 0 14 0 12L0 0"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+      <svg
+        className="doodle doodle-corner-br"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M0 16L12 16C14 16 16 14 16 12L16 0"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
 
       {/* Waves */}
-      <svg className="doodle doodle-wave-1" width="50" height="16" viewBox="0 0 50 16"><path d="M0 8C6 0 12 16 18 8C24 0 30 16 36 8C42 0 50 16 50 8" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/></svg>
+      <svg
+        className="doodle doodle-wave-1"
+        width="50"
+        height="16"
+        viewBox="0 0 50 16"
+      >
+        <path
+          d="M0 8C6 0 12 16 18 8C24 0 30 16 36 8C42 0 50 16 50 8"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+      </svg>
 
       {/* Rings */}
-      <svg className="doodle doodle-ring-1" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" strokeWidth="2"/></svg>
-      <svg className="doodle doodle-ring-2" width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="8" fill="none" stroke="currentColor" strokeWidth="1.5"/></svg>
+      <svg
+        className="doodle doodle-ring-1"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="11"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        />
+      </svg>
+      <svg
+        className="doodle doodle-ring-2"
+        width="18"
+        height="18"
+        viewBox="0 0 18 18"
+      >
+        <circle
+          cx="9"
+          cy="9"
+          r="8"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+        />
+      </svg>
 
       {/* Dots */}
-      <svg className="doodle doodle-dot-1" width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="currentColor"/></svg>
-      <svg className="doodle doodle-dot-2" width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
-      <svg className="doodle doodle-dot-3" width="4" height="4" viewBox="0 0 4 4"><circle cx="2" cy="2" r="2" fill="currentColor"/></svg>
+      <svg
+        className="doodle doodle-dot-1"
+        width="8"
+        height="8"
+        viewBox="0 0 8 8"
+      >
+        <circle cx="4" cy="4" r="4" fill="currentColor" />
+      </svg>
+      <svg
+        className="doodle doodle-dot-2"
+        width="6"
+        height="6"
+        viewBox="0 0 6 6"
+      >
+        <circle cx="3" cy="3" r="3" fill="currentColor" />
+      </svg>
+      <svg
+        className="doodle doodle-dot-3"
+        width="4"
+        height="4"
+        viewBox="0 0 4 4"
+      >
+        <circle cx="2" cy="2" r="2" fill="currentColor" />
+      </svg>
 
       {/* Arrow */}
-      <svg className="doodle doodle-arrow" width="36" height="30" viewBox="0 0 36 30"><path d="M0 24C4 8 16 0 32 4M32 4L26 0M32 4L30 10" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/></svg>
+      <svg
+        className="doodle doodle-arrow"
+        width="36"
+        height="30"
+        viewBox="0 0 36 30"
+      >
+        <path
+          d="M0 24C4 8 16 0 32 4M32 4L26 0M32 4L30 10"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+      </svg>
 
       {/* Diamond */}
-      <svg className="doodle doodle-diamond" width="12" height="12" viewBox="0 0 12 12"><path d="M6 0L12 6L6 12L0 6Z" fill="currentColor"/></svg>
+      <svg
+        className="doodle doodle-diamond"
+        width="12"
+        height="12"
+        viewBox="0 0 12 12"
+      >
+        <path d="M6 0L12 6L6 12L0 6Z" fill="currentColor" />
+      </svg>
 
       {/* Zigzag */}
-      <svg className="doodle doodle-zigzag" width="30" height="16" viewBox="0 0 30 16"><path d="M0 16L7.5 0L15 16L22.5 0L30 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+      <svg
+        className="doodle doodle-zigzag"
+        width="30"
+        height="16"
+        viewBox="0 0 30 16"
+      >
+        <path
+          d="M0 16L7.5 0L15 16L22.5 0L30 16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
     </div>
-  )
+  );
 }
 ```
 
@@ -683,46 +917,55 @@ export default function Doodles() {
 Shows QR preview card, status text, format selector, download button, and footer. Includes Doodles component.
 
 ```jsx
-import { useRef, useCallback } from 'react'
-import { QRCodeCanvas } from 'qrcode.react'
-import { toPng, toSvg } from 'html-to-image'
-import { jsPDF } from 'jspdf'
-import Doodles from './Doodles'
-import './PreviewPanel.css'
+import { useRef, useCallback } from "react";
+import { QRCodeCanvas } from "qrcode.react";
+import { toPng, toSvg } from "html-to-image";
+import { jsPDF } from "jspdf";
+import Doodles from "./Doodles";
+import "./PreviewPanel.css";
 
-const FORMATS = ['PNG', 'SVG', 'PDF']
+const FORMATS = ["PNG", "SVG", "PDF"];
 
 function PreviewPanel({
-  url, isValidUrl, fgColor, bgColor, logo, dotStyle, size,
-  format, onFormatChange,
+  url,
+  isValidUrl,
+  fgColor,
+  bgColor,
+  logo,
+  dotStyle,
+  size,
+  format,
+  onFormatChange,
 }) {
-  const qrRef = useRef(null)
+  const qrRef = useRef(null);
 
   const handleDownload = useCallback(async () => {
-    const node = qrRef.current
-    if (!node) return
+    const node = qrRef.current;
+    if (!node) return;
 
-    const fmt = format.toLowerCase()
+    const fmt = format.toLowerCase();
 
-    if (fmt === 'png') {
-      const dataUrl = await toPng(node, { pixelRatio: size / node.offsetWidth })
-      const link = document.createElement('a')
-      link.download = 'qrni-code.png'
-      link.href = dataUrl
-      link.click()
-    } else if (fmt === 'svg') {
-      const dataUrl = await toSvg(node)
-      const link = document.createElement('a')
-      link.download = 'qrni-code.svg'
-      link.href = dataUrl
-      link.click()
-    } else if (fmt === 'pdf') {
-      const dataUrl = await toPng(node, { pixelRatio: 4 })
-      const pdf = new jsPDF({ unit: 'px', format: [size, size] })
-      pdf.addImage(dataUrl, 'PNG', 0, 0, size, size)
-      pdf.save('qrni-code.pdf')
+    if (fmt === "png") {
+      const dataUrl = await toPng(node, {
+        pixelRatio: size / node.offsetWidth,
+      });
+      const link = document.createElement("a");
+      link.download = "qrni-code.png";
+      link.href = dataUrl;
+      link.click();
+    } else if (fmt === "svg") {
+      const dataUrl = await toSvg(node);
+      const link = document.createElement("a");
+      link.download = "qrni-code.svg";
+      link.href = dataUrl;
+      link.click();
+    } else if (fmt === "pdf") {
+      const dataUrl = await toPng(node, { pixelRatio: 4 });
+      const pdf = new jsPDF({ unit: "px", format: [size, size] });
+      pdf.addImage(dataUrl, "PNG", 0, 0, size, size);
+      pdf.save("qrni-code.pdf");
     }
-  }, [format, size])
+  }, [format, size]);
 
   return (
     <section className="preview-panel">
@@ -738,24 +981,43 @@ function PreviewPanel({
                 fgColor={fgColor}
                 bgColor={bgColor}
                 marginSize={2}
-                imageSettings={logo ? {
-                  src: logo,
-                  height: 40,
-                  width: 40,
-                  excavate: true,
-                } : undefined}
+                imageSettings={
+                  logo
+                    ? {
+                        src: logo,
+                        height: 40,
+                        width: 40,
+                        excavate: true,
+                      }
+                    : undefined
+                }
               />
             </div>
           ) : (
             <div className="qr-placeholder">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><path d="M21 14v3h-3M21 21h-3v-3"/></svg>
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="3" height="3" />
+                <path d="M21 14v3h-3M21 21h-3v-3" />
+              </svg>
               <p>Paste a URL to get started</p>
             </div>
           )}
         </div>
 
-        <p className={`status ${isValidUrl ? 'status-ready' : ''}`}>
-          {isValidUrl ? 'Ready to download' : 'Enter a valid URL'}
+        <p className={`status ${isValidUrl ? "status-ready" : ""}`}>
+          {isValidUrl ? "Ready to download" : "Enter a valid URL"}
         </p>
 
         <div className="export-bar">
@@ -763,31 +1025,52 @@ function PreviewPanel({
             {FORMATS.map((f) => (
               <button
                 key={f}
-                className={`format-option ${format === f.toLowerCase() || format === f ? 'active' : ''}`}
+                className={`format-option ${format === f.toLowerCase() || format === f ? "active" : ""}`}
                 onClick={() => onFormatChange(f.toLowerCase())}
               >
                 {f}
               </button>
             ))}
           </div>
-          <button className="download-btn" onClick={handleDownload} disabled={!isValidUrl}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <button
+            className="download-btn"
+            onClick={handleDownload}
+            disabled={!isValidUrl}
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
             Download
           </button>
         </div>
 
         <footer className="footer">
           <span>Powered by</span>
-          <a href="https://imbensantos.com" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://imbensantos.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <strong>imBento</strong>
           </a>
         </footer>
       </div>
     </section>
-  )
+  );
 }
 
-export default PreviewPanel
+export default PreviewPanel;
 ```
 
 **Step 3: Create PreviewPanel.css**
@@ -831,8 +1114,14 @@ Style the preview panel, QR card, doodle positions/animations, format selector, 
 }
 
 @keyframes fadeScaleIn {
-  from { opacity: 0; transform: scale(0.85); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .qr-placeholder {
@@ -883,7 +1172,7 @@ Style the preview panel, QR card, doodle positions/animations, format selector, 
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 13px;
   font-weight: 500;
   color: var(--text-tertiary);
@@ -909,12 +1198,14 @@ Style the preview panel, QR card, doodle positions/animations, format selector, 
   border-radius: var(--radius-pill);
   background: var(--accent-primary);
   color: white;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
   box-shadow: var(--shadow-button);
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
 }
 
 .download-btn:hover:not(:disabled) {
@@ -954,49 +1245,169 @@ Style the preview panel, QR card, doodle positions/animations, format selector, 
   position: absolute;
 }
 
-.doodle-sparkle-1 { top: 13%; left: 17%; color: var(--accent-primary); opacity: 0.5; animation: twinkle 3s ease-in-out infinite; }
-.doodle-sparkle-2 { top: 22%; right: 15%; color: var(--accent-secondary); opacity: 0.45; animation: twinkle 3s ease-in-out infinite 1s; }
-.doodle-sparkle-3 { bottom: 15%; left: 55%; color: var(--accent-primary); opacity: 0.35; animation: twinkle 3s ease-in-out infinite 2s; }
+.doodle-sparkle-1 {
+  top: 13%;
+  left: 17%;
+  color: var(--accent-primary);
+  opacity: 0.5;
+  animation: twinkle 3s ease-in-out infinite;
+}
+.doodle-sparkle-2 {
+  top: 22%;
+  right: 15%;
+  color: var(--accent-secondary);
+  opacity: 0.45;
+  animation: twinkle 3s ease-in-out infinite 1s;
+}
+.doodle-sparkle-3 {
+  bottom: 15%;
+  left: 55%;
+  color: var(--accent-primary);
+  opacity: 0.35;
+  animation: twinkle 3s ease-in-out infinite 2s;
+}
 
-.doodle-heart-1 { top: 40%; left: 12%; color: var(--accent-primary); opacity: 0.3; animation: float 4s ease-in-out infinite; }
-.doodle-heart-2 { bottom: 20%; right: 12%; color: var(--accent-secondary); opacity: 0.25; animation: float 4s ease-in-out infinite 2s; }
+.doodle-heart-1 {
+  top: 40%;
+  left: 12%;
+  color: var(--accent-primary);
+  opacity: 0.3;
+  animation: float 4s ease-in-out infinite;
+}
+.doodle-heart-2 {
+  bottom: 20%;
+  right: 12%;
+  color: var(--accent-secondary);
+  opacity: 0.25;
+  animation: float 4s ease-in-out infinite 2s;
+}
 
-.doodle-corner-tl { top: 17%; left: 28%; color: var(--accent-primary); opacity: 0.4; }
-.doodle-corner-tr { top: 17%; right: 28%; color: var(--accent-primary); opacity: 0.4; }
-.doodle-corner-bl { bottom: 30%; left: 28%; color: var(--accent-primary); opacity: 0.4; }
-.doodle-corner-br { bottom: 30%; right: 28%; color: var(--accent-primary); opacity: 0.4; }
+.doodle-corner-tl {
+  top: 17%;
+  left: 28%;
+  color: var(--accent-primary);
+  opacity: 0.4;
+}
+.doodle-corner-tr {
+  top: 17%;
+  right: 28%;
+  color: var(--accent-primary);
+  opacity: 0.4;
+}
+.doodle-corner-bl {
+  bottom: 30%;
+  left: 28%;
+  color: var(--accent-primary);
+  opacity: 0.4;
+}
+.doodle-corner-br {
+  bottom: 30%;
+  right: 28%;
+  color: var(--accent-primary);
+  opacity: 0.4;
+}
 
-.doodle-wave-1 { bottom: 25%; left: 10%; color: var(--accent-primary); opacity: 0.25; animation: sway 5s ease-in-out infinite; }
+.doodle-wave-1 {
+  bottom: 25%;
+  left: 10%;
+  color: var(--accent-primary);
+  opacity: 0.25;
+  animation: sway 5s ease-in-out infinite;
+}
 
-.doodle-ring-1 { top: 50%; left: 14%; color: var(--accent-primary); opacity: 0.2; animation: spin 12s linear infinite; }
-.doodle-ring-2 { top: 18%; right: 22%; color: var(--accent-secondary); opacity: 0.2; animation: spin 15s linear infinite reverse; }
+.doodle-ring-1 {
+  top: 50%;
+  left: 14%;
+  color: var(--accent-primary);
+  opacity: 0.2;
+  animation: spin 12s linear infinite;
+}
+.doodle-ring-2 {
+  top: 18%;
+  right: 22%;
+  color: var(--accent-secondary);
+  opacity: 0.2;
+  animation: spin 15s linear infinite reverse;
+}
 
-.doodle-dot-1 { top: 28%; left: 22%; color: var(--accent-primary); opacity: 0.25; }
-.doodle-dot-2 { bottom: 18%; right: 18%; color: var(--accent-secondary); opacity: 0.25; }
-.doodle-dot-3 { top: 45%; right: 10%; color: var(--accent-primary); opacity: 0.2; }
+.doodle-dot-1 {
+  top: 28%;
+  left: 22%;
+  color: var(--accent-primary);
+  opacity: 0.25;
+}
+.doodle-dot-2 {
+  bottom: 18%;
+  right: 18%;
+  color: var(--accent-secondary);
+  opacity: 0.25;
+}
+.doodle-dot-3 {
+  top: 45%;
+  right: 10%;
+  color: var(--accent-primary);
+  opacity: 0.2;
+}
 
-.doodle-arrow { top: 24%; left: 18%; color: var(--accent-primary); opacity: 0.3; }
-.doodle-diamond { top: 14%; left: 52%; color: var(--accent-secondary); opacity: 0.3; animation: twinkle 4s ease-in-out infinite 1.5s; }
-.doodle-zigzag { bottom: 12%; right: 20%; color: var(--accent-primary); opacity: 0.25; }
+.doodle-arrow {
+  top: 24%;
+  left: 18%;
+  color: var(--accent-primary);
+  opacity: 0.3;
+}
+.doodle-diamond {
+  top: 14%;
+  left: 52%;
+  color: var(--accent-secondary);
+  opacity: 0.3;
+  animation: twinkle 4s ease-in-out infinite 1.5s;
+}
+.doodle-zigzag {
+  bottom: 12%;
+  right: 20%;
+  color: var(--accent-primary);
+  opacity: 0.25;
+}
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.2); }
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
 @keyframes sway {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(5px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Mobile */
@@ -1019,6 +1430,7 @@ git commit -m "feat: add PreviewPanel with doodle decorations and export control
 ### Task 4: Install new dependencies
 
 **Files:**
+
 - Modify: `apps/app/package.json`
 
 **Step 1: Install html-to-image and jspdf**
@@ -1039,6 +1451,7 @@ git commit -m "feat: add html-to-image and jspdf for multi-format export"
 ### Task 5: Clean up old component files
 
 **Files:**
+
 - Delete: `apps/app/src/components/QrGenerator.jsx`
 - Delete: `apps/app/src/components/QrGenerator.css`
 

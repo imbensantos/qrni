@@ -13,12 +13,14 @@ Drive visitors to the free QR tool via SEO and credibility. No sign-ups, no lead
 ## Sections
 
 ### 1. Hero
+
 - QRni logo (large, white, bold)
 - Headline: "Your free, instant QR code maker — no sign-up needed!"
 - CTA button: "Generate QR Code" → links to `app.qrni.imbento.co`
 - Screenshot/mockup of the app in Mac-style window frame
 
 ### 2. How It Works
+
 - 3 columns/cards with icons:
   1. Paste your URL
   2. QR code generates instantly
@@ -26,6 +28,7 @@ Drive visitors to the free QR tool via SEO and credibility. No sign-ups, no lead
 - Simple numbered steps, flat icons or Flaticon animated GIFs
 
 ### 3. Features
+
 - 4 highlight cards in a grid:
   - Free forever
   - No sign-up required
@@ -33,6 +36,7 @@ Drive visitors to the free QR tool via SEO and credibility. No sign-ups, no lead
   - High-quality PNG download
 
 ### 4. Footer
+
 - "Powered by imBento" with logo (same as the app)
 - Flaticon attribution link
 
@@ -54,10 +58,12 @@ qrni-landing/
 ```
 
 ## SEO
+
 - Proper `<title>`, `<meta description>`, OG tags
 - Static HTML — instant load, fully crawlable
 
 ## Domain Strategy
+
 - Launch with `qrni.imbento.co` (landing) + `app.qrni.imbento.co` (app)
 - Separate subdomains since landing (Astro) and app (Vite) are separate deployments
 - Migrate to `qrni.app` or similar if traction warrants it

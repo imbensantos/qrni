@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap");
 
 * {
   margin: 0;
@@ -8,24 +8,24 @@
 }
 
 :root {
-  --bg-page: #F5F4F1;
-  --bg-card: #FFFFFF;
-  --bg-surface: #FAFAF8;
-  --bg-preview: #F8F6F3;
-  --bg-muted: #EDECEA;
+  --bg-page: #f5f4f1;
+  --bg-card: #ffffff;
+  --bg-surface: #fafaf8;
+  --bg-preview: #f8f6f3;
+  --bg-muted: #edecea;
 
-  --text-primary: #1A1918;
-  --text-secondary: #6D6C6A;
-  --text-tertiary: #9C9B99;
+  --text-primary: #1a1918;
+  --text-secondary: #6d6c6a;
+  --text-tertiary: #9c9b99;
 
-  --accent-primary: #D89575;
-  --accent-primary-hover: #C8845F;
-  --accent-secondary: #3D8A5A;
-  --accent-light: #C8F0D8;
-  --accent-warm: #FFF0E8;
+  --accent-primary: #d89575;
+  --accent-primary-hover: #c8845f;
+  --accent-secondary: #3d8a5a;
+  --accent-light: #c8f0d8;
+  --accent-warm: #fff0e8;
 
-  --border-subtle: #E5E4E1;
-  --border-strong: #D1D0CD;
+  --border-subtle: #e5e4e1;
+  --border-strong: #d1d0cd;
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -39,7 +39,7 @@
 }
 
 body {
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   min-height: 100vh;
   background: var(--bg-page);
 }

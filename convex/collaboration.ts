@@ -26,7 +26,8 @@ export const createEmailInvite = mutation({
 
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== user._id) throw new Error("Only the namespace owner can invite members");
+    if (namespace.owner !== user._id)
+      throw new Error("Only the namespace owner can invite members");
 
     const normalizedEmail = args.email.toLowerCase().trim();
     if (!isValidEmail(normalizedEmail)) {
@@ -63,7 +64,8 @@ export const createInviteLink = mutation({
 
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== user._id) throw new Error("Only the namespace owner can create invite links");
+    if (namespace.owner !== user._id)
+      throw new Error("Only the namespace owner can create invite links");
 
     const token = generateShortCode(16);
 
@@ -104,7 +106,11 @@ export const acceptInvite = mutation({
     }
 
     if (invite.type === "email") {
-      if (!invite.email || !user.email || invite.email !== user.email.toLowerCase().trim()) {
+      if (
+        !invite.email ||
+        !user.email ||
+        invite.email !== user.email.toLowerCase().trim()
+      ) {
         throw new Error("This invite was sent to a different email address");
       }
     }
@@ -119,7 +125,7 @@ export const acceptInvite = mutation({
     const existingMembership = await ctx.db
       .query("namespace_members")
       .withIndex("by_namespace_user", (q) =>
-        q.eq("namespace", invite.namespace).eq("user", user._id)
+        q.eq("namespace", invite.namespace).eq("user", user._id),
       )
       .first();
 
@@ -151,11 +157,13 @@ export const revokeInvite = mutation({
 
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== user._id) throw new Error("Only the namespace owner can revoke invites");
+    if (namespace.owner !== user._id)
+      throw new Error("Only the namespace owner can revoke invites");
 
     const invite = await ctx.db.get(args.inviteId);
     if (!invite) throw new Error("Invite not found");
-    if (invite.namespace !== args.namespaceId) throw new Error("Invite does not belong to this namespace");
+    if (invite.namespace !== args.namespaceId)
+      throw new Error("Invite does not belong to this namespace");
 
     await ctx.db.patch(args.inviteId, { revoked: true });
   },
@@ -175,11 +183,13 @@ export const removeMember = mutation({
 
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== user._id) throw new Error("Only the namespace owner can remove members");
+    if (namespace.owner !== user._id)
+      throw new Error("Only the namespace owner can remove members");
 
     const membership = await ctx.db.get(args.membershipId);
     if (!membership) throw new Error("Membership not found");
-    if (membership.namespace !== args.namespaceId) throw new Error("Membership does not belong to this namespace");
+    if (membership.namespace !== args.namespaceId)
+      throw new Error("Membership does not belong to this namespace");
 
     await ctx.db.delete(args.membershipId);
   },
@@ -198,10 +208,11 @@ export const listMembers = query({
       const membership = await ctx.db
         .query("namespace_members")
         .withIndex("by_namespace_user", (q) =>
-          q.eq("namespace", args.namespaceId).eq("user", userId)
+          q.eq("namespace", args.namespaceId).eq("user", userId),
         )
         .first();
-      if (!membership) throw new Error("Not authorized to view members of this namespace");
+      if (!membership)
+        throw new Error("Not authorized to view members of this namespace");
     }
 
     const members = await ctx.db
@@ -218,10 +229,14 @@ export const listMembers = query({
           joinedAt: member.joinedAt,
           invitedBy: member.invitedBy,
           user: memberUser
-            ? { _id: memberUser._id, name: memberUser.name, email: memberUser.email }
+            ? {
+                _id: memberUser._id,
+                name: memberUser.name,
+                email: memberUser.email,
+              }
             : null,
         };
-      })
+      }),
     );
   },
 });
@@ -239,10 +254,11 @@ export const listInvites = query({
       const membership = await ctx.db
         .query("namespace_members")
         .withIndex("by_namespace_user", (q) =>
-          q.eq("namespace", args.namespaceId).eq("user", userId)
+          q.eq("namespace", args.namespaceId).eq("user", userId),
         )
         .first();
-      if (!membership) throw new Error("Not authorized to view invites for this namespace");
+      if (!membership)
+        throw new Error("Not authorized to view invites for this namespace");
     }
 
     const now = Date.now();
@@ -253,7 +269,7 @@ export const listInvites = query({
 
     // Filter out expired invites — callers only need active/pending ones
     return invites.filter(
-      (invite) => invite.expiresAt === undefined || invite.expiresAt > now
+      (invite) => invite.expiresAt === undefined || invite.expiresAt > now,
     );
   },
 });

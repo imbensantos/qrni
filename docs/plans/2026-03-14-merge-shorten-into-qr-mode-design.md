@@ -34,15 +34,18 @@ Top-to-bottom flow:
 ### Preview Panel
 
 **Before generating (empty state):**
+
 - Current empty state with decorative doodles, centered card with QR icon + hint text
 
 **After generating (short link toggle OFF):**
+
 - QR code preview (large, centered)
 - Download format options (PNG / SVG / PDF)
 - Download button
 - Footer ("Powered by imBento")
 
 **After generating (short link toggle ON):**
+
 - QR code preview (large, centered) — encodes the short link URL
 - Download format options (PNG / SVG / PDF)
 - Download button
@@ -51,13 +54,13 @@ Top-to-bottom flow:
 
 ### Screens affected
 
-| Action | Screen IDs | Description |
-|--------|-----------|-------------|
-| Remove | `Ty57P` (S1), `1LQxm` (S2), `j302o` (S3), `DIihb` (S4) | Desktop Shorten screens |
-| Remove | M1, M2, M3, M4 (if they exist) | Mobile Shorten screens |
-| Update | `OXUT4` (S9) | Update mode toggle from 3 tabs to 2 tabs |
-| Update | `lxa5G`, `9dTUQ` | QRni App empty/active states — update mode toggle to 2 tabs |
-| Update | All remaining screens with mode toggle | Remove Shorten tab from toggle |
+| Action | Screen IDs                                             | Description                                                 |
+| ------ | ------------------------------------------------------ | ----------------------------------------------------------- |
+| Remove | `Ty57P` (S1), `1LQxm` (S2), `j302o` (S3), `DIihb` (S4) | Desktop Shorten screens                                     |
+| Remove | M1, M2, M3, M4 (if they exist)                         | Mobile Shorten screens                                      |
+| Update | `OXUT4` (S9)                                           | Update mode toggle from 3 tabs to 2 tabs                    |
+| Update | `lxa5G`, `9dTUQ`                                       | QRni App empty/active states — update mode toggle to 2 tabs |
+| Update | All remaining screens with mode toggle                 | Remove Shorten tab from toggle                              |
 
 ### What stays the same
 

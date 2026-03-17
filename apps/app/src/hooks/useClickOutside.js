@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect } from "react";
 
 /**
  * Attaches click-outside and Escape-key listeners when `isOpen` is true,
@@ -10,24 +10,24 @@ import { useEffect } from 'react'
  */
 export function useClickOutside(ref, onClose, isOpen) {
   useEffect(() => {
-    if (!isOpen) return
+    if (!isOpen) return;
 
     function handleClickOutside(e) {
       if (ref.current && !ref.current.contains(e.target)) {
-        onClose()
+        onClose();
       }
     }
 
     function handleEscape(e) {
-      if (e.key === 'Escape') onClose()
+      if (e.key === "Escape") onClose();
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
-    document.addEventListener('keydown', handleEscape)
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('keydown', handleEscape)
-    }
-  }, [ref, onClose, isOpen])
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [ref, onClose, isOpen]);
 }

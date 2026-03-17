@@ -42,7 +42,10 @@ export const createAnonymousLink = mutation({
         throw new Error("Rate limit exceeded. Try again later.");
       }
       if (rateLimit.windowStart <= oneHourAgo) {
-        await ctx.db.patch(rateLimit._id, { windowStart: Date.now(), count: 1 });
+        await ctx.db.patch(rateLimit._id, {
+          windowStart: Date.now(),
+          count: 1,
+        });
       } else {
         await ctx.db.patch(rateLimit._id, { count: rateLimit.count + 1 });
       }
@@ -65,7 +68,10 @@ export const createAnonymousLink = mutation({
       recentDuplicate.destinationUrl === args.destinationUrl &&
       Date.now() - recentDuplicate.createdAt < DUPLICATE_WINDOW_MS
     ) {
-      return { shortCode: recentDuplicate.shortCode, linkId: recentDuplicate._id };
+      return {
+        shortCode: recentDuplicate.shortCode,
+        linkId: recentDuplicate._id,
+      };
     }
 
     // Generate unique short code
@@ -82,7 +88,9 @@ export const createAnonymousLink = mutation({
     } while (attempts < 5);
 
     if (attempts >= 5) {
-      throw new Error("Failed to generate unique short code. Please try again.");
+      throw new Error(
+        "Failed to generate unique short code. Please try again.",
+      );
     }
 
     const linkId = await ctx.db.insert("links", {
@@ -121,7 +129,10 @@ export const createAnonymousLinkInternal = internalMutation({
         throw new Error("Rate limit exceeded. Try again later.");
       }
       if (rateLimit.windowStart <= oneHourAgo) {
-        await ctx.db.patch(rateLimit._id, { windowStart: Date.now(), count: 1 });
+        await ctx.db.patch(rateLimit._id, {
+          windowStart: Date.now(),
+          count: 1,
+        });
       } else {
         await ctx.db.patch(rateLimit._id, { count: rateLimit.count + 1 });
       }
@@ -144,7 +155,10 @@ export const createAnonymousLinkInternal = internalMutation({
       recentDuplicate.destinationUrl === args.destinationUrl &&
       Date.now() - recentDuplicate.createdAt < DUPLICATE_WINDOW_MS
     ) {
-      return { shortCode: recentDuplicate.shortCode, linkId: recentDuplicate._id };
+      return {
+        shortCode: recentDuplicate.shortCode,
+        linkId: recentDuplicate._id,
+      };
     }
 
     // Generate unique short code
@@ -161,7 +175,9 @@ export const createAnonymousLinkInternal = internalMutation({
     } while (attempts < 5);
 
     if (attempts >= 5) {
-      throw new Error("Failed to generate unique short code. Please try again.");
+      throw new Error(
+        "Failed to generate unique short code. Please try again.",
+      );
     }
 
     const linkId = await ctx.db.insert("links", {
@@ -191,7 +207,9 @@ export const createCustomSlugLink = mutation({
     if (!user) throw new Error("User not found");
 
     if (!isValidCustomSlug(args.customSlug)) {
-      throw new Error("Slug must be 1-60 chars: letters, numbers, hyphens, underscores");
+      throw new Error(
+        "Slug must be 1-60 chars: letters, numbers, hyphens, underscores",
+      );
     }
 
     validateDestinationUrl(args.destinationUrl);
@@ -203,7 +221,9 @@ export const createCustomSlugLink = mutation({
       .take(500);
     const flatCustomCount = existingLinks.filter((l) => !l.namespace).length;
     if (flatCustomCount >= 5) {
-      throw new Error("You've used all 5 custom slugs. Create a namespace for unlimited links!");
+      throw new Error(
+        "You've used all 5 custom slugs. Create a namespace for unlimited links!",
+      );
     }
 
     // Duplicate submission guard: reject same URL + slug within 5 seconds
@@ -218,7 +238,10 @@ export const createCustomSlugLink = mutation({
       recentDuplicate.shortCode === args.customSlug &&
       Date.now() - recentDuplicate.createdAt < DUPLICATE_WINDOW_MS
     ) {
-      return { shortCode: recentDuplicate.shortCode, linkId: recentDuplicate._id };
+      return {
+        shortCode: recentDuplicate.shortCode,
+        linkId: recentDuplicate._id,
+      };
     }
 
     // Check slug availability against existing links
@@ -267,13 +290,15 @@ export const createNamespacedLink = mutation({
     const membership = await ctx.db
       .query("namespace_members")
       .withIndex("by_namespace_user", (q) =>
-        q.eq("namespace", args.namespaceId).eq("user", user._id)
+        q.eq("namespace", args.namespaceId).eq("user", user._id),
       )
       .first();
     const isEditor = membership?.role === "editor";
 
     if (!isOwner && !isEditor) {
-      throw new Error("You don't have permission to add links to this namespace");
+      throw new Error(
+        "You don't have permission to add links to this namespace",
+      );
     }
 
     validateDestinationUrl(args.destinationUrl);
@@ -283,7 +308,7 @@ export const createNamespacedLink = mutation({
     const recentDuplicate = await ctx.db
       .query("links")
       .withIndex("by_namespace_slug", (q) =>
-        q.eq("namespace", args.namespaceId).eq("namespaceSlug", args.slug)
+        q.eq("namespace", args.namespaceId).eq("namespaceSlug", args.slug),
       )
       .first();
     if (
@@ -297,7 +322,7 @@ export const createNamespacedLink = mutation({
     const existing = await ctx.db
       .query("links")
       .withIndex("by_namespace_slug", (q) =>
-        q.eq("namespace", args.namespaceId).eq("namespaceSlug", args.slug)
+        q.eq("namespace", args.namespaceId).eq("namespaceSlug", args.slug),
       )
       .first();
     if (existing) throw new Error("This slug already exists in this namespace");
@@ -389,7 +414,9 @@ export const updateLink = mutation({
 
     if (args.newSlug !== undefined) {
       if (!isValidCustomSlug(args.newSlug)) {
-        throw new Error("Slug must be 1-60 chars: letters, numbers, hyphens, underscores");
+        throw new Error(
+          "Slug must be 1-60 chars: letters, numbers, hyphens, underscores",
+        );
       }
 
       let newShortCode: string;
@@ -399,10 +426,13 @@ export const updateLink = mutation({
         const existing = await ctx.db
           .query("links")
           .withIndex("by_namespace_slug", (q) =>
-            q.eq("namespace", link.namespace!).eq("namespaceSlug", args.newSlug!)
+            q
+              .eq("namespace", link.namespace!)
+              .eq("namespaceSlug", args.newSlug!),
           )
           .first();
-        if (existing && existing._id !== link._id) throw new Error("This slug already exists in this namespace");
+        if (existing && existing._id !== link._id)
+          throw new Error("This slug already exists in this namespace");
         newShortCode = `${ns.slug}/${args.newSlug}`;
         updates.namespaceSlug = args.newSlug;
       } else {
@@ -410,7 +440,8 @@ export const updateLink = mutation({
           .query("links")
           .withIndex("by_short_code", (q) => q.eq("shortCode", args.newSlug!))
           .first();
-        if (existing && existing._id !== link._id) throw new Error("This slug is already taken");
+        if (existing && existing._id !== link._id)
+          throw new Error("This slug is already taken");
         newShortCode = args.newSlug;
       }
       updates.shortCode = newShortCode;
@@ -441,7 +472,7 @@ export const listNamespaceLinks = query({
       const membership = await ctx.db
         .query("namespace_members")
         .withIndex("by_namespace_user", (q) =>
-          q.eq("namespace", args.namespaceId).eq("user", user._id)
+          q.eq("namespace", args.namespaceId).eq("user", user._id),
         )
         .first();
       if (!membership) return [];
@@ -449,7 +480,9 @@ export const listNamespaceLinks = query({
 
     return await ctx.db
       .query("links")
-      .withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId))
+      .withIndex("by_namespace_slug", (q) =>
+        q.eq("namespace", args.namespaceId),
+      )
       .order("desc")
       .take(500);
   },

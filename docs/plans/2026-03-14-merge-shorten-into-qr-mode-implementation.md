@@ -19,10 +19,10 @@ Delete the 4 desktop Shorten screens that are no longer needed.
 Use `batch_design` on `designs/qrni-app.pen`:
 
 ```javascript
-D("Ty57P")
-D("1LQxm")
-D("j302o")
-D("DIihb")
+D("Ty57P");
+D("1LQxm");
+D("j302o");
+D("DIihb");
 ```
 
 - `Ty57P` = S1 Desktop - Shorten Anonymous
@@ -52,10 +52,10 @@ Delete the 4 mobile Shorten screens.
 Use `batch_design` on `designs/qrni-app.pen`:
 
 ```javascript
-D("OuWIG")
-D("hOZ9r")
-D("2VCQI")
-D("7uuuN")
+D("OuWIG");
+D("hOZ9r");
+D("2VCQI");
+D("7uuuN");
 ```
 
 - `OuWIG` = M1 Mobile - Shorten Anonymous
@@ -82,12 +82,12 @@ Update the 4 remaining desktop screens that have a 3-tab Mode Toggle. Remove the
 
 **Screens and their Mode Toggle + Shorten tab IDs:**
 
-| Screen | Toggle ID | Shorten Tab ID | Currently Active Tab |
-|--------|-----------|---------------|---------------------|
-| S5 (Create Namespace) `Zl9Gk` | `SVsCR` | `dIgma` | Shorten (needs to change to Single) |
-| S6 (Namespace Mgmt) `zLCnP` | `l5geZ` | `o0yTN` | Shorten (needs to change to Single) |
-| S7 (Editor/Viewer) `vTTXy` | `2m0pS` | `g9i3n` | Shorten (needs to change to Single) |
-| S9 (QR Mode) `OXUT4` | `Mlp6P` | `yAH1L` | Single (stays Single) |
+| Screen                        | Toggle ID | Shorten Tab ID | Currently Active Tab                |
+| ----------------------------- | --------- | -------------- | ----------------------------------- |
+| S5 (Create Namespace) `Zl9Gk` | `SVsCR`   | `dIgma`        | Shorten (needs to change to Single) |
+| S6 (Namespace Mgmt) `zLCnP`   | `l5geZ`   | `o0yTN`        | Shorten (needs to change to Single) |
+| S7 (Editor/Viewer) `vTTXy`    | `2m0pS`   | `g9i3n`        | Shorten (needs to change to Single) |
+| S9 (QR Mode) `OXUT4`          | `Mlp6P`   | `yAH1L`        | Single (stays Single)               |
 
 **Step 1: Delete Shorten tabs and fix active states for S5, S6, S7**
 
@@ -96,10 +96,10 @@ For S5, S6, S7: the Shorten tab is currently active (has white fill + shadow). A
 Use `batch_design` on `designs/qrni-app.pen`:
 
 ```javascript
-D("dIgma")
-D("o0yTN")
-D("g9i3n")
-D("yAH1L")
+D("dIgma");
+D("o0yTN");
+D("g9i3n");
+D("yAH1L");
 ```
 
 **Step 2: Update Single tab to active state on S5, S6, S7**
@@ -107,21 +107,51 @@ D("yAH1L")
 The Single tabs on S5/S6/S7 currently have inactive styling. Update them to active:
 
 S5 Single tab (`cvvHB`): update text child
+
 ```javascript
-U("cvvHB", {fill: "$white", effect: {"blur": 3, "color": "#1A191810", "offset": {"x": 0, "y": 1}, "shadowType": "outer", "type": "shadow"}})
-U("t3HOE", {fill: "$text-primary", fontWeight: "600"})
+U("cvvHB", {
+  fill: "$white",
+  effect: {
+    blur: 3,
+    color: "#1A191810",
+    offset: { x: 0, y: 1 },
+    shadowType: "outer",
+    type: "shadow",
+  },
+});
+U("t3HOE", { fill: "$text-primary", fontWeight: "600" });
 ```
 
 S6 Single tab (`3XLYx`): update text child
+
 ```javascript
-U("3XLYx", {fill: "$white", effect: {"blur": 3, "color": "#1A191810", "offset": {"x": 0, "y": 1}, "shadowType": "outer", "type": "shadow"}})
-U("QsoNm", {fill: "$text-primary", fontWeight: "600"})
+U("3XLYx", {
+  fill: "$white",
+  effect: {
+    blur: 3,
+    color: "#1A191810",
+    offset: { x: 0, y: 1 },
+    shadowType: "outer",
+    type: "shadow",
+  },
+});
+U("QsoNm", { fill: "$text-primary", fontWeight: "600" });
 ```
 
 S7 Single tab (`tIJzm`): update text child
+
 ```javascript
-U("tIJzm", {fill: "$white", effect: {"blur": 3, "color": "#1A191810", "offset": {"x": 0, "y": 1}, "shadowType": "outer", "type": "shadow"}})
-U("1Ku7l", {fill: "$text-primary", fontWeight: "600"})
+U("tIJzm", {
+  fill: "$white",
+  effect: {
+    blur: 3,
+    color: "#1A191810",
+    offset: { x: 0, y: 1 },
+    shadowType: "outer",
+    type: "shadow",
+  },
+});
+U("1Ku7l", { fill: "$text-primary", fontWeight: "600" });
 ```
 
 All 10 operations (4 deletes + 6 updates) can be done in a single `batch_design` call.
@@ -145,26 +175,36 @@ Update the 2 remaining mobile screens that have a 3-tab Mode Toggle.
 
 **Screens and their Mode Toggle + Shorten tab IDs:**
 
-| Screen | Toggle ID | Shorten Tab ID | Currently Active Tab |
-|--------|-----------|---------------|---------------------|
-| M5 (Create Namespace) `G12x2` | `HUJkf` | `G1NND` | Shorten (needs to change to Single) |
-| M9 (QR Mode) `0zMb7` | `iSQ18` | `kgwXs` | Single (stays Single) |
+| Screen                        | Toggle ID | Shorten Tab ID | Currently Active Tab                |
+| ----------------------------- | --------- | -------------- | ----------------------------------- |
+| M5 (Create Namespace) `G12x2` | `HUJkf`   | `G1NND`        | Shorten (needs to change to Single) |
+| M9 (QR Mode) `0zMb7`          | `iSQ18`   | `kgwXs`        | Single (stays Single)               |
 
 **Step 1: Delete Shorten tabs**
 
 Use `batch_design` on `designs/qrni-app.pen`:
 
 ```javascript
-D("G1NND")
-D("kgwXs")
+D("G1NND");
+D("kgwXs");
 ```
 
 **Step 2: Update M5 Single tab to active state**
 
 M5 Single tab (`S442W`): update text child
+
 ```javascript
-U("S442W", {fill: "$white", effect: {"blur": 3, "color": "#1A191810", "offset": {"x": 0, "y": 1}, "shadowType": "outer", "type": "shadow"}})
-U("Tgclb", {fill: "$text-primary", fontWeight: "600"})
+U("S442W", {
+  fill: "$white",
+  effect: {
+    blur: 3,
+    color: "#1A191810",
+    offset: { x: 0, y: 1 },
+    shadowType: "outer",
+    type: "shadow",
+  },
+});
+U("Tgclb", { fill: "$text-primary", fontWeight: "600" });
 ```
 
 **Step 3: Verify with screenshots**
@@ -189,8 +229,8 @@ Rename screens to remove "Shorten" references and clarify the new unified struct
 Use `batch_design` on `designs/qrni-app.pen`:
 
 ```javascript
-U("OXUT4", {name: "S5 Desktop - Single Mode with Short Link Toggle"})
-U("0zMb7", {name: "M5 Mobile - Single Mode with Short Link Toggle"})
+U("OXUT4", { name: "S5 Desktop - Single Mode with Short Link Toggle" });
+U("0zMb7", { name: "M5 Mobile - Single Mode with Short Link Toggle" });
 ```
 
 Renumber S5-S9 and M5-M9 if desired (screen naming is cosmetic).
