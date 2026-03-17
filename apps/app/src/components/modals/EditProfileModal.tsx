@@ -94,14 +94,16 @@ function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProps) {
               {(user?.name || "?").charAt(0).toUpperCase()}
             </div>
           )}
-          <div className="edit-profile-avatar-actions">
-            <button type="button" className="edit-profile-avatar-link upload">
-              Upload
-            </button>
-            <button type="button" className="edit-profile-avatar-link remove">
-              Remove
-            </button>
-          </div>
+          {import.meta.env.VITE_FEATURE_AVATAR_UPLOAD === "true" && (
+            <div className="edit-profile-avatar-actions">
+              <button type="button" className="edit-profile-avatar-link upload">
+                Upload
+              </button>
+              <button type="button" className="edit-profile-avatar-link remove">
+                Remove
+              </button>
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="edit-profile-form">

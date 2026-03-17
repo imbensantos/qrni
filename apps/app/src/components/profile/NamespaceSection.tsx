@@ -142,8 +142,8 @@ function NamespaceSection({
             </div>
           )}
 
-          {/* Invite (owner only) */}
-          {isOwner && (
+          {/* Invite (owner only, behind feature flag) */}
+          {isOwner && import.meta.env.VITE_FEATURE_INVITES === "true" && (
             <button
               className="pp-invite-btn"
               onClick={() => onInvite(namespace._id, namespace.slug)}
