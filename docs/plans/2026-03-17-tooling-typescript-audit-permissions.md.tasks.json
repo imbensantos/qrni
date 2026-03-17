@@ -1,0 +1,17 @@
+{
+  "planPath": "docs/plans/2026-03-17-tooling-typescript-audit-permissions.md",
+  "tasks": [
+    {"id": 1, "subject": "Task 1: Set up Prettier + root ESLint", "status": "pending"},
+    {"id": 2, "subject": "Task 2: Set up Husky + lint-staged", "status": "pending", "blockedBy": [1]},
+    {"id": 3, "subject": "Task 3: Add TypeScript config to apps/app", "status": "pending", "blockedBy": [2]},
+    {"id": 4, "subject": "Task 4: Migrate utils to TypeScript", "status": "pending", "blockedBy": [3]},
+    {"id": 5, "subject": "Task 5: Migrate hooks to TypeScript", "status": "pending", "blockedBy": [4]},
+    {"id": 6, "subject": "Task 6: Migrate shared components to TypeScript", "status": "pending", "blockedBy": [5]},
+    {"id": 7, "subject": "Task 7: Migrate profile + modal components to TypeScript", "status": "pending", "blockedBy": [6]},
+    {"id": 8, "subject": "Task 8: Migrate pages + App + router to TypeScript", "status": "pending", "blockedBy": [7]},
+    {"id": 9, "subject": "Task 9: Add audit logging", "status": "pending"},
+    {"id": 10, "subject": "Task 10: Enforce role-based permissions", "status": "pending", "blockedBy": [9]},
+    {"id": 11, "subject": "Task 11: Document homograph protection", "status": "pending"}
+  ],
+  "lastUpdated": "2026-03-17T00:00:00Z"
+}
