@@ -32,6 +32,11 @@ dist-ssr
 # Vercel
 .vercel/
 
+# Test artifacts
+test-results/
+playwright-report/
+coverage/
+
 # Secrets and credentials — never commit these
 docs/client_secret*
 *.secret.*
