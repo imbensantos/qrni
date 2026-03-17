@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { useMutation, useQuery } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../../../convex/_generated/api";
 import type { Id } from "../../../../convex/_generated/dataModel";
@@ -117,14 +117,17 @@ function ControlsPanel({
     }
   };
 
-  const createAnonymousLink = useMutation(api.links.createAnonymousLink);
-  const createCustomSlugLink = useMutation(api.links.createCustomSlugLink);
-  const createNamespacedLink = useMutation(api.links.createNamespacedLink);
+  const createAnonymousLink = useAction(api.links.createAnonymousLink);
+  const createAutoSlugLink = useAction(api.links.createAutoSlugLink);
+  const createCustomSlugLink = useAction(api.links.createCustomSlugLink);
+  const createNamespacedLink = useAction(api.links.createNamespacedLink);
 
   const myLinks = useQuery(api.links.listMyLinks) ?? [];
   const myNamespaces = useQuery(api.namespaces.listMine);
 
-  const flatCustomCount = myLinks.filter((l) => !l.namespace && l.owner).length;
+  const flatCustomCount = myLinks.filter(
+    (l) => !l.namespace && l.owner && !l.autoSlug,
+  ).length;
 
   const allNamespaces: Namespace[] = [
     ...(myNamespaces?.owned ?? []),
@@ -168,9 +171,8 @@ function ControlsPanel({
             customSlug: customSlug.trim(),
           });
         } else {
-          res = await createAnonymousLink({
+          res = await createAutoSlugLink({
             destinationUrl: targetUrl,
-            creatorIp: getSessionId(),
           });
         }
         onShortLinkCreated?.(res);
@@ -190,6 +192,7 @@ function ControlsPanel({
       selectedNamespace,
       customSlug,
       createAnonymousLink,
+      createAutoSlugLink,
       createNamespacedLink,
       createCustomSlugLink,
       onShortLinkCreated,

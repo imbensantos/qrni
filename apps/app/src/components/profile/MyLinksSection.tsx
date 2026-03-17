@@ -18,9 +18,7 @@ function MyLinksSection({
   onDelete,
 }: MyLinksSectionProps) {
   const personalLinks = links ? links.filter((l) => !l.namespace) : [];
-  const customSlugCount = personalLinks.filter(
-    (l) => l.shortCode && l.shortCode.length > 6,
-  ).length;
+  const customSlugCount = personalLinks.filter((l) => !l.autoSlug).length;
 
   return (
     <div className="pp-card">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useMutation } from "convex/react";
+import { useAction } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
+import { cleanConvexError } from "../../utils/errors";
 import ModalBackdrop from "./ModalBackdrop";
 import { IconPencil, IconLink, IconClose } from "../Icons";
 import { formatDate } from "../../utils/ui-utils";
@@ -29,7 +30,7 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const updateLink = useMutation(api.links.updateLink);
+  const updateLink = useAction(api.links.updateLink);
 
   // Sync form state when link prop changes
   useEffect(() => {
@@ -79,7 +80,8 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
       });
       onClose();
     } catch (err) {
-      setError((err as Error).message || "Failed to update link");
+      const msg = cleanConvexError((err as Error).message || "");
+      setError(msg || "Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }

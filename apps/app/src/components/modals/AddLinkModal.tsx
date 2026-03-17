@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useMutation } from "convex/react";
+import { useAction } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
+import { cleanConvexError } from "../../utils/errors";
 import ModalBackdrop from "./ModalBackdrop";
 import { IconPlus, IconClose, IconLink } from "../Icons";
 import { Id } from "../../../../../convex/_generated/dataModel";
@@ -25,8 +26,9 @@ function AddLinkModal({
   const [urlError, setUrlError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const createCustomSlugLink = useMutation(api.links.createCustomSlugLink);
-  const createNamespacedLink = useMutation(api.links.createNamespacedLink);
+  const createAutoSlugLink = useAction(api.links.createAutoSlugLink);
+  const createCustomSlugLink = useAction(api.links.createCustomSlugLink);
+  const createNamespacedLink = useAction(api.links.createNamespacedLink);
 
   useEffect(() => {
     if (isOpen) {
@@ -40,7 +42,7 @@ function AddLinkModal({
 
   const prefix = namespaceId
     ? `${window.location.host}/${namespaceSlug}/`
-    : `${window.location.host}/s/`;
+    : `${window.location.host}/`;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,10 +50,12 @@ function AddLinkModal({
     setUrlError("");
 
     let hasError = false;
-    if (!slug.trim()) {
-      setSlugError("Slug is required");
+    const hasSlug = slug.trim().length > 0;
+
+    if (namespaceId && !hasSlug) {
+      setSlugError("Slug is required for namespaced links");
       hasError = true;
-    } else if (!/^[a-zA-Z0-9_-]{1,60}$/.test(slug)) {
+    } else if (hasSlug && !/^[a-zA-Z0-9_-]{1,60}$/.test(slug)) {
       setSlugError(
         "Only letters, numbers, and hyphens allowed (max 60 characters)",
       );
@@ -75,20 +79,26 @@ function AddLinkModal({
     try {
       if (namespaceId) {
         await createNamespacedLink({ destinationUrl, namespaceId, slug });
-      } else {
+      } else if (hasSlug) {
         await createCustomSlugLink({ destinationUrl, customSlug: slug });
+      } else {
+        await createAutoSlugLink({ destinationUrl });
       }
       onClose();
     } catch (err) {
-      const message = (err as Error).message || "Something went wrong";
+      const message =
+        cleanConvexError((err as Error).message || "") ||
+        "Something went wrong. Please try again.";
       if (
-        message.toLowerCase().includes("slug") ||
-        message.toLowerCase().includes("short")
+        message.toLowerCase().includes("name") ||
+        message.toLowerCase().includes("short") ||
+        message.toLowerCase().includes("limit")
       ) {
         setSlugError(message);
       } else if (
         message.toLowerCase().includes("url") ||
-        message.toLowerCase().includes("destination")
+        message.toLowerCase().includes("destination") ||
+        message.toLowerCase().includes("harmful")
       ) {
         setUrlError(message);
       } else {
@@ -152,6 +162,9 @@ function AddLinkModal({
           <div className="alm-field">
             <label className="alm-label" htmlFor="alm-slug">
               Short link slug
+              {!namespaceId && (
+                <span className="alm-optional"> (optional)</span>
+              )}
             </label>
             <div className={`alm-slug-row ${slugError ? "has-error" : ""}`}>
               <span className="alm-slug-prefix">{prefix}</span>
@@ -164,14 +177,18 @@ function AddLinkModal({
                   setSlug(e.target.value);
                   setSlugError("");
                 }}
-                placeholder="my-link"
+                placeholder={
+                  namespaceId ? "my-link" : "my-link (auto-generated if empty)"
+                }
               />
             </div>
             {slugError ? (
               <p className="alm-error">{slugError}</p>
             ) : (
               <p className="alm-hint">
-                Only letters, numbers, and hyphens allowed
+                {namespaceId
+                  ? "Only letters, numbers, and hyphens allowed"
+                  : "Leave empty to auto-generate, or enter a custom slug"}
               </p>
             )}
           </div>
