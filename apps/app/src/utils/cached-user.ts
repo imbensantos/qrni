@@ -8,7 +8,7 @@ export interface CachedUser {
 
 export function getCachedUser(): CachedUser | null {
   try {
-    const raw = localStorage.getItem(CACHED_USER_KEY);
+    const raw = sessionStorage.getItem(CACHED_USER_KEY);
     return raw ? (JSON.parse(raw) as CachedUser) : null;
   } catch {
     return null;
@@ -17,7 +17,7 @@ export function getCachedUser(): CachedUser | null {
 
 export function cacheUser(user: CachedUser): void {
   try {
-    localStorage.setItem(
+    sessionStorage.setItem(
       CACHED_USER_KEY,
       JSON.stringify({
         name: user.name,
@@ -31,7 +31,13 @@ export function cacheUser(user: CachedUser): void {
 }
 
 export function clearCachedUser(): void {
-  localStorage.removeItem(CACHED_USER_KEY);
+  sessionStorage.removeItem(CACHED_USER_KEY);
+  // Clean up any legacy localStorage entries
+  try {
+    localStorage.removeItem(CACHED_USER_KEY);
+  } catch {
+    /* ignore */
+  }
 }
 
 export function hasCachedUser(): boolean {

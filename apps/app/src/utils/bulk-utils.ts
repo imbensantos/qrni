@@ -12,6 +12,7 @@ export interface BulkEntry {
 }
 
 export function isValidUrl(url: string): boolean {
+  if (typeof url !== "string" || url.includes("\0")) return false;
   try {
     const u = new URL(url);
     return u.protocol === "http:" || u.protocol === "https:";
@@ -21,8 +22,14 @@ export function isValidUrl(url: string): boolean {
 }
 
 export function sanitizeLabel(label: string | number): string {
+  let str: string;
+  try {
+    str = String(label);
+  } catch {
+    str = "";
+  }
   return (
-    String(label)
+    str
       .trim()
       .toLowerCase()
       .replace(/\s+/g, "-")
@@ -129,8 +136,18 @@ export function parseJSON(text: string): BulkEntry[] {
   }
 
   const entries = (data as Record<string, unknown>[]).slice(0, MAX_ENTRIES).map((item, i) => {
-    const label = String(item["label"] ?? item["name"] ?? "");
-    const url = String(item["url"] ?? item["link"] ?? "");
+    let label: string;
+    let url: string;
+    try {
+      label = String(item["label"] ?? item["name"] ?? "");
+    } catch {
+      label = "";
+    }
+    try {
+      url = String(item["url"] ?? item["link"] ?? "");
+    } catch {
+      url = "";
+    }
     const valid = isValidUrl(url);
     const error = !label.trim()
       ? "Missing label"

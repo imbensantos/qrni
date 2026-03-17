@@ -15,12 +15,22 @@ export default defineConfig({
   plugins: [
     react(),
     {
+      name: "security-headers",
+      configureServer(server) {
+        server.middlewares.use((_req, res, next) => {
+          res.setHeader("X-Content-Type-Options", "nosniff");
+          res.setHeader("X-Frame-Options", "DENY");
+          res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+          res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+          next();
+        });
+      },
+    },
+    {
       name: "short-link-proxy",
       configureServer(server) {
         if (!CONVEX_SITE_URL) {
-          console.warn(
-            "[short-link-proxy] VITE_CONVEX_URL is not set — short-link proxy disabled",
-          );
+          console.warn("[short-link-proxy] VITE_CONVEX_URL is not set — short-link proxy disabled");
           return;
         }
         server.middlewares.use(async (req, res, next) => {
@@ -35,10 +45,7 @@ export default defineConfig({
                 redirect: "manual",
               });
               const location = upstream.headers.get("location");
-              if (
-                location &&
-                (upstream.status === 301 || upstream.status === 302)
-              ) {
+              if (location && (upstream.status === 301 || upstream.status === 302)) {
                 res.writeHead(upstream.status, { Location: location });
                 res.end();
                 return;
@@ -52,4 +59,7 @@ export default defineConfig({
       },
     },
   ],
+  build: {
+    sourcemap: false,
+  },
 });

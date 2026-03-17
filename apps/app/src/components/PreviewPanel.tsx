@@ -63,7 +63,9 @@ function PreviewPanel({
 
   useEffect(() => {
     if (qrContainerRef.current) {
-      qrContainerRef.current.innerHTML = "";
+      while (qrContainerRef.current.firstChild) {
+        qrContainerRef.current.removeChild(qrContainerRef.current.firstChild);
+      }
       qrCode.append(qrContainerRef.current);
     }
   }, [qrCode]);

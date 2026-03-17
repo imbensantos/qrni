@@ -30,11 +30,10 @@ describe("isValidUrl — protocol injection prevention", () => {
     expect(isValidUrl("vbscript:MsgBox('XSS')")).toBe(false);
   });
 
-  it("does not reject URLs with null bytes (known gap — URL constructor accepts them)", () => {
-    // SECURITY NOTE: The URL constructor in browsers/jsdom does not reject null bytes.
-    // isValidUrl only checks the protocol, so null bytes in paths pass through.
-    // If this becomes a requirement, add explicit null-byte checking to isValidUrl.
-    expect(isValidUrl("https://example.com/\0malicious")).toBe(true);
+  it("rejects URLs with null bytes", () => {
+    expect(isValidUrl("https://example.com/\0malicious")).toBe(false);
+    expect(isValidUrl("https://example.com/path\0")).toBe(false);
+    expect(isValidUrl("\0https://example.com")).toBe(false);
   });
 
   it("rejects URLs with protocol embedded in path (http://evil.com/javascript:)", () => {
@@ -116,11 +115,7 @@ describe("bulk parsing — malicious input handling", () => {
     expect(result[0].valid).toBe(false);
   });
 
-  it("throws on JSON with objects that override toString to non-function (current bug)", () => {
-    // SECURITY NOTE: If an attacker provides { toString: "evil" }, String() throws
-    // TypeError: Cannot convert object to primitive value.
-    // parseJSON does not currently catch this — it propagates the error.
-    // This is a real bug that should be fixed with a try/catch around String().
+  it("handles JSON with objects that override toString to non-function gracefully", () => {
     const malicious = JSON.stringify([
       {
         label: { toString: "evil" },
@@ -128,7 +123,11 @@ describe("bulk parsing — malicious input handling", () => {
       },
     ]);
 
-    expect(() => parseJSON(malicious)).toThrow("Cannot convert object to primitive value");
+    const result = parseJSON(malicious);
+    expect(result).toHaveLength(1);
+    // String() coercion failure falls back to empty string → "Missing label"
+    expect(result[0].valid).toBe(false);
+    expect(result[0].error).toBe("Missing label");
   });
 
   it("handles CSV injection (=CMD formulas in labels)", () => {
