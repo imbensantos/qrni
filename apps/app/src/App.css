@@ -16,7 +16,7 @@
 .signin-btn {
   padding: 8px 20px;
   border: none;
-  border-radius: 100px;
+  border-radius: var(--radius-pill);
   background: var(--accent-primary);
   color: white;
   font-family: "Outfit", sans-serif;
@@ -60,7 +60,7 @@
   height: calc(100% - 6px);
   background: var(--bg-card);
   border-radius: var(--radius-sm);
-  box-shadow: 0 1px 3px rgba(26, 25, 24, 0.06);
+  box-shadow: var(--shadow-subtle);
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 0;
 }

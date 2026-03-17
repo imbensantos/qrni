@@ -225,7 +225,7 @@
 .shorten-error {
   font-size: 13px;
   font-weight: 500;
-  color: #d85555;
+  color: var(--color-error);
   margin: 0;
 }
 

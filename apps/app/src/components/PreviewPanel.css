@@ -97,7 +97,7 @@
   height: calc(100% - 6px);
   background: var(--bg-card);
   border-radius: var(--radius-sm);
-  box-shadow: 0 1px 3px rgba(26, 25, 24, 0.06);
+  box-shadow: var(--shadow-subtle);
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 0;
 }
@@ -165,7 +165,7 @@
 
 .download-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(216, 149, 117, 0.35);
+  box-shadow: var(--shadow-button-hover);
 }
 
 .download-btn:focus-visible {
@@ -174,7 +174,7 @@
 }
 
 .download-btn:disabled {
-  background: #c4b5ab;
+  background: var(--bg-disabled);
   cursor: not-allowed;
 }
 

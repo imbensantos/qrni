@@ -134,7 +134,7 @@
 }
 
 .action-btn.delete:hover {
-  color: #d85555;
+  color: var(--color-error);
 }
 
 /* Mobile */

@@ -33,9 +33,26 @@
   --radius-xl: 20px;
   --radius-pill: 100px;
 
-  --shadow-card: 0 2px 12px rgba(26, 25, 24, 0.03);
+  --shadow-subtle: 0 1px 3px rgba(26, 25, 24, 0.06);
+  --shadow-card: 0 2px 8px rgba(26, 25, 24, 0.03);
   --shadow-elevated: 0 4px 20px rgba(26, 25, 24, 0.06);
+  --shadow-dropdown: 0 4px 16px rgba(26, 25, 24, 0.1);
   --shadow-button: 0 4px 16px rgba(216, 149, 117, 0.25);
+  --shadow-button-hover: 0 6px 20px rgba(216, 149, 117, 0.35);
+  --shadow-modal: 0 8px 32px rgba(26, 25, 24, 0.15);
+
+  --color-error: #dc2626;
+  --color-error-hover: #b91c1c;
+  --color-error-bg: #fee2e2;
+  --color-error-text: #dc2626;
+
+  --color-warning-bg: #fff8e1;
+  --color-warning-text: #b8860b;
+
+  --bg-disabled: #c4b5ab;
+
+  --accent-warm-hover: #fde5d4;
+  --accent-success-bg: #e8f5e9;
 }
 
 body {

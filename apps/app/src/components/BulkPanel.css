@@ -69,14 +69,14 @@
   font-weight: 600;
   color: white;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(216, 149, 117, 0.25);
+  box-shadow: var(--shadow-button);
   transition:
     transform 0.15s ease,
     box-shadow 0.2s;
 }
 
 .file-upload-btn:hover {
-  box-shadow: 0 6px 20px rgba(216, 149, 117, 0.35);
+  box-shadow: var(--shadow-button-hover);
   transform: translateY(-1px);
 }
 

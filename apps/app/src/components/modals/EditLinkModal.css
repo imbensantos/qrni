@@ -166,8 +166,8 @@
 /* Error */
 .edit-link-error {
   font-size: 13px;
-  color: #d94444;
-  background: #fef0f0;
+  color: var(--color-error);
+  background: var(--color-error-bg);
   padding: 10px 14px;
   border-radius: var(--radius-md);
 }
