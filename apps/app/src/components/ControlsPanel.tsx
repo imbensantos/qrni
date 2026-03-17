@@ -182,7 +182,9 @@ function ControlsPanel({
     try {
       await signIn("google");
     } catch (err) {
-      console.error("Sign-in error:", err);
+      if (import.meta.env.DEV) {
+        console.error("Sign-in error:", err);
+      }
     }
   };
 

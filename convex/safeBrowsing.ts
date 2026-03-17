@@ -1,16 +1,23 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 
-export async function checkUrlSafety(
-  url: string,
-): Promise<{ safe: boolean; unchecked?: boolean }> {
+export async function checkUrlSafety(url: string): Promise<{ safe: boolean; unchecked?: boolean }> {
   const apiKey = process.env.GOOGLE_SAFE_BROWSING_API_KEY;
   if (!apiKey) {
-    console.warn(
-      "GOOGLE_SAFE_BROWSING_API_KEY is not set — URL threat checking is disabled. " +
-        "Configure the env var in the Convex dashboard to enable it.",
+    // In development, allow URLs through unchecked but warn loudly.
+    // In production, refuse to silently skip safety checks — this prevents
+    // a misconfigured deployment from becoming an open redirect to malware.
+    const isDev = process.env.CONVEX_IS_DEV === "true";
+    if (isDev) {
+      console.warn(
+        "GOOGLE_SAFE_BROWSING_API_KEY is not set — URL threat checking is disabled in dev mode. " +
+          "Configure the env var in the Convex dashboard to enable it.",
+      );
+      return { safe: true, unchecked: true };
+    }
+    throw new Error(
+      "URL safety checking is unavailable. GOOGLE_SAFE_BROWSING_API_KEY must be configured.",
     );
-    return { safe: true, unchecked: true };
   }
 
   const response = await fetch(

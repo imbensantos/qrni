@@ -1,6 +1,11 @@
 import { MutationCtx } from "../_generated/server";
 import { Id } from "../_generated/dataModel";
 
+// TODO: Implement a scheduled cleanup job (e.g., Convex cron) to prune audit
+// log entries older than a retention period (e.g., 90 days). Without cleanup,
+// the audit_log table will grow unbounded. This is acceptable for early-stage
+// usage but must be addressed before production scale.
+
 export async function logAudit(
   ctx: MutationCtx,
   args: {

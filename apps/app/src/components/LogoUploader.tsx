@@ -1,5 +1,9 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
+
+const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"] as const;
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
 interface LogoUploaderProps {
   logo: string | null;
@@ -17,11 +21,28 @@ function LogoUploader({
   showIcon = true,
 }: LogoUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const { trigger } = useWebHaptics();
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    setUploadError(null);
+
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type as (typeof ALLOWED_IMAGE_TYPES)[number])) {
+      setUploadError("Only PNG, JPEG, WebP, and GIF images are allowed.");
+      // Reset the input so the same file can be re-selected after fixing
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      setUploadError("Image must be under 5 MB.");
+      e.target.value = "";
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (ev) => onLogoChange(ev.target?.result as string);
     reader.readAsDataURL(file);
@@ -68,7 +89,7 @@ function LogoUploader({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/png,image/jpeg,image/webp,image/gif"
             onChange={handleLogoUpload}
             hidden
             aria-label="Upload logo image"
@@ -98,6 +119,11 @@ function LogoUploader({
             </svg>
             <span>Add logo</span>
           </button>
+          {uploadError && (
+            <p className="logo-upload-error" role="alert">
+              {uploadError}
+            </p>
+          )}
         </>
       )}
     </section>

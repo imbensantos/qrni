@@ -19,7 +19,9 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo): void {
-    console.error("Uncaught render error:", error, info);
+    if (import.meta.env.DEV) {
+      console.error("Uncaught render error:", error, info);
+    }
   }
 
   render() {

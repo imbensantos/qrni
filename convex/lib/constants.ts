@@ -23,6 +23,9 @@ export const ANONYMOUS_RATE_LIMIT = 10;
 /** Authenticated user link creation rate limit per user per window */
 export const AUTH_RATE_LIMIT = 100;
 
+/** Invite acceptance rate limit per user per window */
+export const INVITE_RATE_LIMIT = 10;
+
 /** Rate limit window duration in milliseconds (1 hour) */
 export const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 
@@ -83,6 +86,12 @@ export const ERR = {
   MEMBERSHIP_NOT_IN_NAMESPACE: "Membership does not belong to this namespace",
   ONLY_OWNER_CAN_TRANSFER: "Only the owner can transfer ownership",
   TARGET_MUST_BE_MEMBER: "Target user must be a member of this namespace",
+
+  INVITE_RATE_LIMITED: "Too many invite attempts. Please wait a bit and try again.",
+
+  // Generic security messages (avoid leaking entity existence)
+  LINK_NOT_FOUND_OR_DENIED: "Link not found or access denied",
+  INVITE_INVALID: "Invalid or expired invite",
 
   // User
   NAME_TOO_LONG: `Name must be ${MAX_USER_NAME_LENGTH} characters or fewer`,

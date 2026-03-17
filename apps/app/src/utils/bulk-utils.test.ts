@@ -50,14 +50,13 @@ describe("isValidUrl", () => {
   });
 
   it("returns false for non-string inputs coerced at runtime", () => {
-     
     expect(isValidUrl(null as any)).toBe(false);
-     
+
     expect(isValidUrl(undefined as any)).toBe(false);
   });
 
-  it("is case-sensitive (uppercase HTTP is invalid)", () => {
-    expect(isValidUrl("HTTP://EXAMPLE.COM")).toBe(false);
+  it("accepts case-insensitive protocols (HTTP:// is valid per RFC)", () => {
+    expect(isValidUrl("HTTP://EXAMPLE.COM")).toBe(true);
   });
 });
 

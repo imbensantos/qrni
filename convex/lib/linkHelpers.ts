@@ -7,6 +7,7 @@ import {
   ERR,
   ANONYMOUS_RATE_LIMIT,
   AUTH_RATE_LIMIT,
+  INVITE_RATE_LIMIT,
   RATE_LIMIT_WINDOW_MS,
 } from "./constants";
 
@@ -169,6 +170,40 @@ export async function checkAnonymousRateLimit(ctx: MutationCtx, ip: string): Pro
     .take(10);
   for (const record of expiredRecords) {
     await ctx.db.delete(record._id);
+  }
+}
+
+/**
+ * Checks and updates the rate limit for invite acceptance (by user ID).
+ * Uses a stricter limit (10/hour) to prevent brute-force token guessing.
+ */
+export async function checkInviteRateLimit(ctx: MutationCtx, userId: Id<"users">): Promise<void> {
+  const windowStart = Date.now() - RATE_LIMIT_WINDOW_MS;
+  const key = `invite:${userId}`;
+
+  const rateLimit = await ctx.db
+    .query("rate_limits")
+    .withIndex("by_ip", (q) => q.eq("ip", key))
+    .first();
+
+  if (rateLimit) {
+    if (rateLimit.windowStart > windowStart && rateLimit.count >= INVITE_RATE_LIMIT) {
+      throw new Error(ERR.INVITE_RATE_LIMITED);
+    }
+    if (rateLimit.windowStart <= windowStart) {
+      await ctx.db.patch(rateLimit._id, {
+        windowStart: Date.now(),
+        count: 1,
+      });
+    } else {
+      await ctx.db.patch(rateLimit._id, { count: rateLimit.count + 1 });
+    }
+  } else {
+    await ctx.db.insert("rate_limits", {
+      ip: key,
+      windowStart: Date.now(),
+      count: 1,
+    });
   }
 }
 

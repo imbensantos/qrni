@@ -376,13 +376,17 @@ export const deleteLink = mutation({
     if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
     const link = await ctx.db.get(args.linkId);
-    if (!link) throw new Error("Link not found");
+    if (!link) throw new Error(ERR.LINK_NOT_FOUND_OR_DENIED);
 
     if (link.owner !== user._id) {
       if (link.namespace) {
-        await checkPermission(ctx, link.namespace, user._id, "editor");
+        try {
+          await checkPermission(ctx, link.namespace, user._id, "editor");
+        } catch {
+          throw new Error(ERR.LINK_NOT_FOUND_OR_DENIED);
+        }
       } else {
-        throw new Error(ERR.NOT_AUTHORIZED);
+        throw new Error(ERR.LINK_NOT_FOUND_OR_DENIED);
       }
     }
 
@@ -411,13 +415,17 @@ export const updateLinkInternal = internalMutation({
     if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
     const link = await ctx.db.get(args.linkId);
-    if (!link) throw new Error("Link not found");
+    if (!link) throw new Error(ERR.LINK_NOT_FOUND_OR_DENIED);
 
     if (link.owner !== user._id) {
       if (link.namespace) {
-        await checkPermission(ctx, link.namespace, user._id, "editor");
+        try {
+          await checkPermission(ctx, link.namespace, user._id, "editor");
+        } catch {
+          throw new Error(ERR.LINK_NOT_FOUND_OR_DENIED);
+        }
       } else {
-        throw new Error(ERR.NOT_AUTHORIZED);
+        throw new Error(ERR.LINK_NOT_FOUND_OR_DENIED);
       }
     }
 
@@ -502,6 +510,9 @@ export const updateLink = action({
   },
 });
 
+// Security: Returns [] on permission denial intentionally rather than throwing.
+// This prevents namespace existence enumeration — an unauthorized caller cannot
+// distinguish "namespace doesn't exist" from "namespace exists but I lack access".
 export const listNamespaceLinks = query({
   args: {
     namespaceId: v.id("namespaces"),

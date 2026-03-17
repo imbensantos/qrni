@@ -12,10 +12,12 @@ export interface BulkEntry {
 }
 
 export function isValidUrl(url: string): boolean {
-  return (
-    typeof url === "string" &&
-    (url.startsWith("http://") || url.startsWith("https://"))
-  );
+  try {
+    const u = new URL(url);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 export function sanitizeLabel(label: string | number): string {
@@ -55,20 +57,8 @@ export function parseCSV(text: string): BulkEntry[] {
   // If the first row looks like a header (contains known column names), use it
   if (withHeader.meta.fields && hasHeaderRow(withHeader.meta.fields)) {
     const entries = withHeader.data.slice(0, MAX_ENTRIES).map((row, i) => {
-      const label = (
-        row["label"] ||
-        row["Label"] ||
-        row["name"] ||
-        row["Name"] ||
-        ""
-      ).trim();
-      const url = (
-        row["url"] ||
-        row["URL"] ||
-        row["link"] ||
-        row["Link"] ||
-        ""
-      ).trim();
+      const label = (row["label"] || row["Label"] || row["name"] || row["Name"] || "").trim();
+      const url = (row["url"] || row["URL"] || row["link"] || row["Link"] || "").trim();
       return buildEntry(i, label, url);
     });
     return deduplicateLabels(entries);
@@ -138,28 +128,26 @@ export function parseJSON(text: string): BulkEntry[] {
     ];
   }
 
-  const entries = (data as Record<string, unknown>[])
-    .slice(0, MAX_ENTRIES)
-    .map((item, i) => {
-      const label = String(item["label"] ?? item["name"] ?? "");
-      const url = String(item["url"] ?? item["link"] ?? "");
-      const valid = isValidUrl(url);
-      const error = !label.trim()
-        ? "Missing label"
-        : !url.trim()
-          ? "Missing URL"
-          : !valid
-            ? "Invalid URL (must start with http:// or https://)"
-            : null;
-      return {
-        index: i + 1,
-        label: label.trim(),
-        url: url.trim(),
-        filename: sanitizeLabel(label),
-        valid: !!label.trim() && valid,
-        error,
-      };
-    });
+  const entries = (data as Record<string, unknown>[]).slice(0, MAX_ENTRIES).map((item, i) => {
+    const label = String(item["label"] ?? item["name"] ?? "");
+    const url = String(item["url"] ?? item["link"] ?? "");
+    const valid = isValidUrl(url);
+    const error = !label.trim()
+      ? "Missing label"
+      : !url.trim()
+        ? "Missing URL"
+        : !valid
+          ? "Invalid URL (must start with http:// or https://)"
+          : null;
+    return {
+      index: i + 1,
+      label: label.trim(),
+      url: url.trim(),
+      filename: sanitizeLabel(label),
+      valid: !!label.trim() && valid,
+      error,
+    };
+  });
 
   return deduplicateLabels(entries);
 }

@@ -2,6 +2,7 @@ import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { logAudit } from "./lib/auditLog";
+import { sanitizeText } from "./lib/validation";
 import { MAX_USER_NAME_LENGTH, ERR } from "./lib/constants";
 
 export const currentUser = query({
@@ -25,10 +26,11 @@ export const updateProfile = mutation({
     const updates: Record<string, unknown> = {};
 
     if (args.name !== undefined) {
-      if (args.name.length > MAX_USER_NAME_LENGTH) {
+      const sanitizedName = sanitizeText(args.name);
+      if (sanitizedName.length > MAX_USER_NAME_LENGTH) {
         throw new Error(ERR.NAME_TOO_LONG);
       }
-      updates.name = args.name;
+      updates.name = sanitizedName;
     }
 
     if (args.avatarUrl !== undefined) {

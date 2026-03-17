@@ -4,6 +4,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { isValidSlug } from "./lib/shortCode";
 import { logAudit } from "./lib/auditLog";
 import { checkPermission } from "./lib/permissions";
+import { sanitizeText } from "./lib/validation";
 import { MAX_NAMESPACES_PER_USER, MAX_DESCRIPTION_LENGTH, ERR } from "./lib/constants";
 
 const RESERVED_SLUGS = [
@@ -77,7 +78,13 @@ export const create = mutation({
       throw new Error(ERR.NAMESPACE_RESERVED);
     }
 
-    if (args.description !== undefined && args.description.length > MAX_DESCRIPTION_LENGTH) {
+    const sanitizedDescription =
+      args.description !== undefined ? sanitizeText(args.description) : undefined;
+
+    if (
+      sanitizedDescription !== undefined &&
+      sanitizedDescription.length > MAX_DESCRIPTION_LENGTH
+    ) {
       throw new Error(ERR.DESCRIPTION_TOO_LONG);
     }
 
@@ -104,7 +111,7 @@ export const create = mutation({
     const namespaceId = await ctx.db.insert("namespaces", {
       owner: user._id,
       slug,
-      description: args.description,
+      description: sanitizedDescription,
       createdAt: Date.now(),
       lastActiveAt: Date.now(),
     });
@@ -143,10 +150,11 @@ export const update = mutation({
 
     // Handle description update
     if (args.description !== undefined) {
-      if (args.description.length > MAX_DESCRIPTION_LENGTH) {
+      const sanitizedDescription = sanitizeText(args.description);
+      if (sanitizedDescription.length > MAX_DESCRIPTION_LENGTH) {
         throw new Error(ERR.DESCRIPTION_TOO_LONG);
       }
-      updates.description = args.description || undefined;
+      updates.description = sanitizedDescription || undefined;
     }
 
     // Handle slug rename

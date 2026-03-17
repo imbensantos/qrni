@@ -108,6 +108,9 @@ describe("ERR error messages", () => {
     "MEMBERSHIP_NOT_IN_NAMESPACE",
     "ONLY_OWNER_CAN_TRANSFER",
     "TARGET_MUST_BE_MEMBER",
+    "INVITE_RATE_LIMITED",
+    "LINK_NOT_FOUND_OR_DENIED",
+    "INVITE_INVALID",
     "NAME_TOO_LONG",
     "AVATAR_MUST_BE_HTTPS",
   ] as const;

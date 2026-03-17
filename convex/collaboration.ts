@@ -5,6 +5,7 @@ import { generateShortCode } from "./lib/shortCode";
 import { logAudit } from "./lib/auditLog";
 import { checkPermission } from "./lib/permissions";
 import { isValidEmail } from "./lib/validation";
+import { checkInviteRateLimit } from "./lib/linkHelpers";
 import { INVITE_TTL_MS, ERR } from "./lib/constants";
 
 const roleValidator = v.union(v.literal("editor"), v.literal("viewer"));
@@ -33,7 +34,8 @@ export const createEmailInvite = mutation({
       throw new Error(ERR.INVALID_EMAIL);
     }
 
-    const token = generateShortCode(16);
+    // Use 32 chars (~190 bits of entropy) to make brute-force infeasible
+    const token = generateShortCode(32);
 
     const inviteId = await ctx.db.insert("namespace_invites", {
       namespace: namespace._id,
@@ -81,7 +83,8 @@ export const createInviteLink = mutation({
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
 
-    const token = generateShortCode(16);
+    // Use 32 chars (~190 bits of entropy) to make brute-force infeasible
+    const token = generateShortCode(32);
 
     const inviteId = await ctx.db.insert("namespace_invites", {
       namespace: namespace._id,
@@ -115,21 +118,26 @@ export const acceptInvite = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
+    // Rate limit invite acceptance to prevent brute-force token guessing
+    await checkInviteRateLimit(ctx, user._id);
+
     const invite = await ctx.db
       .query("namespace_invites")
       .withIndex("by_token", (q) => q.eq("token", args.token))
       .first();
 
-    if (!invite) throw new Error(ERR.INVITE_NOT_FOUND);
-    if (invite.revoked) throw new Error(ERR.INVITE_REVOKED);
+    // Use a single generic error for all invalid invite states to prevent
+    // enumeration of valid tokens, expired vs revoked status, etc.
+    if (!invite) throw new Error(ERR.INVITE_INVALID);
+    if (invite.revoked) throw new Error(ERR.INVITE_INVALID);
 
     if (invite.expiresAt !== undefined && Date.now() > invite.expiresAt) {
-      throw new Error(ERR.INVITE_EXPIRED);
+      throw new Error(ERR.INVITE_INVALID);
     }
 
     if (invite.type === "email") {
       if (!invite.email || !user.email || invite.email !== user.email.toLowerCase().trim()) {
-        throw new Error(ERR.INVITE_WRONG_EMAIL);
+        throw new Error(ERR.INVITE_INVALID);
       }
     }
 
