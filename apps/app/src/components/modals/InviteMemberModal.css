@@ -151,6 +151,19 @@
   z-index: 10;
   overflow: hidden;
   min-width: 100%;
+  animation: imm-dropdown-in 0.18s ease-out;
+  transform-origin: top center;
+}
+
+@keyframes imm-dropdown-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .imm-role-option {

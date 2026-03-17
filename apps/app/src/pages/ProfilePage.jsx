@@ -79,14 +79,6 @@ function IconChevronDown({ size = 16 }) {
   )
 }
 
-function IconChevronUp({ size = 16 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="18 15 12 9 6 15" />
-    </svg>
-  )
-}
-
 function IconPlus({ size = 16 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -508,18 +500,18 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
 
           {/* Expand/Collapse */}
           <button
-            className="pp-icon-btn"
+            className={`pp-icon-btn pp-chevron-toggle${expanded ? ' pp-chevron-toggle--open' : ''}`}
             onClick={() => setExpanded(e => !e)}
             title={expanded ? 'Collapse' : 'Expand'}
           >
-            {expanded ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
+            <IconChevronDown size={16} />
           </button>
         </div>
       </div>
 
-      {/* Expanded content */}
-      {expanded && (
-        <>
+      {/* Expandable content */}
+      <div className={`pp-collapse${expanded ? ' pp-collapse--open' : ''}`}>
+        <div className="pp-collapse-inner">
           <div className="pp-divider" />
 
           <div className="pp-link-list">
@@ -588,8 +580,8 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
               </div>
             </>
           )}
-        </>
-      )}
+        </div>
+      </div>
     </div>
   )
 }

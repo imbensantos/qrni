@@ -247,6 +247,30 @@
   background: #c4835f;
 }
 
+/* ─── Collapse Animation ────────────────────────────────────────────────────── */
+
+.pp-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+}
+
+.pp-collapse--open {
+  grid-template-rows: 1fr;
+}
+
+.pp-collapse-inner {
+  overflow: hidden;
+}
+
+.pp-chevron-toggle svg {
+  transition: transform 0.25s ease;
+}
+
+.pp-chevron-toggle--open svg {
+  transform: rotate(180deg);
+}
+
 /* ─── Dividers ───────────────────────────────────────────────────────────────── */
 
 .pp-divider {
@@ -390,6 +414,13 @@
 
 .pp-copy-btn.copied {
   color: #3D8A5A;
+  animation: pp-copy-pop 0.3s ease;
+}
+
+@keyframes pp-copy-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
 }
 
 /* ─── Empty State ────────────────────────────────────────────────────────────── */
@@ -559,6 +590,19 @@
   box-shadow: 0 4px 16px rgba(26, 25, 24, 0.08);
   padding: 6px;
   z-index: 50;
+  animation: pp-dropdown-in 0.18s ease-out;
+  transform-origin: top right;
+}
+
+@keyframes pp-dropdown-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .pp-kebab-item {
@@ -661,7 +705,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1.5px solid #E5E4E1;
+  border: 1.5px dashed #E5E4E1;
   border-radius: 16px;
   background: transparent;
   color: #9C9B99;
@@ -669,12 +713,17 @@
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition: border-color 0.3s, color 0.3s, background 0.3s;
 }
 
 .pp-create-namespace-btn:hover {
   border-color: #D89575;
   color: #D89575;
+  background: #FFF0E8;
+}
+
+.pp-create-namespace-btn:active {
+  transform: scale(0.985);
 }
 
 /* ─── All Namespace Links View ───────────────────────────────────────────────── */
