@@ -84,10 +84,10 @@ function AllNamespaceLinksView({
           <table className="all-links-table">
             <thead>
               <tr>
-                <th>Link</th>
-                <th>Clicks</th>
-                <th>Created</th>
-                <th>Actions</th>
+                <th scope="col">Link</th>
+                <th scope="col">Clicks</th>
+                <th scope="col">Created</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody>
