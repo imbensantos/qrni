@@ -117,10 +117,8 @@ function IconFolderOpen({ size = 18 }) {
 function IconClick({ size = 12 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 9l-1-1" />
-      <path d="M9 14H5a1 1 0 01-1-1V5a1 1 0 011-1h9a1 1 0 011 1v4" />
-      <path d="M13.5 13.5l4.5 4.5" />
-      <path d="M13 13l1.5 5.5 2-2 2 2 1.5-1.5-2-2 2-2z" />
+      <path d="m4 4 7.07 17 2.51-7.39L21 11.07z" />
+      <path d="m15 15 5 5" />
     </svg>
   )
 }
@@ -219,14 +217,14 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete }) {
                   <div className="pp-link-info">
                     <div className="pp-link-short-row">
                       <a
-                        href={`https://${shortUrl}`}
+                        href={`${window.location.origin}/${link.shortCode}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="pp-link-short-url"
                       >
                         {shortUrl}
                       </a>
-                      <CopyButton text={`https://${shortUrl}`} />
+                      <CopyButton text={`${window.location.origin}/${link.shortCode}`} />
                     </div>
                     <div className="pp-link-destination">{link.destinationUrl}</div>
                   </div>
@@ -317,10 +315,10 @@ function AllNamespaceLinksView({ namespaceId, namespaceName, onBack, onEdit, onD
                   <tr key={link._id}>
                     <td>
                       <div className="pp-link-short-row">
-                        <a href={`https://${shortUrl}`} target="_blank" rel="noopener noreferrer" className="pp-link-short-url">
+                        <a href={`${window.location.origin}/${link.shortCode}`} target="_blank" rel="noopener noreferrer" className="pp-link-short-url">
                           /{link.shortCode}
                         </a>
-                        <CopyButton text={`https://${shortUrl}`} />
+                        <CopyButton text={`${window.location.origin}/${link.shortCode}`} />
                       </div>
                       <div className="pp-link-destination">{link.destinationUrl}</div>
                     </td>
@@ -550,9 +548,14 @@ function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete
                         </span>
                         <span className="pp-link-date">{formatDate(link.createdAt)}</span>
                         {canEdit && (
-                          <button className="pp-icon-btn pp-icon-btn--delete" onClick={() => onDelete(link)} title="Delete link">
-                            <IconTrash size={14} />
-                          </button>
+                          <>
+                            <button className="pp-icon-btn" onClick={() => onEdit(link)} title="Edit link">
+                              <IconPencil size={14} />
+                            </button>
+                            <button className="pp-icon-btn pp-icon-btn--delete" onClick={() => onDelete(link)} title="Delete link">
+                              <IconTrash size={14} />
+                            </button>
+                          </>
                         )}
                       </div>
                     </div>
