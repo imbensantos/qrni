@@ -1,7 +1,7 @@
 .invite-member-modal {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 /* Header */
@@ -15,15 +15,15 @@
 .imm-header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .imm-icon {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--accent-warm);
-  color: var(--accent-primary);
+  background: #FFF0E8;
+  color: #D89575;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -32,10 +32,11 @@
 
 .imm-title {
   font-size: 1.125rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
   margin: 0;
   line-height: 1.3;
+  letter-spacing: -0.3px;
 }
 
 .imm-subtitle {
@@ -68,7 +69,7 @@
 
 .imm-input-row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: stretch;
 }
 
@@ -88,15 +89,17 @@
 
 .imm-email-input {
   width: 100%;
-  border: 1.5px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
+  border: 1px solid #E5E4E1;
+  border-radius: 12px;
   padding: 10px 12px 10px 36px;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-family: inherit;
   color: var(--text-primary);
-  background: var(--bg-card);
+  background: transparent;
   transition: border-color 0.15s;
   outline: none;
+  height: 44px;
+  box-sizing: border-box;
 }
 
 .imm-email-input:focus {
@@ -109,27 +112,76 @@
 }
 
 .imm-role-select {
-  border: 1.5px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
-  font-size: 0.875rem;
-  font-family: inherit;
-  color: var(--text-primary);
-  background: var(--bg-card);
-  cursor: pointer;
-  outline: none;
-  transition: border-color 0.15s;
+  position: relative;
+  flex-shrink: 0;
 }
 
-.imm-role-select:focus {
-  border-color: var(--accent-primary);
+.imm-role-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #E5E4E1;
+  border-radius: 12px;
+  padding: 0 12px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: #1A1918;
+  background: #FFFFFF;
+  cursor: pointer;
+  height: 44px;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+  white-space: nowrap;
+}
+
+.imm-role-trigger:hover {
+  border-color: #D89575;
+}
+
+.imm-role-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  border: 1px solid #E5E4E1;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(26, 25, 24, 0.1);
+  z-index: 10;
+  overflow: hidden;
+  min-width: 100%;
+}
+
+.imm-role-option {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: #1A1918;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.imm-role-option:hover {
+  background: #FAFAF8;
+}
+
+.imm-role-option--active {
+  color: #D89575;
+  font-weight: 600;
 }
 
 .imm-send-btn {
-  background: var(--accent-primary);
+  background: #D89575;
   color: #fff;
   border: none;
-  border-radius: var(--radius-pill);
+  border-radius: 12px;
   padding: 10px 20px;
   font-size: 0.875rem;
   font-weight: 600;
@@ -137,10 +189,12 @@
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.15s, opacity 0.15s;
+  height: 44px;
+  box-sizing: border-box;
 }
 
 .imm-send-btn:hover:not(:disabled) {
-  background: var(--accent-primary-hover);
+  background: #C4825F;
 }
 
 .imm-send-btn:disabled {
@@ -158,19 +212,27 @@
   border-radius: var(--radius-sm);
 }
 
+/* Divider */
+.imm-divider {
+  height: 1px;
+  background: #E5E4E1;
+  border: none;
+  margin: 0;
+}
+
 /* Members section */
 .imm-members-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 4px;
 }
 
 .imm-members-heading {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: #9C9B99;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.5px;
   margin: 0;
 }
 
@@ -183,28 +245,36 @@
 .imm-member-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
+  gap: 10px;
+  padding: 10px 0;
   transition: background 0.1s;
 }
 
 .imm-member-row:hover {
-  background: var(--border-subtle);
+  background: #FAFAF8;
+  border-radius: 8px;
+  margin: 0 -8px;
+  padding: 10px 8px;
 }
 
 /* Avatar */
 .imm-avatar {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: 700;
   flex-shrink: 0;
+}
+
+.imm-avatar--pending {
+  background: #EDECEA !important;
+  color: #9C9B99;
+  border: 1.5px solid #E5E4E1;
 }
 
 /* Member info */
@@ -217,28 +287,42 @@
 }
 
 .imm-member-name {
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #1A1918;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .imm-member-email {
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
+  font-size: 0.75rem;
+  color: #9C9B99;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.imm-pending-email {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6D6C6A;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.imm-pending-status {
+  font-size: 0.75rem;
+  color: #9C9B99;
+}
+
 /* Role badges */
 .imm-role-badge {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
-  padding: 3px 10px;
-  border-radius: var(--radius-pill);
+  padding: 4px 10px;
+  border-radius: 8px;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -249,8 +333,8 @@
 }
 
 .imm-role-editor {
-  background: #C8F0D8;
-  color: #3D8A5A;
+  background: #FAFAF8;
+  color: #6D6C6A;
 }
 
 .imm-role-viewer {
@@ -259,8 +343,15 @@
 }
 
 .imm-role-pending {
-  background: #FFF0E8;
-  color: #D89575;
+  background: #FFF8E1;
+  color: #B8860B;
+}
+
+/* Role + remove wrapper */
+.imm-role-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 /* Revoke button */
