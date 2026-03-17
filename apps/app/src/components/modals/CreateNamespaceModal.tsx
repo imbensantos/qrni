@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
+import { cleanConvexError } from "../../utils/errors";
 import ModalBackdrop from "./ModalBackdrop";
 import { IconFolderOpen, IconClose, IconGlobe } from "../Icons";
 import "./CreateNamespaceModal.css";
@@ -46,7 +47,8 @@ function CreateNamespaceModal({ isOpen, onClose }: CreateNamespaceModalProps) {
       await createNamespace({ slug: sanitizedName });
       onClose();
     } catch (err) {
-      setError((err as Error).message || "Failed to create namespace");
+      const msg = cleanConvexError((err as Error).message || "");
+      setError(msg || "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

@@ -129,8 +129,9 @@ function ControlsPanel({
     (l) => !l.namespace && l.owner && !l.autoSlug,
   ).length;
 
+  const ownedNamespaces = myNamespaces?.owned ?? [];
   const allNamespaces: Namespace[] = [
-    ...(myNamespaces?.owned ?? []),
+    ...ownedNamespaces,
     ...(myNamespaces?.collaborated ?? []).filter(
       (ns): ns is NonNullable<typeof ns> => ns !== null,
     ),
@@ -494,6 +495,10 @@ function ControlsPanel({
                               Add
                             </button>
                           </div>
+                        ) : ownedNamespaces.length >= 5 ? (
+                          <span className="ns-limit-msg">
+                            Namespace limit reached (5 of 5)
+                          </span>
                         ) : (
                           <button
                             type="button"

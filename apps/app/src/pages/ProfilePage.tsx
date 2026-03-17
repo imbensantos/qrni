@@ -241,6 +241,14 @@ function ProfilePage() {
             onDelete={modalHandlers.onDelete}
           />
 
+          {/* Namespace header */}
+          <div className="pp-namespace-header">
+            <span className="pp-card-title">Namespaces</span>
+            <span className="pp-slug-info">
+              {ownedWithRole.length} of 5 namespaces used
+            </span>
+          </div>
+
           {/* Namespace Cards */}
           {allNamespaces.map((ns, index) => (
             <NamespaceSection
@@ -281,6 +289,7 @@ function ProfilePage() {
           <button
             className="pp-create-namespace-btn"
             onClick={() => setCreateNamespaceModal(true)}
+            disabled={ownedWithRole.length >= 5}
           >
             <IconPlus size={16} />
             Create new namespace

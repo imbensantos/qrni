@@ -736,7 +736,14 @@
   background: var(--accent-warm-hover);
 }
 
-/* ─── Create Namespace Button ────────────────────────────────────────────────── */
+/* ─── Create Namespace Footer ────────────────────────────────────────────────── */
+
+.pp-namespace-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
 
 .pp-create-namespace-btn {
   width: 100%;

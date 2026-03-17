@@ -87,7 +87,7 @@ export const create = mutation({
       .withIndex("by_owner", (q) => q.eq("owner", user._id))
       .take(100);
     if (ownedNamespaces.length >= 5) {
-      throw new Error("You can create up to 5 namespaces");
+      throw new Error("You've reached the limit of 5 namespaces.");
     }
 
     const existing = await ctx.db
