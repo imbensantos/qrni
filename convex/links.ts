@@ -4,6 +4,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 
 import { generateShortCode, isValidCustomSlug } from "./lib/shortCode";
 import { logAudit } from "./lib/auditLog";
+import { checkPermission } from "./lib/permissions";
 
 const MAX_URL_LENGTH = 2048;
 // Duplicate submission window: reject same URL + slug within 5 seconds
@@ -292,23 +293,10 @@ export const createNamespacedLink = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
+    await checkPermission(ctx, args.namespaceId, user._id, "editor");
+
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-
-    const isOwner = namespace.owner === user._id;
-    const membership = await ctx.db
-      .query("namespace_members")
-      .withIndex("by_namespace_user", (q) =>
-        q.eq("namespace", args.namespaceId).eq("user", user._id),
-      )
-      .first();
-    const isEditor = membership?.role === "editor";
-
-    if (!isOwner && !isEditor) {
-      throw new Error(
-        "You don't have permission to add links to this namespace",
-      );
-    }
 
     validateDestinationUrl(args.destinationUrl);
 
@@ -399,7 +387,14 @@ export const deleteLink = mutation({
 
     const link = await ctx.db.get(args.linkId);
     if (!link) throw new Error("Link not found");
-    if (link.owner !== user._id) throw new Error("Not authorized");
+
+    if (link.owner !== user._id) {
+      if (link.namespace) {
+        await checkPermission(ctx, link.namespace, user._id, "editor");
+      } else {
+        throw new Error("Not authorized");
+      }
+    }
 
     await ctx.db.delete(args.linkId);
 
@@ -427,7 +422,14 @@ export const updateLink = mutation({
 
     const link = await ctx.db.get(args.linkId);
     if (!link) throw new Error("Link not found");
-    if (link.owner !== user._id) throw new Error("Not authorized");
+
+    if (link.owner !== user._id) {
+      if (link.namespace) {
+        await checkPermission(ctx, link.namespace, user._id, "editor");
+      } else {
+        throw new Error("Not authorized");
+      }
+    }
 
     const updates: Record<string, unknown> = {};
 
@@ -496,18 +498,10 @@ export const listNamespaceLinks = query({
     const user = await ctx.db.get(userId);
     if (!user) return [];
 
-    const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) return [];
-
-    const isOwner = namespace.owner === user._id;
-    if (!isOwner) {
-      const membership = await ctx.db
-        .query("namespace_members")
-        .withIndex("by_namespace_user", (q) =>
-          q.eq("namespace", args.namespaceId).eq("user", user._id),
-        )
-        .first();
-      if (!membership) return [];
+    try {
+      await checkPermission(ctx, args.namespaceId, user._id, "viewer");
+    } catch {
+      return [];
     }
 
     return await ctx.db

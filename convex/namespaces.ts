@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { isValidSlug } from "./lib/shortCode";
 import { logAudit } from "./lib/auditLog";
+import { checkPermission } from "./lib/permissions";
 
 const RESERVED_SLUGS = [
   // App routes
@@ -106,10 +107,10 @@ export const update = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
+    await checkPermission(ctx, args.namespaceId, user._id, "owner");
+
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== user._id)
-      throw new Error("Only the owner can edit a namespace");
 
     const updates: Record<string, unknown> = {};
 
@@ -223,10 +224,10 @@ export const remove = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
+    await checkPermission(ctx, args.namespaceId, user._id, "owner");
+
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== user._id)
-      throw new Error("Only the owner can delete a namespace");
 
     // Cascade delete: links, members, invites
     const links = await ctx.db

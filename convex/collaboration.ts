@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { generateShortCode } from "./lib/shortCode";
 import { logAudit } from "./lib/auditLog";
+import { checkPermission } from "./lib/permissions";
 
 const roleValidator = v.union(v.literal("editor"), v.literal("viewer"));
 
@@ -25,10 +26,10 @@ export const createEmailInvite = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
+    await checkPermission(ctx, args.namespaceId, user._id, "editor");
+
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== user._id)
-      throw new Error("Only the namespace owner can invite members");
 
     const normalizedEmail = args.email.toLowerCase().trim();
     if (!isValidEmail(normalizedEmail)) {
@@ -77,10 +78,10 @@ export const createInviteLink = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
+    await checkPermission(ctx, args.namespaceId, user._id, "editor");
+
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== user._id)
-      throw new Error("Only the namespace owner can create invite links");
 
     const token = generateShortCode(16);
 
@@ -188,10 +189,10 @@ export const revokeInvite = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
+    await checkPermission(ctx, args.namespaceId, user._id, "owner");
+
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== user._id)
-      throw new Error("Only the namespace owner can revoke invites");
 
     const invite = await ctx.db.get(args.inviteId);
     if (!invite) throw new Error("Invite not found");
@@ -222,10 +223,10 @@ export const removeMember = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
+    await checkPermission(ctx, args.namespaceId, user._id, "owner");
+
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== user._id)
-      throw new Error("Only the namespace owner can remove members");
 
     const membership = await ctx.db.get(args.membershipId);
     if (!membership) throw new Error("Membership not found");
@@ -250,19 +251,7 @@ export const listMembers = query({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Must be signed in");
 
-    // Verify caller is the namespace owner or a member
-    const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== userId) {
-      const membership = await ctx.db
-        .query("namespace_members")
-        .withIndex("by_namespace_user", (q) =>
-          q.eq("namespace", args.namespaceId).eq("user", userId),
-        )
-        .first();
-      if (!membership)
-        throw new Error("Not authorized to view members of this namespace");
-    }
+    await checkPermission(ctx, args.namespaceId, userId, "viewer");
 
     const members = await ctx.db
       .query("namespace_members")
@@ -296,19 +285,7 @@ export const listInvites = query({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Must be signed in");
 
-    // Verify caller is the namespace owner or a member
-    const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== userId) {
-      const membership = await ctx.db
-        .query("namespace_members")
-        .withIndex("by_namespace_user", (q) =>
-          q.eq("namespace", args.namespaceId).eq("user", userId),
-        )
-        .first();
-      if (!membership)
-        throw new Error("Not authorized to view invites for this namespace");
-    }
+    await checkPermission(ctx, args.namespaceId, userId, "viewer");
 
     const now = Date.now();
     const invites = await ctx.db
@@ -320,5 +297,57 @@ export const listInvites = query({
     return invites.filter(
       (invite) => invite.expiresAt === undefined || invite.expiresAt > now,
     );
+  },
+});
+
+export const transferOwnership = mutation({
+  args: {
+    namespaceId: v.id("namespaces"),
+    newOwnerId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
+
+    const namespace = await ctx.db.get(args.namespaceId);
+    if (!namespace) throw new Error("Namespace not found");
+    if (namespace.owner !== userId)
+      throw new Error("Only the owner can transfer ownership");
+
+    if (args.newOwnerId === userId)
+      throw new Error("You already own this namespace");
+
+    // Verify target is an existing member
+    const membership = await ctx.db
+      .query("namespace_members")
+      .withIndex("by_namespace_user", (q) =>
+        q.eq("namespace", args.namespaceId).eq("user", args.newOwnerId),
+      )
+      .first();
+    if (!membership)
+      throw new Error("Target user must be a member of this namespace");
+
+    // Transfer: set new owner on namespace
+    await ctx.db.patch(args.namespaceId, { owner: args.newOwnerId });
+
+    // Remove new owner from members table (owners aren't in members)
+    await ctx.db.delete(membership._id);
+
+    // Add old owner as editor member
+    await ctx.db.insert("namespace_members", {
+      namespace: args.namespaceId,
+      user: userId,
+      role: "editor",
+      invitedBy: args.newOwnerId,
+      joinedAt: Date.now(),
+    });
+
+    await logAudit(ctx, {
+      userId,
+      action: "namespace.transfer",
+      resourceType: "namespace",
+      resourceId: String(args.namespaceId),
+      metadata: { newOwner: String(args.newOwnerId) },
+    });
   },
 });
