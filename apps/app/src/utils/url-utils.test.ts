@@ -1,9 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { buildShortLinkUrl } from "./url-utils";
+import { getAppOrigin, getAppHost, buildShortLinkUrl } from "./url-utils";
 
 beforeEach(() => {
-  // Mock window.location.origin
-  vi.stubGlobal("location", { origin: "https://qrni.co" });
+  // Mock window.location.origin and host
+  vi.stubGlobal("location", { origin: "https://qrni.co", host: "qrni.co" });
+});
+
+describe("getAppOrigin", () => {
+  it("returns window.location.origin", () => {
+    expect(getAppOrigin()).toBe(window.location.origin);
+  });
+});
+
+describe("getAppHost", () => {
+  it("returns window.location.host", () => {
+    expect(getAppHost()).toBe(window.location.host);
+  });
 });
 
 describe("buildShortLinkUrl", () => {
