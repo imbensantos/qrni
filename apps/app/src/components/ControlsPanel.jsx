@@ -4,16 +4,12 @@ import { useMutation, useQuery } from 'convex/react'
 import { useAuthActions } from '@convex-dev/auth/react'
 import { api } from '../../../../convex/_generated/api'
 import { useAuth } from '../hooks/useAuth'
+import { hasCachedUser } from '../utils/cached-user'
+import { getSessionId } from '../utils/session-id'
+import { cleanConvexError } from '../utils/errors'
+import { DOT_STYLES } from '../utils/constants'
+import { isValidUrl } from '../utils/bulk-utils'
 import './ControlsPanel.css'
-
-const DOT_STYLES = [
-  { id: 'square', label: 'Square' },
-  { id: 'rounded', label: 'Rounded' },
-  { id: 'dots', label: 'Dots' },
-  { id: 'classy', label: 'Classy' },
-  { id: 'classy-rounded', label: 'Leaf' },
-  { id: 'extra-rounded', label: 'Blob' },
-]
 
 function ControlsPanel({
   url, onUrlChange,
@@ -31,7 +27,8 @@ function ControlsPanel({
   const dotRowRef = useRef(null)
   const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0 })
   const { trigger } = useWebHaptics()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, isLoading: authLoading } = useAuth()
+  const showAuthFeatures = authLoading ? hasCachedUser() : isAuthenticated
   const { signIn } = useAuthActions()
 
   const [customSlug, setCustomSlug] = useState('')
@@ -56,14 +53,7 @@ function ControlsPanel({
       setCreatingNs(false)
       setNsDropdownOpen(false)
     } catch (err) {
-      const msg = err.message
-        .replace(/\[CONVEX [^\]]*\]\s*/g, '')
-        .replace(/\[Request ID: [^\]]*\]\s*/g, '')
-        .replace(/Server Error\s*/gi, '')
-        .replace(/Uncaught Error:\s*/gi, '')
-        .replace(/\s*at handler\s*\(.*$/s, '')
-        .replace(/\s*Called by client\s*$/i, '')
-        .trim()
+      const msg = cleanConvexError(err.message)
       setNsCreateError(msg || 'Failed to create namespace')
     }
   }
@@ -101,14 +91,14 @@ function ControlsPanel({
   }, [pendingNsId, allNamespaces])
 
   const createShortLink = useCallback(async (targetUrl) => {
-    const isValid = targetUrl.startsWith('http://') || targetUrl.startsWith('https://')
+    const isValid = isValidUrl(targetUrl)
     if (!isValid) return
     setShortLinkLoading(true)
     setShortLinkError(null)
     try {
       let res
       if (!isAuthenticated) {
-        res = await createAnonymousLink({ destinationUrl: targetUrl, creatorIp: 'anonymous' })
+        res = await createAnonymousLink({ destinationUrl: targetUrl, creatorIp: getSessionId() })
       } else if (selectedNamespace) {
         res = await createNamespacedLink({
           destinationUrl: targetUrl,
@@ -121,21 +111,12 @@ function ControlsPanel({
           customSlug: customSlug.trim(),
         })
       } else {
-        res = await createAnonymousLink({ destinationUrl: targetUrl, creatorIp: 'anonymous' })
+        res = await createAnonymousLink({ destinationUrl: targetUrl, creatorIp: getSessionId() })
       }
       onShortLinkCreated?.(res)
       trigger('success')
     } catch (err) {
-      const msg = err.message || 'Failed to create short link'
-      // Strip Convex noise: [CONVEX ...] [Request ID: ...] Server Error Uncaught Error: ...
-      const clean = msg
-        .replace(/\[CONVEX [^\]]*\]\s*/g, '')
-        .replace(/\[Request ID: [^\]]*\]\s*/g, '')
-        .replace(/Server Error\s*/gi, '')
-        .replace(/Uncaught Error:\s*/gi, '')
-        .replace(/\s*at handler\s*\(.*$/s, '')
-        .replace(/\s*Called by client\s*$/i, '')
-        .trim()
+      const clean = cleanConvexError(err.message || 'Failed to create short link')
       setShortLinkError(clean || 'Failed to create short link')
       trigger('error')
     } finally {
@@ -241,7 +222,7 @@ function ControlsPanel({
           )}
 
           {/* Authenticated: Custom Slug + Namespace */}
-          {isAuthenticated ? (
+          {showAuthFeatures ? (
             <>
               <section className="control-section" role="group" aria-labelledby="slug-label">
                 <div className="control-header">
@@ -262,7 +243,7 @@ function ControlsPanel({
             </>
           ) : null}
 
-          {isAuthenticated ? (
+          {showAuthFeatures ? (
             <>
               <section className="control-section" role="group" aria-labelledby="namespace-label">
                 <label id="namespace-label" className="control-label">
@@ -512,7 +493,7 @@ function ControlsPanel({
       {/* Generate Button */}
       <button
         className="generate-btn"
-        disabled={!(url.startsWith('http://') || url.startsWith('https://')) || shortLinkLoading}
+        disabled={!isValidUrl(url) || shortLinkLoading}
         onClick={handleGenerate}
       >
         {shortLinkLoading ? 'Generating...' : 'Generate QR'}

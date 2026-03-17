@@ -30,6 +30,11 @@
   opacity: 0.85;
 }
 
+.auth-placeholder {
+  width: 100px;
+  height: 36px;
+}
+
 .logo {
   font-size: 24px;
   font-weight: 800;

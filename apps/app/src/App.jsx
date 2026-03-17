@@ -1,13 +1,29 @@
+import { useEffect } from 'react'
 import { useQuery } from 'convex/react'
 import { useAuthActions } from '@convex-dev/auth/react'
 import { Outlet, Link } from '@tanstack/react-router'
 import { api } from '../../../convex/_generated/api'
+import { useAuth } from './hooks/useAuth'
+import { getCachedUser, cacheUser, clearCachedUser } from './utils/cached-user'
 import ProfileDropdown from './components/ProfileDropdown'
 import './App.css'
 
 function App() {
   const { signIn } = useAuthActions()
+  const { isLoading } = useAuth()
   const user = useQuery(api.users.currentUser)
+  const cachedUser = getCachedUser()
+
+  // Keep cache in sync with real auth state
+  useEffect(() => {
+    if (!isLoading) {
+      if (user) cacheUser(user)
+      else clearCachedUser()
+    }
+  }, [isLoading, user])
+
+  // While loading: show cached user optimistically, or empty placeholder if no cache
+  const displayUser = isLoading ? cachedUser : user
 
   return (
     <div className="app">
@@ -15,8 +31,10 @@ function App() {
         <Link to="/" className="logo-link">
           <h1 className="logo">QRni ✨</h1>
         </Link>
-        {user ? (
-          <ProfileDropdown user={user} />
+        {isLoading && !cachedUser ? (
+          <div className="auth-placeholder" />
+        ) : displayUser ? (
+          <ProfileDropdown user={displayUser} />
         ) : (
           <button className="signin-btn" onClick={() => signIn("google")}>
             Sign in

@@ -3,6 +3,7 @@ import { useMutation, useQuery } from 'convex/react'
 import { useWebHaptics } from 'web-haptics/react'
 import { api } from '../../../../convex/_generated/api'
 import { useAuth } from '../hooks/useAuth'
+import { getSessionId } from '../utils/session-id'
 import './ShortenPanel.css'
 
 const BASE_URL_PATH = '/s/'
@@ -46,7 +47,7 @@ function ShortenPanel() {
     try {
       let res
       if (!isAuthenticated) {
-        res = await createAnonymousLink({ destinationUrl: url, creatorIp: 'anonymous' })
+        res = await createAnonymousLink({ destinationUrl: url, creatorIp: getSessionId() })
       } else if (selectedNamespace) {
         if (!namespaceSlug.trim()) {
           setError('Enter a slug for this namespace link')
@@ -64,7 +65,7 @@ function ShortenPanel() {
           customSlug: customSlug.trim(),
         })
       } else {
-        res = await createAnonymousLink({ destinationUrl: url, creatorIp: 'anonymous' })
+        res = await createAnonymousLink({ destinationUrl: url, creatorIp: getSessionId() })
       }
       setResult(res)
       trigger('success')
