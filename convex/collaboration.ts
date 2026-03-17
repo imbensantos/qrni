@@ -174,6 +174,19 @@ export const listMembers = query({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Must be signed in");
 
+    // Verify caller is the namespace owner or a member
+    const namespace = await ctx.db.get(args.namespaceId);
+    if (!namespace) throw new Error("Namespace not found");
+    if (namespace.owner !== userId) {
+      const membership = await ctx.db
+        .query("namespace_members")
+        .withIndex("by_namespace_user", (q) =>
+          q.eq("namespace", args.namespaceId).eq("user", userId)
+        )
+        .first();
+      if (!membership) throw new Error("Not authorized to view members of this namespace");
+    }
+
     const members = await ctx.db
       .query("namespace_members")
       .withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId))
@@ -201,6 +214,19 @@ export const listInvites = query({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Must be signed in");
+
+    // Verify caller is the namespace owner or a member
+    const namespace = await ctx.db.get(args.namespaceId);
+    if (!namespace) throw new Error("Namespace not found");
+    if (namespace.owner !== userId) {
+      const membership = await ctx.db
+        .query("namespace_members")
+        .withIndex("by_namespace_user", (q) =>
+          q.eq("namespace", args.namespaceId).eq("user", userId)
+        )
+        .first();
+      if (!membership) throw new Error("Not authorized to view invites for this namespace");
+    }
 
     return await ctx.db
       .query("namespace_invites")

@@ -1,21 +1,35 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { auth } from "./auth";
 
 const http = httpRouter();
 
+// Auth routes (OAuth signin/callback, OIDC discovery)
+auth.addHttpRoutes(http);
+
+// Short link redirects: /{code} or /{namespace}/{slug}
+// Must skip paths reserved for auth (/.well-known/, /api/auth/)
 http.route({
-  pathPrefix: "/s/",
+  pathPrefix: "/",
   method: "GET",
   handler: httpAction(async (ctx, request) => {
     const url = new URL(request.url);
-    const pathAfterS = url.pathname.replace(/^\/s\//, "");
+    const path = url.pathname;
 
-    if (!pathAfterS) {
+    // Let auth routes pass through (this handler should not be reached for
+    // auth paths if Convex resolves specific prefixes first, but guard anyway)
+    if (path.startsWith("/api/auth/") || path.startsWith("/.well-known/")) {
+      return new Response("Not found", { status: 404 });
+    }
+
+    const trimmed = path.replace(/^\//, "");
+
+    if (!trimmed) {
       return new Response(null, { status: 302, headers: { Location: "/" } });
     }
 
-    const parts = pathAfterS.split("/");
+    const parts = trimmed.split("/").filter(Boolean);
     let link;
 
     if (parts.length >= 2) {
@@ -24,7 +38,9 @@ http.route({
       if (namespace) {
         link = await ctx.runQuery(internal.redirects.getNamespacedLink, { namespaceId: namespace._id, slug });
       }
-    } else {
+    }
+
+    if (!link && parts.length === 1) {
       link = await ctx.runQuery(internal.redirects.getLinkByCode, { shortCode: parts[0] });
     }
 
@@ -34,7 +50,7 @@ http.route({
 
     await ctx.runMutation(internal.redirects.incrementClickCount, { linkId: link._id });
 
-    return new Response(null, { status: 301, headers: { Location: link.destinationUrl } });
+    return new Response(null, { status: 302, headers: { Location: link.destinationUrl } });
   }),
 });
 

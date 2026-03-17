@@ -4,6 +4,8 @@ import { v } from "convex/values";
 export const checkUrl = action({
   args: { url: v.string() },
   handler: async (ctx, args) => {
+    // TODO: Safe Browsing is effectively disabled without GOOGLE_SAFE_BROWSING_API_KEY.
+    // Configure the env var in the Convex dashboard to enable URL threat checking.
     const apiKey = process.env.GOOGLE_SAFE_BROWSING_API_KEY;
     if (!apiKey) return { safe: true };
 
