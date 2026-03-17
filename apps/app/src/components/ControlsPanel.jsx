@@ -36,6 +36,7 @@ function ControlsPanel({
   const [shortLinkLoading, setShortLinkLoading] = useState(false)
   const [shortLinkError, setShortLinkError] = useState(null)
   const [nsDropdownOpen, setNsDropdownOpen] = useState(false)
+  const [nsFocusedIndex, setNsFocusedIndex] = useState(0)
   const [creatingNs, setCreatingNs] = useState(false)
   const [newNsSlug, setNewNsSlug] = useState('')
   const [nsCreateError, setNsCreateError] = useState(null)
@@ -157,6 +158,42 @@ function ControlsPanel({
     row.scrollLeft = dragState.current.scrollLeft - (x - dragState.current.startX)
   }
 
+  const onTouchStart = (e) => {
+    const row = dotRowRef.current
+    const touch = e.touches[0]
+    dragState.current = { isDown: true, startX: touch.pageX - row.offsetLeft, scrollLeft: row.scrollLeft }
+  }
+  const onTouchEnd = () => {
+    dragState.current.isDown = false
+  }
+  const onTouchMove = (e) => {
+    if (!dragState.current.isDown) return
+    const row = dotRowRef.current
+    const touch = e.touches[0]
+    const x = touch.pageX - row.offsetLeft
+    row.scrollLeft = dragState.current.scrollLeft - (x - dragState.current.startX)
+  }
+
+  // Namespace dropdown keyboard navigation
+  // Options: index 0 = "None", 1..N = namespaces
+  const handleNsKeyDown = (e) => {
+    const optionCount = 1 + allNamespaces.length // "None" + namespaces
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setNsFocusedIndex((i) => Math.min(i + 1, optionCount - 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setNsFocusedIndex((i) => Math.max(i - 1, 0))
+    } else if (e.key === 'Enter') {
+      e.preventDefault()
+      if (nsFocusedIndex === 0) handleNamespaceSelect('none')
+      else handleNamespaceSelect(allNamespaces[nsFocusedIndex - 1]._id)
+    } else if (e.key === 'Escape') {
+      e.preventDefault()
+      setNsDropdownOpen(false)
+    }
+  }
+
   const handleDotRowKeyDown = (e) => {
     const row = dotRowRef.current
     if (!row) return
@@ -253,7 +290,7 @@ function ControlsPanel({
                   <button
                     type="button"
                     className="namespace-dropdown-trigger"
-                    onClick={() => setNsDropdownOpen(!nsDropdownOpen)}
+                    onClick={() => { setNsDropdownOpen(!nsDropdownOpen); setNsFocusedIndex(0) }}
                     aria-expanded={nsDropdownOpen}
                     aria-haspopup="listbox"
                   >
@@ -263,21 +300,26 @@ function ControlsPanel({
                     </svg>
                   </button>
                   {nsDropdownOpen && (
-                    <ul className="namespace-dropdown-menu" role="listbox">
+                    <ul
+                      className="namespace-dropdown-menu"
+                      role="listbox"
+                      tabIndex={-1}
+                      onKeyDown={handleNsKeyDown}
+                    >
                       <li
                         role="option"
                         aria-selected={!selectedNamespace}
-                        className={`ns-option ${!selectedNamespace ? 'selected' : ''}`}
+                        className={`ns-option ${!selectedNamespace ? 'selected' : ''} ${nsFocusedIndex === 0 ? 'focused' : ''}`}
                         onClick={() => handleNamespaceSelect('none')}
                       >
                         None
                       </li>
-                      {allNamespaces.map(ns => (
+                      {allNamespaces.map((ns, idx) => (
                         <li
                           key={ns._id}
                           role="option"
                           aria-selected={selectedNamespace?._id === ns._id}
-                          className={`ns-option ${selectedNamespace?._id === ns._id ? 'selected' : ''}`}
+                          className={`ns-option ${selectedNamespace?._id === ns._id ? 'selected' : ''} ${nsFocusedIndex === idx + 1 ? 'focused' : ''}`}
                           onClick={() => handleNamespaceSelect(ns._id)}
                         >
                           {ns.slug}
@@ -440,6 +482,9 @@ function ControlsPanel({
           onMouseLeave={onDragEnd}
           onMouseUp={onDragEnd}
           onMouseMove={onDragMove}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
           onKeyDown={handleDotRowKeyDown}
         >
           {DOT_STYLES.map((ds) => (

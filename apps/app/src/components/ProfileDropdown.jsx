@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { useAuthActions } from '@convex-dev/auth/react'
 import { Link } from '@tanstack/react-router'
+import { useClickOutside } from '../hooks/useClickOutside'
 import './ProfileDropdown.css'
 
 function ProfileDropdown({ user }) {
@@ -8,24 +9,7 @@ function ProfileDropdown({ user }) {
   const { signOut } = useAuthActions()
   const dropdownRef = useRef(null)
 
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setOpen(false)
-      }
-    }
-    function handleEscape(e) {
-      if (e.key === 'Escape') setOpen(false)
-    }
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside)
-      document.addEventListener('keydown', handleEscape)
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('keydown', handleEscape)
-    }
-  }, [open])
+  useClickOutside(dropdownRef, () => setOpen(false), open)
 
   const initial = (user.name || user.email || '?')[0].toUpperCase()
   const firstName = (user.name || user.email || 'User').split(' ')[0]

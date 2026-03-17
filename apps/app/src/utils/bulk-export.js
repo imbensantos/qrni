@@ -1,8 +1,4 @@
-import QRCodeStyling from 'qr-code-styling'
-import JSZip from 'jszip'
-import { jsPDF } from 'jspdf'
-
-function createQRCode(url, { fgColor, bgColor, dotStyle, logo, size }) {
+function createQRCode(QRCodeStyling, url, { fgColor, bgColor, dotStyle, logo, size }) {
   return new QRCodeStyling({
     width: size,
     height: size,
@@ -45,6 +41,11 @@ async function renderToBlob(qr, format) {
 const CHUNK_SIZE = 10
 
 export async function generateZip(entries, options, format, onProgress) {
+  const [{ default: QRCodeStyling }, { default: JSZip }] = await Promise.all([
+    import('qr-code-styling'),
+    import('jszip'),
+  ])
+
   const zip = new JSZip()
   const validEntries = entries.filter((e) => e.valid)
   const ext = format === 'svg' ? 'svg' : format === 'webp' ? 'webp' : 'png'
@@ -52,7 +53,7 @@ export async function generateZip(entries, options, format, onProgress) {
   for (let i = 0; i < validEntries.length; i += CHUNK_SIZE) {
     const chunk = validEntries.slice(i, i + CHUNK_SIZE)
     const promises = chunk.map(async (entry) => {
-      const qr = createQRCode(entry.url, options)
+      const qr = createQRCode(QRCodeStyling, entry.url, options)
       const blob = await renderToBlob(qr, format)
       zip.file(`${entry.filename}.${ext}`, blob)
     })
@@ -68,6 +69,11 @@ export async function generateZip(entries, options, format, onProgress) {
 }
 
 export async function generatePdf(entries, options, onProgress) {
+  const [{ default: QRCodeStyling }, { jsPDF }] = await Promise.all([
+    import('qr-code-styling'),
+    import('jspdf'),
+  ])
+
   const validEntries = entries.filter((e) => e.valid)
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
 
@@ -96,7 +102,7 @@ export async function generatePdf(entries, options, onProgress) {
       const x = margin + col * cellW + (cellW - qrSize) / 2
       const y = margin + row * cellH
 
-      const qr = createQRCode(entry.url, { ...options, size: 512 })
+      const qr = createQRCode(QRCodeStyling, entry.url, { ...options, size: 512 })
       const container = document.createElement('div')
       qr.append(container)
       await new Promise((r) => setTimeout(r, 100))

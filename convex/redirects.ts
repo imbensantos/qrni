@@ -38,6 +38,9 @@ export const incrementClickCount = internalMutation({
   handler: async (ctx, args) => {
     const link = await ctx.db.get(args.linkId);
     if (link) {
+      // Safe: Convex mutations are fully serialized (OCC-based transactions),
+      // so the read-then-write here is atomic — no concurrent mutation can
+      // interleave between the get() and patch() calls.
       await ctx.db.patch(args.linkId, { clickCount: link.clickCount + 1 });
       if (link.namespace) {
         await ctx.db.patch(link.namespace, { lastActiveAt: Date.now() });

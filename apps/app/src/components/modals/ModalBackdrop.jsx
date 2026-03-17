@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import './ModalBackdrop.css'
 
-function ModalBackdrop({ isOpen, onClose, children }) {
+function ModalBackdrop({ isOpen, onClose, children, titleId }) {
   const mouseDownTarget = useRef(null)
 
   useEffect(() => {
@@ -30,7 +30,12 @@ function ModalBackdrop({ isOpen, onClose, children }) {
         }
       }}
     >
-      <div className="modal-content">
+      <div
+        className="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+      >
         {children}
       </div>
     </div>

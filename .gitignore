@@ -25,6 +25,13 @@ dist-ssr
 *.sw?
 .vite
 
+# Screenshots and local artifacts
+*.png
+.playwright-mcp/
+
+# Vercel
+.vercel/
+
 # Secrets and credentials — never commit these
 docs/client_secret*
 *.secret.*

@@ -1,5 +1,5 @@
-import { useState, useCallback, useRef, useEffect } from 'react'
-import { useQuery, useMutation } from 'convex/react'
+import { useState } from 'react'
+import { useQuery } from 'convex/react'
 import { Link } from '@tanstack/react-router'
 import { api } from '../../../../convex/_generated/api'
 import AddLinkModal from '../components/modals/AddLinkModal'
@@ -10,482 +10,12 @@ import InviteMemberModal from '../components/modals/InviteMemberModal'
 import EditProfileModal from '../components/modals/EditProfileModal'
 import DeleteNamespaceModal from '../components/modals/DeleteNamespaceModal'
 import RenameNamespaceModal from '../components/modals/RenameNamespaceModal'
-import {
-  IconCopy,
-  IconCheck,
-  IconPencil,
-  IconTrash,
-  IconChevronDown,
-  IconPlus,
-  IconLink,
-  IconFolderOpen,
-  IconClick,
-  IconUserPlus,
-  IconEllipsis,
-  IconArrowRight,
-} from '../components/Icons'
+import { IconPencil, IconPlus } from '../components/Icons'
+import MyLinksSection from '../components/profile/MyLinksSection'
+import AllNamespaceLinksView from '../components/profile/AllNamespaceLinksView'
+import NamespaceSection from '../components/profile/NamespaceSection'
+import { formatMemberSince } from '../utils/ui-utils'
 import './ProfilePage.css'
-
-const NAMESPACE_COLORS = ['#D89575', '#3D8A5A', '#5B8BD4', '#9B6BC4', '#D4805B', '#5BAD8A']
-const NAMESPACE_BG_COLORS = ['#FFF0E8', '#E8F5E9', '#EBF0FA', '#F3EDF9', '#FFF0E8', '#E8F5E9']
-
-function getNamespaceColor(index) {
-  return NAMESPACE_COLORS[index % NAMESPACE_COLORS.length]
-}
-
-function getNamespaceBgColor(index) {
-  return NAMESPACE_BG_COLORS[index % NAMESPACE_BG_COLORS.length]
-}
-
-function formatDate(timestamp) {
-  const d = new Date(timestamp)
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  return `${months[d.getMonth()]} ${d.getDate()}`
-}
-
-function formatMemberSince(timestamp) {
-  const d = new Date(timestamp)
-  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-  return `Member since ${months[d.getMonth()]} ${d.getFullYear()}`
-}
-
-// ─── Copy Button ──────────────────────────────────────────────────────────────
-
-function CopyButton({ text }) {
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      // Fallback: ignore
-    }
-  }, [text])
-
-  return (
-    <button className={`pp-copy-btn${copied ? ' copied' : ''}`} onClick={handleCopy} title="Copy URL">
-      {copied ? <IconCheck size={12} /> : <IconCopy size={12} />}
-    </button>
-  )
-}
-
-// ─── My Links Card ────────────────────────────────────────────────────────────
-
-function MyLinksSection({ links, onAdd, onEdit, onDelete }) {
-  const personalLinks = links ? links.filter(l => !l.namespace) : []
-  const customSlugCount = personalLinks.filter(l => l.shortCode && l.shortCode.length > 6).length
-
-  return (
-    <div className="pp-card">
-      {/* Header */}
-      <div className="pp-card-header">
-        <div className="pp-card-header-left">
-          <span className="pp-card-icon"><IconLink size={18} /></span>
-          <span className="pp-card-title">My Links</span>
-          <span className="pp-count-badge">{personalLinks.length}</span>
-        </div>
-        <div className="pp-card-header-right">
-          <span className="pp-slug-info">{customSlugCount} of 5 custom slugs used</span>
-          <button className="pp-add-btn" onClick={() => onAdd(null, null)}>
-            <IconPlus size={12} />
-            Add
-          </button>
-        </div>
-      </div>
-
-      {/* Divider */}
-      <div className="pp-divider" />
-
-      {/* Link List */}
-      <div className="pp-link-list">
-        {personalLinks.length === 0 ? (
-          <div className="pp-empty">No links yet. Create your first short link!</div>
-        ) : (
-          personalLinks.map((link, i) => {
-            const shortUrl = link.namespaceSlug
-              ? `${window.location.host}/${link.namespaceSlug}/${link.shortCode}`
-              : `${window.location.host}/${link.shortCode}`
-            return (
-              <div key={link._id}>
-                <div className="pp-link-row">
-                  <div className="pp-link-info">
-                    <div className="pp-link-short-row">
-                      <a
-                        href={`${window.location.origin}/${link.shortCode}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="pp-link-short-url"
-                      >
-                        {shortUrl}
-                      </a>
-                      <CopyButton text={`${window.location.origin}/${link.shortCode}`} />
-                    </div>
-                    <div className="pp-link-destination">{link.destinationUrl}</div>
-                  </div>
-                  <div className="pp-link-meta">
-                    <span className="pp-clicks">
-                      <IconClick size={12} />
-                      <span className="pp-clicks-count">{link.clickCount}</span>
-                    </span>
-                    <button className="pp-icon-btn" onClick={() => onEdit(link)} title="Edit link">
-                      <IconPencil size={14} />
-                    </button>
-                    <button className="pp-icon-btn pp-icon-btn--delete" onClick={() => onDelete(link)} title="Delete link">
-                      <IconTrash size={14} />
-                    </button>
-                  </div>
-                </div>
-                {i < personalLinks.length - 1 && <div className="pp-row-divider" />}
-              </div>
-            )
-          })
-        )}
-      </div>
-    </div>
-  )
-}
-
-// ─── All Namespace Links View ─────────────────────────────────────────────────
-
-function AllNamespaceLinksView({ namespaceId, namespaceName, onBack, onEdit, onDelete, onAdd, onInvite }) {
-  const [page, setPage] = useState(0)
-  const LINKS_PER_PAGE = 5
-
-  const nsLinks = useQuery(api.links.listNamespaceLinks, { namespaceId })
-  const members = useQuery(api.collaboration.listMembers, { namespaceId })
-
-  const totalLinks = nsLinks ? nsLinks.length : 0
-  const totalPages = Math.max(1, Math.ceil(totalLinks / LINKS_PER_PAGE))
-  const pagedLinks = nsLinks ? nsLinks.slice(page * LINKS_PER_PAGE, (page + 1) * LINKS_PER_PAGE) : []
-  const memberCount = members ? members.length : 0
-
-  const currentUserMember = members?.find(m => m.isCurrentUser)
-  const role = currentUserMember?.role || 'viewer'
-  const roleLabel = role.charAt(0).toUpperCase() + role.slice(1)
-
-  return (
-    <div className="all-links-view">
-      <button className="all-links-back" onClick={onBack}>
-        &larr; Back to profile
-      </button>
-
-      <div className="all-links-header">
-        <div className="namespace-avatar" style={{ background: '#D89575' }}>
-          {namespaceName.charAt(0).toUpperCase()}
-        </div>
-        <span className="namespace-name">{namespaceName}</span>
-        <span className="all-links-meta">
-          {totalLinks} links &middot; {memberCount} member{memberCount !== 1 ? 's' : ''} &middot; {roleLabel}
-        </span>
-        <div className="all-links-header-actions">
-          <button className="namespace-invite-btn" onClick={() => onInvite(namespaceId, namespaceName)}>
-            Invite
-          </button>
-          <button className="section-add-btn" onClick={() => onAdd(namespaceId, namespaceName)}>
-            <IconPlus size={14} /> Add link
-          </button>
-        </div>
-      </div>
-
-      {totalLinks === 0 ? (
-        <div className="pp-empty">No links in this namespace yet.</div>
-      ) : (
-        <>
-          <table className="all-links-table">
-            <thead>
-              <tr>
-                <th>Link</th>
-                <th>Clicks</th>
-                <th>Created</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pagedLinks.map(link => {
-                const shortUrl = link.namespaceSlug
-                  ? `${window.location.host}/${link.namespaceSlug}/${link.shortCode}`
-                  : `${window.location.host}/${link.shortCode}`
-                return (
-                  <tr key={link._id}>
-                    <td>
-                      <div className="pp-link-short-row">
-                        <a href={`${window.location.origin}/${link.shortCode}`} target="_blank" rel="noopener noreferrer" className="pp-link-short-url">
-                          /{link.shortCode}
-                        </a>
-                        <CopyButton text={`${window.location.origin}/${link.shortCode}`} />
-                      </div>
-                      <div className="pp-link-destination">{link.destinationUrl}</div>
-                    </td>
-                    <td>{link.clickCount}</td>
-                    <td>{formatDate(link.createdAt)}</td>
-                    <td>
-                      <div className="pp-link-meta">
-                        <button className="pp-icon-btn" onClick={() => onEdit(link)} title="Edit link">
-                          <IconPencil size={14} />
-                        </button>
-                        <button className="pp-icon-btn pp-icon-btn--delete" onClick={() => onDelete(link)} title="Delete link">
-                          <IconTrash size={14} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-
-          {totalPages > 1 && (
-            <div className="pagination">
-              <button className="page-btn" disabled={page === 0} onClick={() => setPage(p => p - 1)}>
-                &lsaquo;
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  className={`page-btn${page === i ? ' active' : ''}`}
-                  onClick={() => setPage(i)}
-                >
-                  {i + 1}
-                </button>
-              ))}
-              <button className="page-btn" disabled={page === totalPages - 1} onClick={() => setPage(p => p + 1)}>
-                &rsaquo;
-              </button>
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  )
-}
-
-// ─── Namespace Card ───────────────────────────────────────────────────────────
-
-function NamespaceSection({ namespace, role, colorIndex, onAdd, onEdit, onDelete, onInvite, onViewAll, onRename, onDeleteNamespace }) {
-  const [expanded, setExpanded] = useState(true)
-  const [kebabOpen, setKebabOpen] = useState(false)
-  const kebabRef = useRef(null)
-  const nsLinks = useQuery(api.links.listNamespaceLinks, { namespaceId: namespace._id })
-  const members = useQuery(api.collaboration.listMembers, { namespaceId: namespace._id })
-
-  const iconColor = getNamespaceColor(colorIndex)
-  const iconBg = getNamespaceBgColor(colorIndex)
-  const canEdit = role === 'owner' || role === 'editor'
-  const isOwner = role === 'owner'
-  const previewLinks = nsLinks ? nsLinks.slice(0, 3) : []
-  const totalLinks = nsLinks ? nsLinks.length : 0
-
-  // Close kebab on outside click / escape
-  useEffect(() => {
-    if (!kebabOpen) return
-    function handleClickOutside(e) {
-      if (kebabRef.current && !kebabRef.current.contains(e.target)) setKebabOpen(false)
-    }
-    function handleEscape(e) {
-      if (e.key === 'Escape') setKebabOpen(false)
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    document.addEventListener('keydown', handleEscape)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('keydown', handleEscape)
-    }
-  }, [kebabOpen])
-
-  function handleEditNamespace() {
-    setKebabOpen(false)
-    onRename(namespace._id, namespace.slug, namespace.description)
-  }
-
-  function handleDeleteNamespace() {
-    setKebabOpen(false)
-    onDeleteNamespace(namespace._id, namespace.slug)
-  }
-
-  // Extract just the slug from a namespaced shortCode ("namespace/slug" → "slug")
-  function extractSlug(shortCode, namespaceSlug) {
-    if (namespaceSlug && shortCode.startsWith(namespaceSlug + '/')) {
-      return shortCode.slice(namespaceSlug.length + 1)
-    }
-    return shortCode
-  }
-
-  return (
-    <div className="pp-card">
-      {/* Namespace Header */}
-      <div className="pp-ns-header">
-        <div className="pp-ns-info">
-          {/* Folder icon */}
-          <div className="pp-ns-folder-icon" style={{ background: iconBg }}>
-            <span style={{ color: iconColor }}>
-              <IconFolderOpen size={18} />
-            </span>
-          </div>
-
-          {/* Name + meta */}
-          <div className="pp-ns-name-col">
-            <span className="pp-ns-name">{namespace.slug}</span>
-            <div className="pp-ns-meta-row">
-              <span className="pp-ns-link-count">{totalLinks} links</span>
-              <span className="pp-ns-dot">·</span>
-              <span className={`pp-role-badge pp-role-badge--${role}`}>
-                {role.charAt(0).toUpperCase() + role.slice(1)}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="pp-ns-actions">
-          {/* Member avatar stack */}
-          {members && members.length > 0 && (
-            <div className="pp-member-stack">
-              {members.slice(0, 4).map((member, i) => (
-                <div
-                  key={member._id}
-                  className="pp-member-avatar"
-                  style={{ background: getNamespaceColor(i + 1) }}
-                  title={member.name || 'Member'}
-                >
-                  {member.image ? (
-                    <img src={member.image} alt={member.name || 'Member'} />
-                  ) : (
-                    (member.name || '?').charAt(0).toUpperCase()
-                  )}
-                </div>
-              ))}
-              {members.length > 4 && (
-                <div className="pp-member-avatar" style={{ background: '#999' }}>
-                  +{members.length - 4}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Invite (owner only) */}
-          {isOwner && (
-            <button className="pp-invite-btn" onClick={() => onInvite(namespace._id, namespace.slug)}>
-              <IconUserPlus size={13} />
-              Invite
-            </button>
-          )}
-
-          {/* Kebab menu */}
-          {isOwner && (
-            <div className="pp-kebab" ref={kebabRef}>
-              <button
-                className="pp-icon-btn"
-                title="More options"
-                onClick={() => setKebabOpen(o => !o)}
-              >
-                <IconEllipsis size={16} />
-              </button>
-              {kebabOpen && (
-                <div className="pp-kebab-menu">
-                  <button className="pp-kebab-item" onClick={handleEditNamespace}>
-                    <IconPencil size={16} />
-                    Edit namespace
-                  </button>
-                  <div className="pp-kebab-divider" />
-                  <button className="pp-kebab-item pp-kebab-item--danger" onClick={handleDeleteNamespace}>
-                    <IconTrash size={16} />
-                    Delete namespace
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Expand/Collapse */}
-          <button
-            className={`pp-icon-btn pp-chevron-toggle${expanded ? ' pp-chevron-toggle--open' : ''}`}
-            onClick={() => setExpanded(e => !e)}
-            title={expanded ? 'Collapse' : 'Expand'}
-          >
-            <IconChevronDown size={16} />
-          </button>
-        </div>
-      </div>
-
-      {/* Expandable content */}
-      <div className={`pp-collapse${expanded ? ' pp-collapse--open' : ''}`}>
-        <div className="pp-collapse-inner">
-          <div className="pp-divider" />
-
-          <div className="pp-link-list">
-            {previewLinks.length === 0 ? (
-              <div className="pp-empty">No links in this namespace yet.</div>
-            ) : (
-              previewLinks.map((link, i) => {
-                const slug = extractSlug(link.shortCode, namespace.slug)
-                const fullUrl = `${window.location.origin}/${namespace.slug}/${slug}`
-                return (
-                  <div key={link._id}>
-                    <div className="pp-link-row">
-                      <div className="pp-link-info">
-                        <div className="pp-link-short-row">
-                          <span className="pp-ns-link-slug">/{slug}</span>
-                          <CopyButton text={fullUrl} />
-                        </div>
-                        <div className="pp-link-destination pp-link-destination--ns">
-                          {window.location.host}/{namespace.slug}/{slug} → {link.destinationUrl}
-                        </div>
-                      </div>
-                      <div className="pp-link-meta">
-                        <span className="pp-clicks">
-                          <IconClick size={12} />
-                          <span className="pp-clicks-count">{link.clickCount}</span>
-                        </span>
-                        <span className="pp-link-date">{formatDate(link.createdAt)}</span>
-                        {canEdit && (
-                          <>
-                            <button className="pp-icon-btn" onClick={() => onEdit(link)} title="Edit link">
-                              <IconPencil size={14} />
-                            </button>
-                            <button className="pp-icon-btn pp-icon-btn--delete" onClick={() => onDelete(link)} title="Delete link">
-                              <IconTrash size={14} />
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                    {i < previewLinks.length - 1 && <div className="pp-row-divider" />}
-                  </div>
-                )
-              })
-            )}
-          </div>
-
-          {/* Footer */}
-          {(totalLinks > 3 || canEdit) && (
-            <>
-              <div className="pp-row-divider" />
-              <div className="pp-ns-footer">
-                <div className="pp-ns-footer-left">
-                  {totalLinks > 3 && (
-                    <button className="pp-view-all-btn" onClick={() => onViewAll(namespace._id, namespace.slug)}>
-                      View all {totalLinks} links
-                      <IconArrowRight size={12} />
-                    </button>
-                  )}
-                </div>
-                {canEdit && (
-                  <button className="pp-add-link-btn" onClick={() => onAdd(namespace._id, namespace.slug)}>
-                    <IconPlus size={12} />
-                    Add link
-                  </button>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ─── Profile Page ─────────────────────────────────────────────────────────────
 
 function ProfilePage() {
   const user = useQuery(api.users.currentUser)
@@ -530,6 +60,13 @@ function ProfilePage() {
     ...(namespaces?.collaborated || []).filter(Boolean),
   ]
 
+  const modalHandlers = {
+    onAdd: (nsId, nsSlug) => setAddLinkModal({ open: true, namespaceId: nsId, namespaceSlug: nsSlug }),
+    onEdit: (link) => setEditLinkModal({ open: true, link }),
+    onDelete: (link) => setDeleteLinkModal({ open: true, link }),
+    onInvite: (nsId, nsName) => setInviteModal({ open: true, namespaceId: nsId, namespaceName: nsName }),
+  }
+
   return (
     <main className="profile-page">
       {allLinksView.active ? (
@@ -537,17 +74,16 @@ function ProfilePage() {
           namespaceId={allLinksView.namespaceId}
           namespaceName={allLinksView.namespaceName}
           onBack={() => setAllLinksView({ active: false, namespaceId: null, namespaceName: null })}
-          onEdit={(link) => setEditLinkModal({ open: true, link })}
-          onDelete={(link) => setDeleteLinkModal({ open: true, link })}
-          onAdd={(nsId, nsSlug) => setAddLinkModal({ open: true, namespaceId: nsId, namespaceSlug: nsSlug })}
-          onInvite={(nsId, nsName) => setInviteModal({ open: true, namespaceId: nsId, namespaceName: nsName })}
+          onEdit={modalHandlers.onEdit}
+          onDelete={modalHandlers.onDelete}
+          onAdd={modalHandlers.onAdd}
+          onInvite={modalHandlers.onInvite}
         />
       ) : (
         <div className="pp-body">
           {/* Profile Hero */}
           <div className="pp-hero">
             <div className="pp-hero-left">
-              {/* Avatar */}
               {avatarUrl ? (
                 <img
                   src={avatarUrl}
@@ -561,7 +97,6 @@ function ProfilePage() {
                 </div>
               )}
 
-              {/* User info */}
               <div className="pp-user-info">
                 <div className="pp-user-name-row">
                   <span className="pp-user-name">{displayName}</span>
@@ -594,9 +129,9 @@ function ProfilePage() {
           {/* My Links */}
           <MyLinksSection
             links={myLinks}
-            onAdd={(nsId, nsSlug) => setAddLinkModal({ open: true, namespaceId: nsId, namespaceSlug: nsSlug })}
-            onEdit={(link) => setEditLinkModal({ open: true, link })}
-            onDelete={(link) => setDeleteLinkModal({ open: true, link })}
+            onAdd={modalHandlers.onAdd}
+            onEdit={modalHandlers.onEdit}
+            onDelete={modalHandlers.onDelete}
           />
 
           {/* Namespace Cards */}
@@ -606,10 +141,10 @@ function ProfilePage() {
               namespace={ns}
               role={ns.role}
               colorIndex={index}
-              onAdd={(nsId, nsSlug) => setAddLinkModal({ open: true, namespaceId: nsId, namespaceSlug: nsSlug })}
-              onEdit={(link) => setEditLinkModal({ open: true, link })}
-              onDelete={(link) => setDeleteLinkModal({ open: true, link })}
-              onInvite={(nsId, nsName) => setInviteModal({ open: true, namespaceId: nsId, namespaceName: nsName })}
+              onAdd={modalHandlers.onAdd}
+              onEdit={modalHandlers.onEdit}
+              onDelete={modalHandlers.onDelete}
+              onInvite={modalHandlers.onInvite}
               onViewAll={(nsId, nsName) => setAllLinksView({ active: true, namespaceId: nsId, namespaceName: nsName })}
               onRename={(nsId, nsName, nsDesc) => setRenameNsModal({ open: true, namespaceId: nsId, namespaceName: nsName, namespaceDescription: nsDesc })}
               onDeleteNamespace={(nsId, nsName) => setDeleteNsModal({ open: true, namespaceId: nsId, namespaceName: nsName })}

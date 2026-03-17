@@ -603,6 +603,12 @@
   font-weight: 600;
 }
 
+.ns-option.focused {
+  background: var(--bg-page);
+  outline: 2px solid var(--accent-primary);
+  outline-offset: -2px;
+}
+
 /* Create Namespace */
 .ns-create-option {
   border-top: 1px solid var(--border-subtle);

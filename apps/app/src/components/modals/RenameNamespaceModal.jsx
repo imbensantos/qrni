@@ -57,7 +57,7 @@ function RenameNamespaceModal({ isOpen, onClose, namespaceId, namespaceName, nam
   if (!namespaceId) return null
 
   return (
-    <ModalBackdrop isOpen={isOpen} onClose={onClose}>
+    <ModalBackdrop isOpen={isOpen} onClose={onClose} titleId="rnm-title">
       <form className="cnm" onSubmit={handleSubmit}>
         <div className="cnm-header">
           <div className="cnm-header-left">
@@ -65,7 +65,7 @@ function RenameNamespaceModal({ isOpen, onClose, namespaceId, namespaceName, nam
               <IconPencil size={20} />
             </div>
             <div className="cnm-title-group">
-              <h2 className="cnm-title">Edit namespace</h2>
+              <h2 id="rnm-title" className="cnm-title">Edit namespace</h2>
               <p className="cnm-subtitle">Update the name or description</p>
             </div>
           </div>

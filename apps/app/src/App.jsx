@@ -6,6 +6,7 @@ import { api } from '../../../convex/_generated/api'
 import { useAuth } from './hooks/useAuth'
 import { getCachedUser, cacheUser, clearCachedUser } from './utils/cached-user'
 import ProfileDropdown from './components/ProfileDropdown'
+import ErrorBoundary from './components/ErrorBoundary'
 import './App.css'
 
 function App() {
@@ -26,23 +27,25 @@ function App() {
   const displayUser = isLoading ? cachedUser : user
 
   return (
-    <div className="app">
-      <header className="header">
-        <Link to="/" className="logo-link">
-          <h1 className="logo">QRni ✨</h1>
-        </Link>
-        {isLoading && !cachedUser ? (
-          <div className="auth-placeholder" />
-        ) : displayUser ? (
-          <ProfileDropdown user={displayUser} />
-        ) : (
-          <button className="signin-btn" onClick={() => signIn("google")}>
-            Sign in
-          </button>
-        )}
-      </header>
-      <Outlet />
-    </div>
+    <ErrorBoundary>
+      <div className="app">
+        <header className="header">
+          <Link to="/" className="logo-link">
+            <h1 className="logo">QRni ✨</h1>
+          </Link>
+          {isLoading && !cachedUser ? (
+            <div className="auth-placeholder" />
+          ) : displayUser ? (
+            <ProfileDropdown user={displayUser} />
+          ) : (
+            <button className="signin-btn" onClick={() => signIn("google")}>
+              Sign in
+            </button>
+          )}
+        </header>
+        <Outlet />
+      </div>
+    </ErrorBoundary>
   )
 }
 

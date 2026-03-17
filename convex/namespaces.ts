@@ -30,7 +30,11 @@ export const create = mutation({
       throw new Error("This namespace is reserved");
     }
 
-    const ownedNamespaces = await ctx.db.query("namespaces").withIndex("by_owner", (q) => q.eq("owner", user._id)).collect();
+    if (args.description !== undefined && args.description.length > 500) {
+      throw new Error("Description must be 500 characters or fewer");
+    }
+
+    const ownedNamespaces = await ctx.db.query("namespaces").withIndex("by_owner", (q) => q.eq("owner", user._id)).take(100);
     if (ownedNamespaces.length >= 5) {
       throw new Error("You can create up to 5 namespaces");
     }
@@ -72,6 +76,9 @@ export const update = mutation({
 
     // Handle description update
     if (args.description !== undefined) {
+      if (args.description.length > 500) {
+        throw new Error("Description must be 500 characters or fewer");
+      }
       updates.description = args.description || undefined;
     }
 
@@ -88,6 +95,9 @@ export const update = mutation({
       }
 
       if (slug !== namespace.slug) {
+        // Safe: Convex mutations are fully serialized (OCC-based transactions),
+        // so this check-then-update is atomic — no concurrent rename can claim
+        // the same slug between the uniqueness check and the patch below.
         const existing = await ctx.db.query("namespaces").withIndex("by_slug", (q) => q.eq("slug", slug)).first();
         if (existing) throw new Error("This namespace is already taken");
 
@@ -95,7 +105,7 @@ export const update = mutation({
         if (linkConflict) throw new Error("This name conflicts with an existing short link");
 
         // Update all links in this namespace to use the new slug prefix
-        const links = await ctx.db.query("links").withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId)).collect();
+        const links = await ctx.db.query("links").withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId)).take(500);
         for (const link of links) {
           if (link.namespaceSlug) {
             await ctx.db.patch(link._id, {
@@ -122,9 +132,9 @@ export const listMine = query({
     const user = await ctx.db.get(userId);
     if (!user) return { owned: [], collaborated: [] };
 
-    const owned = await ctx.db.query("namespaces").withIndex("by_owner", (q) => q.eq("owner", user._id)).collect();
+    const owned = await ctx.db.query("namespaces").withIndex("by_owner", (q) => q.eq("owner", user._id)).take(100);
 
-    const memberships = await ctx.db.query("namespace_members").withIndex("by_user", (q) => q.eq("user", user._id)).collect();
+    const memberships = await ctx.db.query("namespace_members").withIndex("by_user", (q) => q.eq("user", user._id)).take(100);
 
     const collaborated = await Promise.all(
       memberships.map(async (m) => {
@@ -151,13 +161,13 @@ export const remove = mutation({
     if (namespace.owner !== user._id) throw new Error("Only the owner can delete a namespace");
 
     // Cascade delete: links, members, invites
-    const links = await ctx.db.query("links").withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId)).collect();
+    const links = await ctx.db.query("links").withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId)).take(500);
     for (const link of links) await ctx.db.delete(link._id);
 
-    const members = await ctx.db.query("namespace_members").withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId)).collect();
+    const members = await ctx.db.query("namespace_members").withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId)).take(100);
     for (const member of members) await ctx.db.delete(member._id);
 
-    const invites = await ctx.db.query("namespace_invites").withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId)).collect();
+    const invites = await ctx.db.query("namespace_invites").withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId)).take(50);
     for (const invite of invites) await ctx.db.delete(invite._id);
 
     await ctx.db.delete(args.namespaceId);

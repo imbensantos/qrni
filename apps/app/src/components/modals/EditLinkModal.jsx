@@ -3,6 +3,7 @@ import { useMutation } from 'convex/react'
 import { api } from '../../../../../convex/_generated/api'
 import ModalBackdrop from './ModalBackdrop'
 import { IconPencil, IconLink, IconClose } from '../Icons'
+import { formatDate } from '../../utils/ui-utils'
 import './EditLinkModal.css'
 
 function PencilCircleIcon() {
@@ -11,12 +12,6 @@ function PencilCircleIcon() {
       <IconPencil size={18} />
     </div>
   )
-}
-
-function formatDate(timestamp) {
-  const d = new Date(timestamp)
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`
 }
 
 function EditLinkModal({ isOpen, onClose, link }) {
@@ -80,13 +75,13 @@ function EditLinkModal({ isOpen, onClose, link }) {
   }
 
   return (
-    <ModalBackdrop isOpen={isOpen} onClose={onClose}>
+    <ModalBackdrop isOpen={isOpen} onClose={onClose} titleId="edit-link-title">
       <div className="edit-link-modal">
         <div className="edit-link-header">
           <div className="edit-link-header-left">
             <PencilCircleIcon />
             <div className="edit-link-header-text">
-              <h2 className="edit-link-title">Edit link</h2>
+              <h2 id="edit-link-title" className="edit-link-title">Edit link</h2>
               <p className="edit-link-subtitle">Update the slug or destination URL</p>
             </div>
           </div>

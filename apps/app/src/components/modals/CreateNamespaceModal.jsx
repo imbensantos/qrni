@@ -48,7 +48,7 @@ function CreateNamespaceModal({ isOpen, onClose }) {
   }
 
   return (
-    <ModalBackdrop isOpen={isOpen} onClose={onClose}>
+    <ModalBackdrop isOpen={isOpen} onClose={onClose} titleId="cnm-title">
       <form className="cnm" onSubmit={handleSubmit}>
         <div className="cnm-header">
           <div className="cnm-header-left">
@@ -56,7 +56,7 @@ function CreateNamespaceModal({ isOpen, onClose }) {
               <IconFolderOpen size={20} />
             </div>
             <div className="cnm-title-group">
-              <h2 className="cnm-title">Create namespace</h2>
+              <h2 id="cnm-title" className="cnm-title">Create namespace</h2>
               <p className="cnm-subtitle">Organize your links under a custom path</p>
             </div>
           </div>

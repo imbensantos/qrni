@@ -1,21 +1,15 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../../../../../convex/_generated/api'
 import ModalBackdrop from './ModalBackdrop'
 import { IconClose, IconChevronDown } from '../Icons'
+import { useClickOutside } from '../../hooks/useClickOutside'
+import { getColorFromHash } from '../../utils/ui-utils'
 import './InviteMemberModal.css'
 
 const AVATAR_COLORS = [
   '#D89575', '#3D8A5A', '#7B68AE', '#5B8FD4', '#D4795B', '#8A6D3D', '#5BAED4'
 ]
-
-function getAvatarColor(name) {
-  let hash = 0
-  for (let i = 0; i < (name || '').length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash)
-  }
-  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
-}
 
 function InviteMemberModal({ isOpen, onClose, namespaceId, namespaceName }) {
   const [email, setEmail] = useState('')
@@ -40,16 +34,8 @@ function InviteMemberModal({ isOpen, onClose, namespaceId, namespaceName }) {
     }
   }, [isOpen])
 
-  useEffect(() => {
-    if (!roleOpen) return
-    function handleClickOutside(e) {
-      if (roleRef.current && !roleRef.current.contains(e.target)) {
-        setRoleOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [roleOpen])
+  const closeRoleDropdown = useCallback(() => setRoleOpen(false), [])
+  useClickOutside(roleRef, closeRoleDropdown, roleOpen)
 
   const pendingInvites = (invites || []).filter((inv) => !inv.revoked)
 
@@ -164,7 +150,7 @@ function InviteMemberModal({ isOpen, onClose, namespaceId, namespaceName }) {
               <div key={member._id} className="imm-member-row">
                 <div
                   className="imm-avatar"
-                  style={{ background: getAvatarColor(member.user?.name || member.user?.email) }}
+                  style={{ background: getColorFromHash(member.user?.name || member.user?.email || '', AVATAR_COLORS) }}
                 >
                   {(member.user?.name || member.user?.email || '?').charAt(0).toUpperCase()}
                 </div>

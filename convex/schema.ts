@@ -51,6 +51,7 @@ export default defineSchema({
     token: v.string(),
     createdBy: v.id("users"),
     createdAt: v.number(),
+    expiresAt: v.optional(v.float64()),
     revoked: v.boolean(),
   })
     .index("by_namespace", ["namespace"])

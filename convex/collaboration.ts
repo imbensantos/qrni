@@ -5,6 +5,12 @@ import { generateShortCode } from "./lib/shortCode";
 
 const roleValidator = v.union(v.literal("editor"), v.literal("viewer"));
 
+const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+function isValidEmail(email: string): boolean {
+  return email.includes("@") && email.includes(".");
+}
+
 export const createEmailInvite = mutation({
   args: {
     namespaceId: v.id("namespaces"),
@@ -22,16 +28,22 @@ export const createEmailInvite = mutation({
     if (!namespace) throw new Error("Namespace not found");
     if (namespace.owner !== user._id) throw new Error("Only the namespace owner can invite members");
 
+    const normalizedEmail = args.email.toLowerCase().trim();
+    if (!isValidEmail(normalizedEmail)) {
+      throw new Error("Invalid email address");
+    }
+
     const token = generateShortCode(16);
 
     return await ctx.db.insert("namespace_invites", {
       namespace: namespace._id,
       role: args.role,
       type: "email",
-      email: args.email.toLowerCase().trim(),
+      email: normalizedEmail,
       token,
       createdBy: user._id,
       createdAt: Date.now(),
+      expiresAt: Date.now() + INVITE_TTL_MS,
       revoked: false,
     });
   },
@@ -62,6 +74,7 @@ export const createInviteLink = mutation({
       token,
       createdBy: user._id,
       createdAt: Date.now(),
+      expiresAt: Date.now() + INVITE_TTL_MS,
       revoked: false,
     });
 
@@ -85,6 +98,10 @@ export const acceptInvite = mutation({
 
     if (!invite) throw new Error("Invite not found");
     if (invite.revoked) throw new Error("This invite has been revoked");
+
+    if (invite.expiresAt !== undefined && Date.now() > invite.expiresAt) {
+      throw new Error("This invite has expired");
+    }
 
     if (invite.type === "email") {
       if (!invite.email || !user.email || invite.email !== user.email.toLowerCase().trim()) {
@@ -190,7 +207,7 @@ export const listMembers = query({
     const members = await ctx.db
       .query("namespace_members")
       .withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId))
-      .collect();
+      .take(100);
 
     return await Promise.all(
       members.map(async (member) => {
@@ -228,9 +245,15 @@ export const listInvites = query({
       if (!membership) throw new Error("Not authorized to view invites for this namespace");
     }
 
-    return await ctx.db
+    const now = Date.now();
+    const invites = await ctx.db
       .query("namespace_invites")
       .withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId))
-      .collect();
+      .take(50);
+
+    // Filter out expired invites — callers only need active/pending ones
+    return invites.filter(
+      (invite) => invite.expiresAt === undefined || invite.expiresAt > now
+    );
   },
 });

@@ -3,6 +3,7 @@ import { useMutation } from 'convex/react'
 import { api } from '../../../../../convex/_generated/api'
 import ModalBackdrop from './ModalBackdrop'
 import { IconPlus, IconClose, IconLink } from '../Icons'
+import { buildShortLinkUrl } from '../../utils/url-utils'
 import './AddLinkModal.css'
 
 function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
@@ -25,7 +26,7 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
     }
   }, [isOpen])
 
-  const prefix = namespaceId ? `${window.location.host}/${namespaceSlug}/` : `${window.location.host}/`
+  const prefix = namespaceId ? `${window.location.host}/${namespaceSlug}/` : `${window.location.host}/s/`
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -36,8 +37,8 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
     if (!slug.trim()) {
       setSlugError('Slug is required')
       hasError = true
-    } else if (!/^[a-zA-Z0-9_-]+$/.test(slug)) {
-      setSlugError('Only letters, numbers, and hyphens allowed')
+    } else if (!/^[a-zA-Z0-9_-]{1,60}$/.test(slug)) {
+      setSlugError('Only letters, numbers, and hyphens allowed (max 60 characters)')
       hasError = true
     }
 
@@ -74,7 +75,7 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
   }
 
   return (
-    <ModalBackdrop isOpen={isOpen} onClose={onClose}>
+    <ModalBackdrop isOpen={isOpen} onClose={onClose} titleId="alm-title">
       <form className="alm" onSubmit={handleSubmit}>
         <div className="alm-header">
           <div className="alm-header-left">
@@ -82,7 +83,7 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }) {
               <IconPlus size={20} />
             </div>
             <div className="alm-title-group">
-              <h2 className="alm-title">Add new link</h2>
+              <h2 id="alm-title" className="alm-title">Add new link</h2>
               <p className="alm-subtitle">Create a custom short link</p>
             </div>
           </div>

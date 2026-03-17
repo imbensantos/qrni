@@ -21,8 +21,20 @@ export const updateProfile = mutation({
     if (!userId) throw new Error("Must be signed in");
 
     const updates: Record<string, unknown> = {};
-    if (args.name !== undefined) updates.name = args.name;
-    if (args.avatarUrl !== undefined) updates.avatarUrl = args.avatarUrl;
+
+    if (args.name !== undefined) {
+      if (args.name.length > 100) {
+        throw new Error("Name must be 100 characters or fewer");
+      }
+      updates.name = args.name;
+    }
+
+    if (args.avatarUrl !== undefined) {
+      if (!args.avatarUrl.startsWith("https://")) {
+        throw new Error("Avatar URL must start with https://");
+      }
+      updates.avatarUrl = args.avatarUrl;
+    }
 
     if (Object.keys(updates).length > 0) {
       await ctx.db.patch(userId, updates);
@@ -42,7 +54,7 @@ export const getUserStats = query({
     const links = await ctx.db
       .query("links")
       .withIndex("by_owner", (q) => q.eq("owner", userId))
-      .collect();
+      .take(500);
 
     const totalLinks = links.length;
     const totalClicks = links.reduce((sum, link) => sum + link.clickCount, 0);
@@ -50,12 +62,12 @@ export const getUserStats = query({
     const ownedNamespaces = await ctx.db
       .query("namespaces")
       .withIndex("by_owner", (q) => q.eq("owner", userId))
-      .collect();
+      .take(100);
 
     const memberships = await ctx.db
       .query("namespace_members")
       .withIndex("by_user", (q) => q.eq("user", userId))
-      .collect();
+      .take(100);
 
     const totalNamespaces = ownedNamespaces.length + memberships.length;
 

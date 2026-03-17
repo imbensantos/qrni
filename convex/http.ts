@@ -8,6 +8,56 @@ const http = httpRouter();
 // Auth routes (OAuth signin/callback, OIDC discovery)
 auth.addHttpRoutes(http);
 
+// Anonymous link creation via HTTP so the real client IP can be extracted from
+// request headers rather than trusting a client-supplied identifier.
+// POST /api/links/anonymous  body: { destinationUrl: string }
+http.route({
+  path: "/api/links/anonymous",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    let body: { destinationUrl?: string };
+    try {
+      body = await request.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (!body.destinationUrl || typeof body.destinationUrl !== "string") {
+      return new Response(JSON.stringify({ error: "destinationUrl is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Extract real IP from standard proxy headers; fall back to a placeholder
+    // so rate limiting still functions even without a reverse proxy.
+    const creatorIp =
+      request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
+
+    try {
+      const result = await ctx.runMutation(internal.links.createAnonymousLinkInternal, {
+        destinationUrl: body.destinationUrl,
+        creatorIp,
+      });
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Internal server error";
+      return new Response(JSON.stringify({ error: message }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  }),
+});
+
 // Short link redirects: /{code} or /{namespace}/{slug}
 // Must skip paths reserved for auth (/.well-known/, /api/auth/)
 http.route({
