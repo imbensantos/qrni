@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.qrni.co';
 ---
 
 <Layout
@@ -11,7 +13,7 @@ import Layout from '../layouts/Layout.astro';
     <div class="container">
       <h1 class="hero-logo">QRni</h1>
       <p class="hero-headline">Your free, instant QR code maker — no sign-up needed!</p>
-      <a href="https://app.qrni.imbento.co" class="cta-btn">Generate QR Code</a>
+      <a href={appUrl} class="cta-btn">Generate QR Code</a>
 
       <div class="hero-mockup">
         <div class="mockup-window">
@@ -157,7 +159,7 @@ import Layout from '../layouts/Layout.astro';
       </div>
 
       <div class="shortener-cta">
-        <a href="https://app.qrni.imbento.co" class="cta-btn cta-btn--secondary">Try URL Shortener</a>
+        <a href={appUrl} class="cta-btn cta-btn--secondary">Try URL Shortener</a>
       </div>
     </div>
   </section>

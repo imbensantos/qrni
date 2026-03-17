@@ -5,7 +5,7 @@
       "destination": "/index.html"
     },
     {
-      "source": "/:code([a-zA-Z0-9]{7})",
+      "source": "/:code([a-zA-Z0-9][a-zA-Z0-9_-]{0,59})",
       "destination": "https://keen-akita-913.convex.site/:code"
     },
     {
