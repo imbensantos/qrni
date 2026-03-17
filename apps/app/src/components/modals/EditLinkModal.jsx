@@ -49,14 +49,14 @@ function EditLinkModal({ isOpen, onClose, link }) {
   // Sync form state when link prop changes
   useEffect(() => {
     if (link) {
-      setSlug(link.namespace ? (link.namespaceSlug || '') : (link.shortCode || ''))
+      setSlug(link.namespaceSlug ? (link.namespaceSlug || '') : (link.shortCode || ''))
       setDestinationUrl(link.destinationUrl || '')
       setError(null)
     }
   }, [link])
 
-  const prefix = link?.namespace
-    ? `${window.location.host}/${link.namespace}/`
+  const prefix = link?.namespaceSlug
+    ? `${window.location.host}/${link.namespaceSlug}/`
     : `${window.location.host}/`
 
   async function handleSubmit(e) {
@@ -157,11 +157,11 @@ function EditLinkModal({ isOpen, onClose, link }) {
               <span className="edit-link-info-item">
                 Clicks: {link.clickCount ?? 0}
               </span>
-              {link.namespace && (
+              {link.namespaceSlug && (
                 <>
                   <span className="edit-link-info-separator" />
                   <span className="edit-link-info-item">
-                    Namespace: {link.namespace}
+                    Namespace: {link.namespaceSlug}
                   </span>
                 </>
               )}
