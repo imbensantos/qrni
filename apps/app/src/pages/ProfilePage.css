@@ -296,6 +296,24 @@
   justify-content: space-between;
   padding: 10px 20px;
   gap: 16px;
+  animation: pp-row-in 0.3s ease both;
+}
+
+.pp-link-list > div:nth-child(1) .pp-link-row { animation-delay: 0ms; }
+.pp-link-list > div:nth-child(2) .pp-link-row { animation-delay: 50ms; }
+.pp-link-list > div:nth-child(3) .pp-link-row { animation-delay: 100ms; }
+.pp-link-list > div:nth-child(4) .pp-link-row { animation-delay: 150ms; }
+.pp-link-list > div:nth-child(5) .pp-link-row { animation-delay: 200ms; }
+
+@keyframes pp-row-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .pp-link-info {
