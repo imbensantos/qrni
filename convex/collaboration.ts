@@ -2,6 +2,7 @@ import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { generateShortCode } from "./lib/shortCode";
+import { logAudit } from "./lib/auditLog";
 
 const roleValidator = v.union(v.literal("editor"), v.literal("viewer"));
 
@@ -36,7 +37,7 @@ export const createEmailInvite = mutation({
 
     const token = generateShortCode(16);
 
-    return await ctx.db.insert("namespace_invites", {
+    const inviteId = await ctx.db.insert("namespace_invites", {
       namespace: namespace._id,
       role: args.role,
       type: "email",
@@ -47,6 +48,20 @@ export const createEmailInvite = mutation({
       expiresAt: Date.now() + INVITE_TTL_MS,
       revoked: false,
     });
+
+    await logAudit(ctx, {
+      userId: user._id,
+      action: "member.invite",
+      resourceType: "invite",
+      resourceId: String(inviteId),
+      metadata: {
+        namespace: String(namespace._id),
+        email: normalizedEmail,
+        role: args.role,
+      },
+    });
+
+    return inviteId;
   },
 });
 
@@ -69,7 +84,7 @@ export const createInviteLink = mutation({
 
     const token = generateShortCode(16);
 
-    await ctx.db.insert("namespace_invites", {
+    const inviteId = await ctx.db.insert("namespace_invites", {
       namespace: namespace._id,
       role: args.role,
       type: "link",
@@ -78,6 +93,14 @@ export const createInviteLink = mutation({
       createdAt: Date.now(),
       expiresAt: Date.now() + INVITE_TTL_MS,
       revoked: false,
+    });
+
+    await logAudit(ctx, {
+      userId: user._id,
+      action: "member.invite",
+      resourceType: "invite",
+      resourceId: String(inviteId),
+      metadata: { namespace: String(namespace._id), role: args.role },
     });
 
     return { token };
@@ -133,13 +156,23 @@ export const acceptInvite = mutation({
       throw new Error("You are already a member of this namespace");
     }
 
-    return await ctx.db.insert("namespace_members", {
+    const membershipId = await ctx.db.insert("namespace_members", {
       namespace: invite.namespace,
       user: user._id,
       role: invite.role,
       invitedBy: invite.createdBy,
       joinedAt: Date.now(),
     });
+
+    await logAudit(ctx, {
+      userId: user._id,
+      action: "member.join",
+      resourceType: "member",
+      resourceId: String(membershipId),
+      metadata: { namespace: String(invite.namespace), role: invite.role },
+    });
+
+    return membershipId;
   },
 });
 
@@ -166,6 +199,14 @@ export const revokeInvite = mutation({
       throw new Error("Invite does not belong to this namespace");
 
     await ctx.db.patch(args.inviteId, { revoked: true });
+
+    await logAudit(ctx, {
+      userId: user._id,
+      action: "invite.revoke",
+      resourceType: "invite",
+      resourceId: String(args.inviteId),
+      metadata: { namespace: String(args.namespaceId) },
+    });
   },
 });
 
@@ -192,6 +233,14 @@ export const removeMember = mutation({
       throw new Error("Membership does not belong to this namespace");
 
     await ctx.db.delete(args.membershipId);
+
+    await logAudit(ctx, {
+      userId: user._id,
+      action: "member.remove",
+      resourceType: "member",
+      resourceId: String(args.membershipId),
+      metadata: { namespace: String(args.namespaceId) },
+    });
   },
 });
 

@@ -78,4 +78,15 @@ export default defineSchema({
     windowStart: v.number(),
     count: v.number(),
   }).index("by_ip", ["ip"]),
+
+  audit_log: defineTable({
+    userId: v.id("users"),
+    action: v.string(),
+    resourceType: v.string(),
+    resourceId: v.string(),
+    metadata: v.optional(v.any()),
+    timestamp: v.float64(),
+  })
+    .index("by_user_timestamp", ["userId", "timestamp"])
+    .index("by_resource", ["resourceType", "resourceId"]),
 });

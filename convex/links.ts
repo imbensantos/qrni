@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 import { generateShortCode, isValidCustomSlug } from "./lib/shortCode";
+import { logAudit } from "./lib/auditLog";
 
 const MAX_URL_LENGTH = 2048;
 // Duplicate submission window: reject same URL + slug within 5 seconds
@@ -266,6 +267,14 @@ export const createCustomSlugLink = mutation({
       clickCount: 0,
     });
 
+    await logAudit(ctx, {
+      userId: user._id,
+      action: "link.create",
+      resourceType: "link",
+      resourceId: String(linkId),
+      metadata: { slug: args.customSlug },
+    });
+
     return { shortCode: args.customSlug, linkId };
   },
 });
@@ -339,6 +348,14 @@ export const createNamespacedLink = mutation({
 
     await ctx.db.patch(args.namespaceId, { lastActiveAt: Date.now() });
 
+    await logAudit(ctx, {
+      userId: user._id,
+      action: "link.create",
+      resourceType: "link",
+      resourceId: String(linkId),
+      metadata: { namespace: String(args.namespaceId), slug: args.slug },
+    });
+
     return { shortCode: compositeShortCode, linkId };
   },
 });
@@ -385,6 +402,13 @@ export const deleteLink = mutation({
     if (link.owner !== user._id) throw new Error("Not authorized");
 
     await ctx.db.delete(args.linkId);
+
+    await logAudit(ctx, {
+      userId: user._id,
+      action: "link.delete",
+      resourceType: "link",
+      resourceId: String(args.linkId),
+    });
   },
 });
 
@@ -449,6 +473,14 @@ export const updateLink = mutation({
 
     if (Object.keys(updates).length > 0) {
       await ctx.db.patch(args.linkId, updates);
+
+      await logAudit(ctx, {
+        userId: user._id,
+        action: "link.update",
+        resourceType: "link",
+        resourceId: String(args.linkId),
+        metadata: { updates },
+      });
     }
   },
 });

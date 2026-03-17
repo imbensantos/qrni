@@ -2,6 +2,7 @@ import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { isValidSlug } from "./lib/shortCode";
+import { logAudit } from "./lib/auditLog";
 
 const RESERVED_SLUGS = [
   // App routes
@@ -72,13 +73,23 @@ export const create = mutation({
     if (linkConflict)
       throw new Error("This name conflicts with an existing short link");
 
-    return await ctx.db.insert("namespaces", {
+    const namespaceId = await ctx.db.insert("namespaces", {
       owner: user._id,
       slug,
       description: args.description,
       createdAt: Date.now(),
       lastActiveAt: Date.now(),
     });
+
+    await logAudit(ctx, {
+      userId: user._id,
+      action: "namespace.create",
+      resourceType: "namespace",
+      resourceId: String(namespaceId),
+      metadata: { slug },
+    });
+
+    return namespaceId;
   },
 });
 
@@ -162,6 +173,14 @@ export const update = mutation({
 
     if (Object.keys(updates).length > 0) {
       await ctx.db.patch(args.namespaceId, updates);
+
+      await logAudit(ctx, {
+        userId: user._id,
+        action: "namespace.update",
+        resourceType: "namespace",
+        resourceId: String(args.namespaceId),
+        metadata: { updates },
+      });
     }
   },
 });
@@ -229,6 +248,14 @@ export const remove = mutation({
       .withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId))
       .take(50);
     for (const invite of invites) await ctx.db.delete(invite._id);
+
+    await logAudit(ctx, {
+      userId: user._id,
+      action: "namespace.delete",
+      resourceType: "namespace",
+      resourceId: String(args.namespaceId),
+      metadata: { slug: namespace.slug },
+    });
 
     await ctx.db.delete(args.namespaceId);
   },

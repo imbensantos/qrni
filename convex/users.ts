@@ -1,6 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
+import { logAudit } from "./lib/auditLog";
 
 export const currentUser = query({
   args: {},
@@ -38,6 +39,14 @@ export const updateProfile = mutation({
 
     if (Object.keys(updates).length > 0) {
       await ctx.db.patch(userId, updates);
+
+      await logAudit(ctx, {
+        userId,
+        action: "user.update",
+        resourceType: "user",
+        resourceId: String(userId),
+        metadata: { updates },
+      });
     }
   },
 });
