@@ -1,6 +1,39 @@
 import { describe, it, expect } from "vitest";
-import { validateDestinationUrl, isValidEmail } from "./validation";
+import { sanitizeText, validateDestinationUrl, isValidEmail } from "./validation";
 import { ERR, MAX_URL_LENGTH } from "./constants";
+
+// ---------------------------------------------------------------------------
+// sanitizeText
+// ---------------------------------------------------------------------------
+describe("sanitizeText", () => {
+  it("escapes angle brackets", () => {
+    expect(sanitizeText("<script>alert('xss')</script>")).toBe(
+      "&lt;script&gt;alert('xss')&lt;/script&gt;",
+    );
+  });
+
+  it("trims whitespace", () => {
+    expect(sanitizeText("  hello  ")).toBe("hello");
+  });
+
+  it("handles empty string", () => {
+    expect(sanitizeText("")).toBe("");
+  });
+
+  it("passes through safe text unchanged", () => {
+    expect(sanitizeText("Hello World 123")).toBe("Hello World 123");
+  });
+
+  it("handles multiple angle brackets", () => {
+    expect(sanitizeText("<b>bold</b> and <i>italic</i>")).toBe(
+      "&lt;b&gt;bold&lt;/b&gt; and &lt;i&gt;italic&lt;/i&gt;",
+    );
+  });
+
+  it("preserves quotes and ampersands", () => {
+    expect(sanitizeText('He said "hello" & goodbye')).toBe('He said "hello" & goodbye');
+  });
+});
 
 // ---------------------------------------------------------------------------
 // validateDestinationUrl
