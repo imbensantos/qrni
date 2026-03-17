@@ -257,7 +257,7 @@ function ControlsPanel({
                     aria-expanded={nsDropdownOpen}
                     aria-haspopup="listbox"
                   >
-                    <span>{selectedNamespace ? `${selectedNamespace.slug}` : 'None (flat link)'}</span>
+                    <span style={selectedNamespace ? undefined : { color: 'var(--text-tertiary)' }}>{selectedNamespace ? selectedNamespace.slug : 'None'}</span>
                     <svg width="12" height="8" viewBox="0 0 12 8" fill="none" className={`ns-chevron ${nsDropdownOpen ? 'open' : ''}`}>
                       <path d="M1 1L6 6L11 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -270,7 +270,7 @@ function ControlsPanel({
                         className={`ns-option ${!selectedNamespace ? 'selected' : ''}`}
                         onClick={() => handleNamespaceSelect('none')}
                       >
-                        None (flat link)
+                        None
                       </li>
                       {allNamespaces.map(ns => (
                         <li
@@ -397,19 +397,21 @@ function ControlsPanel({
             <button className="logo-remove" onClick={() => { onLogoChange(null); trigger('nudge') }}>Remove</button>
           </div>
         ) : (
-          <button
-            type="button"
-            className="upload-zone"
-            onClick={() => { fileInputRef.current?.click(); trigger('nudge') }}
-          >
+          <>
             <input ref={fileInputRef} type="file" accept="image/*" onChange={handleLogoUpload} hidden aria-label="Upload logo image" />
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="17 8 12 3 7 8" />
-              <line x1="12" y1="3" x2="12" y2="15" />
-            </svg>
-            <span>Add logo</span>
-          </button>
+            <button
+              type="button"
+              className="upload-zone"
+              onClick={() => { fileInputRef.current?.click(); trigger('nudge') }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              <span>Add logo</span>
+            </button>
+          </>
         )}
       </section>
 

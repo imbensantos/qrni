@@ -6,9 +6,11 @@ import './PreviewPanel.css'
 
 const FORMATS = ['png', 'svg', 'webp']
 
+const BASE_URL_PATH = '/'
+
 function PreviewPanel({
   url, isValidUrl, fgColor, bgColor, logo, dotStyle, size,
-  format, onFormatChange, shortenLink,
+  format, onFormatChange, shortenLink, shortLinkResult,
 }) {
   const qrContainerRef = useRef(null)
   const { trigger } = useWebHaptics()
@@ -66,16 +68,20 @@ function PreviewPanel({
           {isValidUrl ? 'Ready to download' : 'Enter a valid URL'}
         </p>
 
-        {shortenLink && isValidUrl && (
+        {shortenLink && isValidUrl && shortLinkResult && (
           <div className="short-link-card">
             <div className="sl-left">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3D8A5A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
               </svg>
-              <span className="sl-url">qrni.to/bR7mQ</span>
+              <span className="sl-url">{`${window.location.host}${BASE_URL_PATH}${shortLinkResult.shortCode}`}</span>
             </div>
-            <button className="sl-copy-btn" onClick={() => { navigator.clipboard?.writeText('https://qrni.to/bR7mQ'); trigger('success') }}>
+            <button className="sl-copy-btn" onClick={() => {
+              const shortUrl = `${window.location.origin}${BASE_URL_PATH}${shortLinkResult.shortCode}`
+              navigator.clipboard?.writeText(shortUrl)
+              trigger('success')
+            }}>
               Copy
             </button>
           </div>

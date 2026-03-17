@@ -120,16 +120,22 @@
   height: 72px;
   border: 1.5px dashed var(--border-subtle);
   border-radius: var(--radius-md);
-  background: var(--bg-page);
+  background: transparent;
   color: var(--text-tertiary);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: border-color 0.3s, color 0.3s, background 0.3s;
 }
 
 .upload-zone:hover {
   border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  background: #FFF0E8;
+}
+
+.upload-zone:active {
+  transform: scale(0.985);
 }
 
 .upload-zone:focus-visible {
