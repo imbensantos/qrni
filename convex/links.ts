@@ -1,10 +1,22 @@
-import { internalMutation, mutation, query } from "./_generated/server";
+import { action, internalMutation, mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
+import type { Id } from "./_generated/dataModel";
 import { generateShortCode, isValidCustomSlug } from "./lib/shortCode";
 import { logAudit } from "./lib/auditLog";
 import { checkPermission } from "./lib/permissions";
+import { checkUrlSafety } from "./safeBrowsing";
+
+async function ensureUrlSafe(url: string): Promise<void> {
+  const result = await checkUrlSafety(url);
+  if (!result.safe) {
+    throw new Error(
+      "This URL was flagged as potentially harmful and can't be shortened.",
+    );
+  }
+}
 
 const MAX_URL_LENGTH = 2048;
 // Duplicate submission window: reject same URL + slug within 5 seconds
@@ -21,96 +33,7 @@ function validateDestinationUrl(url: string): void {
 
 // ============ ANONYMOUS LINK CREATION ============
 
-export const createAnonymousLink = mutation({
-  args: {
-    destinationUrl: v.string(),
-    // creatorIp is now the server-extracted IP forwarded from the HTTP layer.
-    // The field name is preserved for schema compatibility; see convex/http.ts
-    // for where the real IP is extracted from request headers.
-    creatorIp: v.string(),
-  },
-  handler: async (ctx, args) => {
-    validateDestinationUrl(args.destinationUrl);
-
-    // Rate limit: 10 links/hr per IP
-    const oneHourAgo = Date.now() - 60 * 60 * 1000;
-    const rateLimit = await ctx.db
-      .query("rate_limits")
-      .withIndex("by_ip", (q) => q.eq("ip", args.creatorIp))
-      .first();
-
-    if (rateLimit) {
-      if (rateLimit.windowStart > oneHourAgo && rateLimit.count >= 10) {
-        throw new Error("Rate limit exceeded. Try again later.");
-      }
-      if (rateLimit.windowStart <= oneHourAgo) {
-        await ctx.db.patch(rateLimit._id, {
-          windowStart: Date.now(),
-          count: 1,
-        });
-      } else {
-        await ctx.db.patch(rateLimit._id, { count: rateLimit.count + 1 });
-      }
-    } else {
-      await ctx.db.insert("rate_limits", {
-        ip: args.creatorIp,
-        windowStart: Date.now(),
-        count: 1,
-      });
-    }
-
-    // Duplicate submission guard: reject same URL created by the same IP within 5 seconds
-    const recentDuplicate = await ctx.db
-      .query("links")
-      .withIndex("by_creator_ip", (q) => q.eq("creatorIp", args.creatorIp))
-      .order("desc")
-      .first();
-    if (
-      recentDuplicate &&
-      recentDuplicate.destinationUrl === args.destinationUrl &&
-      Date.now() - recentDuplicate.createdAt < DUPLICATE_WINDOW_MS
-    ) {
-      return {
-        shortCode: recentDuplicate.shortCode,
-        linkId: recentDuplicate._id,
-      };
-    }
-
-    // Generate unique short code
-    let shortCode: string;
-    let attempts = 0;
-    do {
-      shortCode = generateShortCode();
-      const existing = await ctx.db
-        .query("links")
-        .withIndex("by_short_code", (q) => q.eq("shortCode", shortCode))
-        .first();
-      if (!existing) break;
-      attempts++;
-    } while (attempts < 5);
-
-    if (attempts >= 5) {
-      throw new Error(
-        "Failed to generate unique short code. Please try again.",
-      );
-    }
-
-    const linkId = await ctx.db.insert("links", {
-      shortCode,
-      destinationUrl: args.destinationUrl,
-      creatorIp: args.creatorIp,
-      createdAt: Date.now(),
-      clickCount: 0,
-    });
-
-    return { shortCode, linkId };
-  },
-});
-
-// Internal variant called by the HTTP layer with a server-extracted IP address.
-// Prefer calling this over createAnonymousLink when the request goes through
-// an HTTP action so the rate limit key is the real client IP rather than a
-// client-supplied session identifier.
+// Internal mutation for anonymous link creation (called by action wrappers)
 export const createAnonymousLinkInternal = internalMutation({
   args: {
     destinationUrl: v.string(),
@@ -128,7 +51,9 @@ export const createAnonymousLinkInternal = internalMutation({
 
     if (rateLimit) {
       if (rateLimit.windowStart > oneHourAgo && rateLimit.count >= 10) {
-        throw new Error("Rate limit exceeded. Try again later.");
+        throw new Error(
+          "You're creating links too fast. Please wait a bit and try again.",
+        );
       }
       if (rateLimit.windowStart <= oneHourAgo) {
         await ctx.db.patch(rateLimit._id, {
@@ -178,7 +103,7 @@ export const createAnonymousLinkInternal = internalMutation({
 
     if (attempts >= 5) {
       throw new Error(
-        "Failed to generate unique short code. Please try again.",
+        "Couldn't create a short link right now. Please try again.",
       );
     }
 
@@ -194,23 +119,129 @@ export const createAnonymousLinkInternal = internalMutation({
   },
 });
 
-// ============ AUTHENTICATED MUTATIONS ============
+// Public action: checks Safe Browsing then creates anonymous link
+export const createAnonymousLink = action({
+  args: {
+    destinationUrl: v.string(),
+    creatorIp: v.string(),
+  },
+  handler: async (
+    ctx,
+    args,
+  ): Promise<{ shortCode: string; linkId: Id<"links"> }> => {
+    await ensureUrlSafe(args.destinationUrl);
 
-export const createCustomSlugLink = mutation({
+    return await ctx.runMutation(internal.links.createAnonymousLinkInternal, {
+      destinationUrl: args.destinationUrl,
+      creatorIp: args.creatorIp,
+    });
+  },
+});
+
+// Authenticated user creating a link with an auto-generated short code
+export const createAutoSlugLinkInternal = internalMutation({
+  args: {
+    destinationUrl: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Must be signed in");
+
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+
+    validateDestinationUrl(args.destinationUrl);
+
+    // Duplicate submission guard
+    const recentDuplicate = await ctx.db
+      .query("links")
+      .withIndex("by_owner", (q) => q.eq("owner", user._id))
+      .order("desc")
+      .first();
+    if (
+      recentDuplicate &&
+      recentDuplicate.destinationUrl === args.destinationUrl &&
+      Date.now() - recentDuplicate.createdAt < DUPLICATE_WINDOW_MS
+    ) {
+      return {
+        shortCode: recentDuplicate.shortCode,
+        linkId: recentDuplicate._id,
+      };
+    }
+
+    // Generate unique short code
+    let shortCode: string;
+    let attempts = 0;
+    do {
+      shortCode = generateShortCode();
+      const existing = await ctx.db
+        .query("links")
+        .withIndex("by_short_code", (q) => q.eq("shortCode", shortCode))
+        .first();
+      if (!existing) break;
+      attempts++;
+    } while (attempts < 5);
+
+    if (attempts >= 5) {
+      throw new Error(
+        "Couldn't create a short link right now. Please try again.",
+      );
+    }
+
+    const linkId = await ctx.db.insert("links", {
+      shortCode,
+      destinationUrl: args.destinationUrl,
+      owner: user._id,
+      autoSlug: true,
+      createdAt: Date.now(),
+      clickCount: 0,
+    });
+
+    await logAudit(ctx, {
+      userId: user._id,
+      action: "link.create",
+      resourceType: "link",
+      resourceId: String(linkId),
+      metadata: { slug: shortCode },
+    });
+
+    return { shortCode, linkId };
+  },
+});
+
+export const createAutoSlugLink = action({
+  args: {
+    destinationUrl: v.string(),
+  },
+  handler: async (
+    ctx,
+    args,
+  ): Promise<{ shortCode: string; linkId: Id<"links"> }> => {
+    await ensureUrlSafe(args.destinationUrl);
+
+    return await ctx.runMutation(internal.links.createAutoSlugLinkInternal, {
+      destinationUrl: args.destinationUrl,
+    });
+  },
+});
+
+// ============ AUTHENTICATED MUTATIONS (internal) ============
+
+export const createCustomSlugLinkInternal = internalMutation({
   args: {
     destinationUrl: v.string(),
     customSlug: v.string(),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Must be signed in to create custom slugs");
+    if (!userId) throw new Error("Please sign in to create custom short links");
 
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     if (!isValidCustomSlug(args.customSlug)) {
       throw new Error(
-        "Slug must be 1-60 chars: letters, numbers, hyphens, underscores",
+        "Short link name can only use letters, numbers, hyphens, and underscores (max 60 characters)",
       );
     }
 
@@ -221,10 +252,12 @@ export const createCustomSlugLink = mutation({
       .query("links")
       .withIndex("by_owner", (q) => q.eq("owner", user._id))
       .take(500);
-    const flatCustomCount = existingLinks.filter((l) => !l.namespace).length;
+    const flatCustomCount = existingLinks.filter(
+      (l) => !l.namespace && !l.autoSlug,
+    ).length;
     if (flatCustomCount >= 5) {
       throw new Error(
-        "You've used all 5 custom slugs. Create a namespace for unlimited links!",
+        "You've reached the limit of 5 custom short links. Use a namespace to create more!",
       );
     }
 
@@ -251,14 +284,18 @@ export const createCustomSlugLink = mutation({
       .query("links")
       .withIndex("by_short_code", (q) => q.eq("shortCode", args.customSlug))
       .first();
-    if (existingLink) throw new Error("This slug is already taken");
+    if (existingLink)
+      throw new Error(
+        "That short link name is already taken — try another one",
+      );
 
     // Check slug availability against existing namespaces
     const nsConflict = await ctx.db
       .query("namespaces")
       .withIndex("by_slug", (q) => q.eq("slug", args.customSlug.toLowerCase()))
       .first();
-    if (nsConflict) throw new Error("This slug conflicts with a namespace");
+    if (nsConflict)
+      throw new Error("That name is already in use — try another one");
 
     const linkId = await ctx.db.insert("links", {
       shortCode: args.customSlug,
@@ -280,7 +317,26 @@ export const createCustomSlugLink = mutation({
   },
 });
 
-export const createNamespacedLink = mutation({
+// Public action: checks Safe Browsing then creates custom slug link
+export const createCustomSlugLink = action({
+  args: {
+    destinationUrl: v.string(),
+    customSlug: v.string(),
+  },
+  handler: async (
+    ctx,
+    args,
+  ): Promise<{ shortCode: string; linkId: Id<"links"> }> => {
+    await ensureUrlSafe(args.destinationUrl);
+
+    return await ctx.runMutation(internal.links.createCustomSlugLinkInternal, {
+      destinationUrl: args.destinationUrl,
+      customSlug: args.customSlug,
+    });
+  },
+});
+
+export const createNamespacedLinkInternal = internalMutation({
   args: {
     destinationUrl: v.string(),
     namespaceId: v.id("namespaces"),
@@ -322,7 +378,10 @@ export const createNamespacedLink = mutation({
         q.eq("namespace", args.namespaceId).eq("namespaceSlug", args.slug),
       )
       .first();
-    if (existing) throw new Error("This slug already exists in this namespace");
+    if (existing)
+      throw new Error(
+        "That name already exists in this namespace — try another one",
+      );
 
     const linkId = await ctx.db.insert("links", {
       shortCode: compositeShortCode,
@@ -345,6 +404,27 @@ export const createNamespacedLink = mutation({
     });
 
     return { shortCode: compositeShortCode, linkId };
+  },
+});
+
+// Public action: checks Safe Browsing then creates namespaced link
+export const createNamespacedLink = action({
+  args: {
+    destinationUrl: v.string(),
+    namespaceId: v.id("namespaces"),
+    slug: v.string(),
+  },
+  handler: async (
+    ctx,
+    args,
+  ): Promise<{ shortCode: string; linkId: Id<"links"> }> => {
+    await ensureUrlSafe(args.destinationUrl);
+
+    return await ctx.runMutation(internal.links.createNamespacedLinkInternal, {
+      destinationUrl: args.destinationUrl,
+      namespaceId: args.namespaceId,
+      slug: args.slug,
+    });
   },
 });
 
@@ -407,7 +487,7 @@ export const deleteLink = mutation({
   },
 });
 
-export const updateLink = mutation({
+export const updateLinkInternal = internalMutation({
   args: {
     linkId: v.id("links"),
     newSlug: v.optional(v.string()),
@@ -441,7 +521,7 @@ export const updateLink = mutation({
     if (args.newSlug !== undefined) {
       if (!isValidCustomSlug(args.newSlug)) {
         throw new Error(
-          "Slug must be 1-60 chars: letters, numbers, hyphens, underscores",
+          "Short link name can only use letters, numbers, hyphens, and underscores (max 60 characters)",
         );
       }
 
@@ -458,7 +538,9 @@ export const updateLink = mutation({
           )
           .first();
         if (existing && existing._id !== link._id)
-          throw new Error("This slug already exists in this namespace");
+          throw new Error(
+            "That name already exists in this namespace — try another one",
+          );
         newShortCode = `${ns.slug}/${args.newSlug}`;
         updates.namespaceSlug = args.newSlug;
       } else {
@@ -467,10 +549,27 @@ export const updateLink = mutation({
           .withIndex("by_short_code", (q) => q.eq("shortCode", args.newSlug!))
           .first();
         if (existing && existing._id !== link._id)
-          throw new Error("This slug is already taken");
+          throw new Error(
+            "That short link name is already taken — try another one",
+          );
         newShortCode = args.newSlug;
       }
       updates.shortCode = newShortCode;
+      if (link.autoSlug && !link.namespace) {
+        const allLinks = await ctx.db
+          .query("links")
+          .withIndex("by_owner", (q) => q.eq("owner", user._id))
+          .take(500);
+        const customCount = allLinks.filter(
+          (l) => !l.namespace && !l.autoSlug,
+        ).length;
+        if (customCount >= 5) {
+          throw new Error(
+            "You've reached the limit of 5 custom short links. Use a namespace to create more!",
+          );
+        }
+        updates.autoSlug = false;
+      }
     }
 
     if (Object.keys(updates).length > 0) {
@@ -484,6 +583,26 @@ export const updateLink = mutation({
         metadata: { updates },
       });
     }
+  },
+});
+
+// Public action: checks Safe Browsing for new URLs then updates link
+export const updateLink = action({
+  args: {
+    linkId: v.id("links"),
+    newSlug: v.optional(v.string()),
+    newDestinationUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, args): Promise<void> => {
+    if (args.newDestinationUrl !== undefined) {
+      await ensureUrlSafe(args.newDestinationUrl);
+    }
+
+    await ctx.runMutation(internal.links.updateLinkInternal, {
+      linkId: args.linkId,
+      newSlug: args.newSlug,
+      newDestinationUrl: args.newDestinationUrl,
+    });
   },
 });
 

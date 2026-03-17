@@ -11,6 +11,8 @@
 import type * as auth from "../auth.js";
 import type * as collaboration from "../collaboration.js";
 import type * as http from "../http.js";
+import type * as lib_auditLog from "../lib/auditLog.js";
+import type * as lib_permissions from "../lib/permissions.js";
 import type * as lib_shortCode from "../lib/shortCode.js";
 import type * as links from "../links.js";
 import type * as namespaces from "../namespaces.js";
@@ -28,6 +30,8 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   collaboration: typeof collaboration;
   http: typeof http;
+  "lib/auditLog": typeof lib_auditLog;
+  "lib/permissions": typeof lib_permissions;
   "lib/shortCode": typeof lib_shortCode;
   links: typeof links;
   namespaces: typeof namespaces;

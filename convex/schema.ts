@@ -65,6 +65,7 @@ export default defineSchema({
     destinationUrl: v.string(),
     creatorIp: v.optional(v.string()),
     owner: v.optional(v.id("users")),
+    autoSlug: v.optional(v.boolean()),
     createdAt: v.number(),
     clickCount: v.number(),
   })

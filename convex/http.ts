@@ -2,6 +2,7 @@ import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { auth } from "./auth";
+import { checkUrlSafety } from "./safeBrowsing";
 
 const http = httpRouter();
 
@@ -43,6 +44,21 @@ http.route({
       "unknown";
 
     try {
+      // Check URL safety before creating the link
+      const safetyResult = await checkUrlSafety(body.destinationUrl);
+      if (!safetyResult.safe) {
+        return new Response(
+          JSON.stringify({
+            error:
+              "This URL was flagged as potentially harmful and can't be shortened.",
+          }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+      }
+
       const result = await ctx.runMutation(
         internal.links.createAnonymousLinkInternal,
         {
