@@ -1,17 +1,13 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { parseFile, type BulkEntry } from "../utils/bulk-utils";
-import { DOT_STYLES } from "../utils/constants";
+import ColorPicker from "./ColorPicker";
+import LogoUploader from "./LogoUploader";
+import DotStyleSelector from "./DotStyleSelector";
 import "./BulkPanel.css";
 
 const FORMATS = ["png", "svg", "webp"] as const;
 type ExportFormat = (typeof FORMATS)[number];
-
-interface DragState {
-  isDown: boolean;
-  startX: number;
-  scrollLeft: number;
-}
 
 interface BulkPanelProps {
   fgColor: string;
@@ -44,55 +40,11 @@ function BulkPanel({
   onFormatChange,
   onEntriesParsed,
 }: BulkPanelProps) {
-  const logoInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const dotRowRef = useRef<HTMLDivElement>(null);
-  const dotDragState = useRef<DragState>({
-    isDown: false,
-    startX: 0,
-    scrollLeft: 0,
-  });
   const [inputText, setInputText] = useState("");
   const [dragging, setDragging] = useState(false);
   const { trigger } = useWebHaptics();
-
-  const onDotDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
-    const row = dotRowRef.current;
-    if (!row) return;
-    dotDragState.current = {
-      isDown: true,
-      startX: e.pageX - row.offsetLeft,
-      scrollLeft: row.scrollLeft,
-    };
-    row.classList.add("dragging");
-  };
-  const onDotDragEnd = () => {
-    dotDragState.current.isDown = false;
-    dotRowRef.current?.classList.remove("dragging");
-  };
-  const onDotDragMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!dotDragState.current.isDown) return;
-    e.preventDefault();
-    const row = dotRowRef.current;
-    if (!row) return;
-    const x = e.pageX - row.offsetLeft;
-    row.scrollLeft =
-      dotDragState.current.scrollLeft - (x - dotDragState.current.startX);
-  };
-
-  const handleDotRowKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    const row = dotRowRef.current;
-    if (!row) return;
-    if (e.key === "ArrowRight") {
-      row.scrollLeft += 80;
-      e.preventDefault();
-    }
-    if (e.key === "ArrowLeft") {
-      row.scrollLeft -= 80;
-      e.preventDefault();
-    }
-  };
 
   const autoParse = useCallback(
     (text: string) => {
@@ -137,22 +89,10 @@ function BulkPanel({
     e.target.value = "";
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => onLogoChange(ev.target?.result as string);
-    reader.readAsDataURL(file);
-  };
-
   return (
     <>
       {/* Data Input */}
-      <section
-        className="control-section"
-        role="group"
-        aria-labelledby="links-label"
-      >
+      <section className="control-section" role="group" aria-labelledby="links-label">
         <label id="links-label" className="control-label" htmlFor="bulk-links">
           Your Links
         </label>
@@ -169,9 +109,7 @@ function BulkPanel({
             ref={textareaRef}
             id="bulk-links"
             className="data-input"
-            placeholder={
-              "Homepage, https://example.com\nGoogle, https://google.com"
-            }
+            placeholder={"Homepage, https://example.com\nGoogle, https://google.com"}
             value={inputText}
             onKeyDown={() => trigger(8)}
             onBeforeInput={() => trigger(8)}
@@ -234,11 +172,7 @@ function BulkPanel({
       <hr className="divider" />
 
       {/* Format */}
-      <section
-        className="control-section"
-        role="group"
-        aria-labelledby="format-label"
-      >
+      <section className="control-section" role="group" aria-labelledby="format-label">
         <span id="format-label" className="control-label">
           Export Format
         </span>
@@ -266,166 +200,35 @@ function BulkPanel({
 
       <hr className="divider" />
 
-      {/* Colors */}
-      <section
-        className="control-section"
-        role="group"
-        aria-labelledby="bulk-colors-label"
-      >
-        <span id="bulk-colors-label" className="control-label">
-          Colors
-        </span>
-        <div className="color-row">
-          <div className="color-group">
-            <span className="color-sublabel">Foreground</span>
-            <label className="color-picker">
-              <input
-                type="color"
-                aria-label="Foreground color"
-                value={fgColor}
-                onClick={() => trigger("nudge")}
-                onInput={(e) => {
-                  onFgColorChange((e.target as HTMLInputElement).value);
-                  trigger(30);
-                }}
-                onChange={(e) => {
-                  onFgColorChange(e.target.value);
-                  trigger("success");
-                }}
-              />
-              <span
-                className="color-swatch"
-                style={{ background: fgColor }}
-                aria-hidden="true"
-              />
-              <span className="color-value">{fgColor.toUpperCase()}</span>
-            </label>
-          </div>
-          <div className="color-group">
-            <span className="color-sublabel">Background</span>
-            <label className="color-picker">
-              <input
-                type="color"
-                aria-label="Background color"
-                value={bgColor}
-                onClick={() => trigger("nudge")}
-                onInput={(e) => {
-                  onBgColorChange((e.target as HTMLInputElement).value);
-                  trigger(30);
-                }}
-                onChange={(e) => {
-                  onBgColorChange(e.target.value);
-                  trigger("success");
-                }}
-              />
-              <span
-                className="color-swatch"
-                style={{ background: bgColor }}
-                aria-hidden="true"
-              />
-              <span className="color-value">{bgColor.toUpperCase()}</span>
-            </label>
-          </div>
-        </div>
-      </section>
+      {/* Colors — shared component */}
+      <ColorPicker
+        fgColor={fgColor}
+        onFgColorChange={onFgColorChange}
+        bgColor={bgColor}
+        onBgColorChange={onBgColorChange}
+        labelId="bulk-colors"
+        showIcon={false}
+      />
 
       <hr className="divider" />
 
-      {/* Logo */}
-      <section
-        className="control-section"
-        role="group"
-        aria-labelledby="bulk-logo-label"
-      >
-        <span id="bulk-logo-label" className="control-label">
-          Logo
-        </span>
-        {logo ? (
-          <div className="logo-preview">
-            <img src={logo} alt="Custom QR code logo" className="logo-thumb" />
-            <button
-              className="logo-remove"
-              onClick={() => {
-                onLogoChange(null);
-                trigger("nudge");
-              }}
-            >
-              Remove
-            </button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            className="upload-zone"
-            onClick={() => {
-              logoInputRef.current?.click();
-              trigger("nudge");
-            }}
-          >
-            <input
-              ref={logoInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleLogoUpload}
-              hidden
-              aria-label="Upload logo image"
-            />
-            <span>Add logo</span>
-          </button>
-        )}
-      </section>
+      {/* Logo — shared component */}
+      <LogoUploader logo={logo} onLogoChange={onLogoChange} labelId="bulk-logo" showIcon={false} />
 
       <hr className="divider" />
 
-      {/* Dot Style */}
-      <section
-        className="control-section"
-        role="group"
-        aria-labelledby="bulk-dotstyle-label"
-      >
-        <span id="bulk-dotstyle-label" className="control-label">
-          Dot Style
-        </span>
-        <div
-          className="dot-row"
-          ref={dotRowRef}
-          role="radiogroup"
-          aria-label="Dot style"
-          onMouseDown={onDotDragStart}
-          onMouseLeave={onDotDragEnd}
-          onMouseUp={onDotDragEnd}
-          onMouseMove={onDotDragMove}
-          onKeyDown={handleDotRowKeyDown}
-        >
-          {DOT_STYLES.map((ds) => (
-            <button
-              key={ds.id}
-              role="radio"
-              aria-checked={dotStyle === ds.id}
-              className={`dot-option ${dotStyle === ds.id ? "active" : ""}`}
-              onClick={() => {
-                onDotStyleChange(ds.id);
-                trigger("success");
-              }}
-            >
-              <span
-                className={`dot-icon dot-icon-${ds.id}`}
-                aria-hidden="true"
-              />
-              <span className="dot-option-label">{ds.label}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+      {/* Dot Style — shared component */}
+      <DotStyleSelector
+        dotStyle={dotStyle}
+        onDotStyleChange={onDotStyleChange}
+        labelId="bulk-dotstyle"
+        showIcon={false}
+      />
 
       <hr className="divider" />
 
       {/* Size */}
-      <section
-        className="control-section"
-        role="group"
-        aria-labelledby="bulk-size-label"
-      >
+      <section className="control-section" role="group" aria-labelledby="bulk-size-label">
         <div className="control-header">
           <span id="bulk-size-label" className="control-label">
             Size
@@ -466,11 +269,7 @@ function BulkPanel({
           rel="noopener noreferrer"
           aria-label="Visit imBento website"
         >
-          <img
-            src="/imbento-logo-dark.svg"
-            alt="imBento"
-            className="imbento-logo"
-          />
+          <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
         </a>
       </footer>
     </>

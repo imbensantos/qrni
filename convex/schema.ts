@@ -58,6 +58,11 @@ export default defineSchema({
     .index("by_token", ["token"])
     .index("by_email", ["email"]),
 
+  // shortCode is the full routable path (e.g. "abc1234" or "myns/page").
+  // namespaceSlug stores only the namespace-local portion (e.g. "page").
+  // This is intentional denormalization: shortCode enables O(1) redirect
+  // lookups without a join, while namespaceSlug supports scoped queries
+  // within a namespace via the by_namespace_slug composite index.
   links: defineTable({
     shortCode: v.string(),
     namespace: v.optional(v.id("namespaces")),
@@ -74,11 +79,17 @@ export default defineSchema({
     .index("by_owner", ["owner"])
     .index("by_creator_ip", ["creatorIp"]),
 
+  // The "ip" field doubles as a user-scoped key for authenticated rate limits
+  // (prefixed with "user:"), so the by_ip index serves both anonymous and
+  // authenticated lookups. The by_window_start index supports cleanup of
+  // expired records.
   rate_limits: defineTable({
     ip: v.string(),
     windowStart: v.number(),
     count: v.number(),
-  }).index("by_ip", ["ip"]),
+  })
+    .index("by_ip", ["ip"])
+    .index("by_window_start", ["windowStart"]),
 
   audit_log: defineTable({
     userId: v.id("users"),
@@ -86,8 +97,9 @@ export default defineSchema({
     resourceType: v.string(),
     resourceId: v.string(),
     metadata: v.optional(v.any()),
-    timestamp: v.float64(),
+    timestamp: v.number(),
   })
     .index("by_user_timestamp", ["userId", "timestamp"])
-    .index("by_resource", ["resourceType", "resourceId"]),
+    .index("by_resource", ["resourceType", "resourceId"])
+    .index("by_action_timestamp", ["action", "timestamp"]),
 });

@@ -3,6 +3,7 @@ import { useWebHaptics } from "web-haptics/react";
 import QRCodeStyling from "qr-code-styling";
 import Doodles from "./Doodles";
 import { buildShortLinkUrl } from "../utils/url-utils";
+import { DOWNLOAD_FILENAME_SINGLE } from "../utils/constants";
 import type { Id } from "../../../../convex/_generated/dataModel";
 import "./PreviewPanel.css";
 
@@ -70,7 +71,7 @@ function PreviewPanel({
   useEffect(() => {
     qrCode.update({
       data: isValidUrl ? url : "",
-       
+
       dotsOptions: { color: fgColor, type: dotStyle as any },
       backgroundOptions: { color: bgColor },
       image: logo || undefined,
@@ -80,7 +81,7 @@ function PreviewPanel({
   const handleDownload = async () => {
     trigger("success");
     qrCode.update({ width: size, height: size });
-    await qrCode.download({ name: "qrni-code", extension: format });
+    await qrCode.download({ name: DOWNLOAD_FILENAME_SINGLE, extension: format });
     qrCode.update({ width: 200, height: 200 });
   };
 
@@ -145,9 +146,7 @@ function PreviewPanel({
                 <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
               </svg>
-              <span className="sl-url">
-                {buildShortLinkUrl(shortLinkResult.shortCode)}
-              </span>
+              <span className="sl-url">{buildShortLinkUrl(shortLinkResult.shortCode)}</span>
             </div>
             <button
               className="sl-copy-btn"
@@ -216,11 +215,7 @@ function PreviewPanel({
             rel="noopener noreferrer"
             aria-label="Visit imBento website"
           >
-            <img
-              src="/imbento-logo-dark.svg"
-              alt="imBento"
-              className="imbento-logo"
-            />
+            <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
           </a>
         </footer>
       </div>

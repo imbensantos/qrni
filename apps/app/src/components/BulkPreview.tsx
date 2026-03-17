@@ -1,16 +1,7 @@
 import { useState, useCallback } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import {
-  generateZip,
-  generatePdf,
-  type ExportFormat,
-} from "../utils/bulk-export";
-import {
-  isValidUrl,
-  sanitizeLabel,
-  deduplicateLabels,
-  type BulkEntry,
-} from "../utils/bulk-utils";
+import { generateZip, generatePdf, type ExportFormat } from "../utils/bulk-export";
+import { isValidUrl, sanitizeLabel, deduplicateLabels, type BulkEntry } from "../utils/bulk-utils";
 import Doodles from "./Doodles";
 import "./BulkPreview.css";
 
@@ -37,6 +28,7 @@ function BulkPreview({
 }: BulkPreviewProps) {
   const [generating, setGenerating] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const [exportError, setExportError] = useState<string | null>(null);
   const { trigger } = useWebHaptics();
 
   const validCount = entries.filter((e) => e.valid).length;
@@ -45,8 +37,7 @@ function BulkPreview({
   const styleOptions = { fgColor, bgColor, dotStyle, logo, size };
 
   const handleAddRow = useCallback(() => {
-    const nextIndex =
-      entries.length > 0 ? Math.max(...entries.map((e) => e.index)) + 1 : 1;
+    const nextIndex = entries.length > 0 ? Math.max(...entries.map((e) => e.index)) + 1 : 1;
     const newEntry: BulkEntry = {
       index: nextIndex,
       label: "",
@@ -88,12 +79,17 @@ function BulkPreview({
 
   const handleZip = async () => {
     setGenerating(true);
+    setExportError(null);
     trigger("nudge");
     try {
       await generateZip(entries, styleOptions, format, (current, total) => {
         setProgress({ current, total });
       });
       trigger("success");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to generate ZIP";
+      setExportError(message);
+      trigger("error");
     } finally {
       setGenerating(false);
       setProgress({ current: 0, total: 0 });
@@ -102,12 +98,17 @@ function BulkPreview({
 
   const handlePdf = async () => {
     setGenerating(true);
+    setExportError(null);
     trigger("nudge");
     try {
       await generatePdf(entries, styleOptions, (current, total) => {
         setProgress({ current, total });
       });
       trigger("success");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to generate PDF";
+      setExportError(message);
+      trigger("error");
     } finally {
       setGenerating(false);
       setProgress({ current: 0, total: 0 });
@@ -137,8 +138,7 @@ function BulkPreview({
           </svg>
           <p>Upload a CSV or JSON file to get started</p>
           <p className="bulk-empty-hint">
-            Format: each row needs a <strong>label</strong> and a{" "}
-            <strong>url</strong>
+            Format: each row needs a <strong>label</strong> and a <strong>url</strong>
           </p>
           <footer className="panel-footer panel-footer-mobile">
             <span>Powered by</span>
@@ -148,11 +148,7 @@ function BulkPreview({
               rel="noopener noreferrer"
               aria-label="Visit imBento website"
             >
-              <img
-                src="/imbento-logo-dark.svg"
-                alt="imBento"
-                className="imbento-logo"
-              />
+              <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
             </a>
           </footer>
         </div>
@@ -167,9 +163,7 @@ function BulkPreview({
         {/* Summary */}
         <div className="bulk-summary" aria-live="polite" aria-atomic="true">
           <span className="bulk-summary-valid">{validCount} valid</span>
-          {invalidCount > 0 && (
-            <span className="bulk-summary-invalid">{invalidCount} invalid</span>
-          )}
+          {invalidCount > 0 && <span className="bulk-summary-invalid">{invalidCount} invalid</span>}
           <span className="bulk-summary-total">{entries.length} total</span>
         </div>
 
@@ -186,10 +180,7 @@ function BulkPreview({
             </thead>
             <tbody>
               {entries.map((entry) => (
-                <tr
-                  key={entry.index}
-                  className={entry.valid ? "" : "bulk-row-invalid"}
-                >
+                <tr key={entry.index} className={entry.valid ? "" : "bulk-row-invalid"}>
                   <td>{entry.index}</td>
                   <td className="bulk-cell-label">
                     <input
@@ -197,9 +188,7 @@ function BulkPreview({
                       value={entry.label}
                       onKeyDown={() => trigger(8)}
                       onBeforeInput={() => trigger(8)}
-                      onChange={(e) =>
-                        handleCellEdit(entry.index, "label", e.target.value)
-                      }
+                      onChange={(e) => handleCellEdit(entry.index, "label", e.target.value)}
                       placeholder="Label"
                       aria-label={`Label for row ${entry.index}`}
                     />
@@ -210,9 +199,7 @@ function BulkPreview({
                       value={entry.url}
                       onKeyDown={() => trigger(8)}
                       onBeforeInput={() => trigger(8)}
-                      onChange={(e) =>
-                        handleCellEdit(entry.index, "url", e.target.value)
-                      }
+                      onChange={(e) => handleCellEdit(entry.index, "url", e.target.value)}
                       placeholder="https://..."
                       aria-label={`URL for row ${entry.index}`}
                     />
@@ -231,11 +218,7 @@ function BulkPreview({
             </tbody>
           </table>
         </div>
-        <button
-          className="bulk-add-row"
-          onClick={handleAddRow}
-          aria-label="Add new QR code entry"
-        >
+        <button className="bulk-add-row" onClick={handleAddRow} aria-label="Add new QR code entry">
           + Add row
         </button>
 
@@ -260,6 +243,20 @@ function BulkPreview({
             <span className="bulk-progress-text">
               Generating {progress.current} of {progress.total}...
             </span>
+          </div>
+        )}
+
+        {/* Export error */}
+        {exportError && (
+          <div className="bulk-export-error" role="alert">
+            <span>{exportError}</span>
+            <button
+              className="bulk-export-error-dismiss"
+              onClick={() => setExportError(null)}
+              aria-label="Dismiss error"
+            >
+              Dismiss
+            </button>
           </div>
         )}
 

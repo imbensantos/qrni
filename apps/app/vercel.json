@@ -1,4 +1,5 @@
 {
+  "$comment": "Vercel rewrites do not support env vars. The Convex deployment URL below must be updated manually when the deployment changes. It should match the CONVEX_SITE_URL environment variable configured in the Vercel project settings.",
   "rewrites": [
     {
       "source": "/profile",

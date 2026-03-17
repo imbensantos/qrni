@@ -4,14 +4,10 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { generateShortCode } from "./lib/shortCode";
 import { logAudit } from "./lib/auditLog";
 import { checkPermission } from "./lib/permissions";
+import { isValidEmail } from "./lib/validation";
+import { INVITE_TTL_MS, ERR } from "./lib/constants";
 
 const roleValidator = v.union(v.literal("editor"), v.literal("viewer"));
-
-const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-function isValidEmail(email: string): boolean {
-  return email.includes("@") && email.includes(".");
-}
 
 export const createEmailInvite = mutation({
   args: {
@@ -21,19 +17,20 @@ export const createEmailInvite = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Must be signed in");
+    if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
 
     const user = await ctx.db.get(userId);
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
-    await checkPermission(ctx, args.namespaceId, user._id, "editor");
+    // Only owners can invite members
+    await checkPermission(ctx, args.namespaceId, user._id, "owner");
 
     const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error("Namespace not found");
+    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
 
     const normalizedEmail = args.email.toLowerCase().trim();
     if (!isValidEmail(normalizedEmail)) {
-      throw new Error("Invalid email address");
+      throw new Error(ERR.INVALID_EMAIL);
     }
 
     const token = generateShortCode(16);
@@ -73,15 +70,16 @@ export const createInviteLink = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Must be signed in");
+    if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
 
     const user = await ctx.db.get(userId);
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
-    await checkPermission(ctx, args.namespaceId, user._id, "editor");
+    // Only owners can invite members
+    await checkPermission(ctx, args.namespaceId, user._id, "owner");
 
     const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error("Namespace not found");
+    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
 
     const token = generateShortCode(16);
 
@@ -112,38 +110,34 @@ export const acceptInvite = mutation({
   args: { token: v.string() },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Must be signed in");
+    if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
 
     const user = await ctx.db.get(userId);
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
     const invite = await ctx.db
       .query("namespace_invites")
       .withIndex("by_token", (q) => q.eq("token", args.token))
       .first();
 
-    if (!invite) throw new Error("Invite not found");
-    if (invite.revoked) throw new Error("This invite has been revoked");
+    if (!invite) throw new Error(ERR.INVITE_NOT_FOUND);
+    if (invite.revoked) throw new Error(ERR.INVITE_REVOKED);
 
     if (invite.expiresAt !== undefined && Date.now() > invite.expiresAt) {
-      throw new Error("This invite has expired");
+      throw new Error(ERR.INVITE_EXPIRED);
     }
 
     if (invite.type === "email") {
-      if (
-        !invite.email ||
-        !user.email ||
-        invite.email !== user.email.toLowerCase().trim()
-      ) {
-        throw new Error("This invite was sent to a different email address");
+      if (!invite.email || !user.email || invite.email !== user.email.toLowerCase().trim()) {
+        throw new Error(ERR.INVITE_WRONG_EMAIL);
       }
     }
 
     const namespace = await ctx.db.get(invite.namespace);
-    if (!namespace) throw new Error("Namespace not found");
+    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
 
     if (namespace.owner === user._id) {
-      throw new Error("You already own this namespace");
+      throw new Error(ERR.ALREADY_OWNER);
     }
 
     const existingMembership = await ctx.db
@@ -154,7 +148,7 @@ export const acceptInvite = mutation({
       .first();
 
     if (existingMembership) {
-      throw new Error("You are already a member of this namespace");
+      throw new Error(ERR.ALREADY_MEMBER);
     }
 
     const membershipId = await ctx.db.insert("namespace_members", {
@@ -184,20 +178,19 @@ export const revokeInvite = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Must be signed in");
+    if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
 
     const user = await ctx.db.get(userId);
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
     await checkPermission(ctx, args.namespaceId, user._id, "owner");
 
     const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error("Namespace not found");
+    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
 
     const invite = await ctx.db.get(args.inviteId);
-    if (!invite) throw new Error("Invite not found");
-    if (invite.namespace !== args.namespaceId)
-      throw new Error("Invite does not belong to this namespace");
+    if (!invite) throw new Error(ERR.INVITE_NOT_FOUND);
+    if (invite.namespace !== args.namespaceId) throw new Error(ERR.INVITE_NOT_IN_NAMESPACE);
 
     await ctx.db.patch(args.inviteId, { revoked: true });
 
@@ -218,20 +211,19 @@ export const removeMember = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Must be signed in");
+    if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
 
     const user = await ctx.db.get(userId);
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
     await checkPermission(ctx, args.namespaceId, user._id, "owner");
 
     const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error("Namespace not found");
+    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
 
     const membership = await ctx.db.get(args.membershipId);
-    if (!membership) throw new Error("Membership not found");
-    if (membership.namespace !== args.namespaceId)
-      throw new Error("Membership does not belong to this namespace");
+    if (!membership) throw new Error(ERR.MEMBERSHIP_NOT_FOUND);
+    if (membership.namespace !== args.namespaceId) throw new Error(ERR.MEMBERSHIP_NOT_IN_NAMESPACE);
 
     await ctx.db.delete(args.membershipId);
 
@@ -245,11 +237,14 @@ export const removeMember = mutation({
   },
 });
 
+// Issue #4: Individual ctx.db.get() calls are already optimized in Convex
+// (they're batched at the engine level). Promise.all is used here to express
+// the parallelism intent, which is the idiomatic Convex pattern.
 export const listMembers = query({
   args: { namespaceId: v.id("namespaces") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Must be signed in");
+    if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
 
     await checkPermission(ctx, args.namespaceId, userId, "viewer");
 
@@ -283,7 +278,7 @@ export const listInvites = query({
   args: { namespaceId: v.id("namespaces") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Must be signed in");
+    if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
 
     await checkPermission(ctx, args.namespaceId, userId, "viewer");
 
@@ -294,9 +289,7 @@ export const listInvites = query({
       .take(50);
 
     // Filter out expired invites — callers only need active/pending ones
-    return invites.filter(
-      (invite) => invite.expiresAt === undefined || invite.expiresAt > now,
-    );
+    return invites.filter((invite) => invite.expiresAt === undefined || invite.expiresAt > now);
   },
 });
 
@@ -307,15 +300,13 @@ export const transferOwnership = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Must be signed in");
+    if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
 
     const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error("Namespace not found");
-    if (namespace.owner !== userId)
-      throw new Error("Only the owner can transfer ownership");
+    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
+    if (namespace.owner !== userId) throw new Error(ERR.ONLY_OWNER_CAN_TRANSFER);
 
-    if (args.newOwnerId === userId)
-      throw new Error("You already own this namespace");
+    if (args.newOwnerId === userId) throw new Error(ERR.ALREADY_OWNER);
 
     // Verify target is an existing member
     const membership = await ctx.db
@@ -324,8 +315,7 @@ export const transferOwnership = mutation({
         q.eq("namespace", args.namespaceId).eq("user", args.newOwnerId),
       )
       .first();
-    if (!membership)
-      throw new Error("Target user must be a member of this namespace");
+    if (!membership) throw new Error(ERR.TARGET_MUST_BE_MEMBER);
 
     // Transfer: set new owner on namespace
     await ctx.db.patch(args.namespaceId, { owner: args.newOwnerId });

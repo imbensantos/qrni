@@ -31,6 +31,9 @@ function AllNamespaceLinksView({
 }: AllNamespaceLinksViewProps) {
   const [page, setPage] = useState(0);
 
+  // TODO: This fetches all links client-side then slices for pagination.
+  // Should be replaced with server-side pagination (offset/cursor-based query)
+  // to avoid fetching the full dataset on every render.
   const nsLinks = useQuery(api.links.listNamespaceLinks, { namespaceId });
   const members = useQuery(api.collaboration.listMembers, { namespaceId });
 
@@ -67,10 +70,7 @@ function AllNamespaceLinksView({
           >
             Invite
           </button>
-          <button
-            className="section-add-btn"
-            onClick={() => onAdd(namespaceId, namespaceName)}
-          >
+          <button className="section-add-btn" onClick={() => onAdd(namespaceId, namespaceName)}>
             <IconPlus size={14} /> Add link
           </button>
         </div>
@@ -103,13 +103,9 @@ function AllNamespaceLinksView({
                         >
                           /{link.shortCode}
                         </a>
-                        <CopyButton
-                          text={`${window.location.origin}/${link.shortCode}`}
-                        />
+                        <CopyButton text={`${window.location.origin}/${link.shortCode}`} />
                       </div>
-                      <div className="pp-link-destination">
-                        {link.destinationUrl}
-                      </div>
+                      <div className="pp-link-destination">{link.destinationUrl}</div>
                     </td>
                     <td>{link.clickCount}</td>
                     <td>{formatDateShort(link.createdAt)}</td>

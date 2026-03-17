@@ -4,6 +4,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { isValidSlug } from "./lib/shortCode";
 import { logAudit } from "./lib/auditLog";
 import { checkPermission } from "./lib/permissions";
+import { MAX_NAMESPACES_PER_USER, MAX_DESCRIPTION_LENGTH, ERR } from "./lib/constants";
 
 const RESERVED_SLUGS = [
   // App routes
@@ -61,47 +62,44 @@ export const create = mutation({
   args: { slug: v.string(), description: v.optional(v.string()) },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Must be signed in");
+    if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
 
     const user = await ctx.db.get(userId);
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
     const slug = args.slug.toLowerCase();
 
     if (!isValidSlug(slug)) {
-      throw new Error(
-        "Namespace must be 3-30 chars: lowercase letters, numbers, hyphens",
-      );
+      throw new Error(ERR.INVALID_NAMESPACE_SLUG);
     }
 
     if (RESERVED_SLUGS.includes(slug)) {
-      throw new Error("This namespace is reserved");
+      throw new Error(ERR.NAMESPACE_RESERVED);
     }
 
-    if (args.description !== undefined && args.description.length > 500) {
-      throw new Error("Description must be 500 characters or fewer");
+    if (args.description !== undefined && args.description.length > MAX_DESCRIPTION_LENGTH) {
+      throw new Error(ERR.DESCRIPTION_TOO_LONG);
     }
 
     const ownedNamespaces = await ctx.db
       .query("namespaces")
       .withIndex("by_owner", (q) => q.eq("owner", user._id))
       .take(100);
-    if (ownedNamespaces.length >= 5) {
-      throw new Error("You've reached the limit of 5 namespaces.");
+    if (ownedNamespaces.length >= MAX_NAMESPACES_PER_USER) {
+      throw new Error(ERR.NAMESPACE_LIMIT);
     }
 
     const existing = await ctx.db
       .query("namespaces")
       .withIndex("by_slug", (q) => q.eq("slug", slug))
       .first();
-    if (existing) throw new Error("This namespace is already taken");
+    if (existing) throw new Error(ERR.NAMESPACE_TAKEN);
 
     const linkConflict = await ctx.db
       .query("links")
       .withIndex("by_short_code", (q) => q.eq("shortCode", slug))
       .first();
-    if (linkConflict)
-      throw new Error("This name conflicts with an existing short link");
+    if (linkConflict) throw new Error(ERR.NAMESPACE_LINK_CONFLICT);
 
     const namespaceId = await ctx.db.insert("namespaces", {
       owner: user._id,
@@ -131,22 +129,22 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Must be signed in");
+    if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
 
     const user = await ctx.db.get(userId);
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
     await checkPermission(ctx, args.namespaceId, user._id, "owner");
 
     const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error("Namespace not found");
+    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
 
     const updates: Record<string, unknown> = {};
 
     // Handle description update
     if (args.description !== undefined) {
-      if (args.description.length > 500) {
-        throw new Error("Description must be 500 characters or fewer");
+      if (args.description.length > MAX_DESCRIPTION_LENGTH) {
+        throw new Error(ERR.DESCRIPTION_TOO_LONG);
       }
       updates.description = args.description || undefined;
     }
@@ -156,13 +154,11 @@ export const update = mutation({
       const slug = args.newSlug.toLowerCase();
 
       if (!isValidSlug(slug)) {
-        throw new Error(
-          "Namespace must be 3-30 chars: lowercase letters, numbers, hyphens",
-        );
+        throw new Error(ERR.INVALID_NAMESPACE_SLUG);
       }
 
       if (RESERVED_SLUGS.includes(slug)) {
-        throw new Error("This namespace is reserved");
+        throw new Error(ERR.NAMESPACE_RESERVED);
       }
 
       if (slug !== namespace.slug) {
@@ -173,22 +169,22 @@ export const update = mutation({
           .query("namespaces")
           .withIndex("by_slug", (q) => q.eq("slug", slug))
           .first();
-        if (existing) throw new Error("This namespace is already taken");
+        if (existing) throw new Error(ERR.NAMESPACE_TAKEN);
 
         const linkConflict = await ctx.db
           .query("links")
           .withIndex("by_short_code", (q) => q.eq("shortCode", slug))
           .first();
-        if (linkConflict)
-          throw new Error("This name conflicts with an existing short link");
+        if (linkConflict) throw new Error(ERR.NAMESPACE_LINK_CONFLICT);
 
-        // Update all links in this namespace to use the new slug prefix
+        // Issue #9: Update all links FIRST, then update the namespace slug.
+        // This way if a link update fails, the old slug is still valid and
+        // the namespace remains in a consistent state.
+        // Uses .collect() to process all links regardless of count.
         const links = await ctx.db
           .query("links")
-          .withIndex("by_namespace_slug", (q) =>
-            q.eq("namespace", args.namespaceId),
-          )
-          .take(500);
+          .withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId))
+          .collect();
         for (const link of links) {
           if (link.namespaceSlug) {
             await ctx.db.patch(link._id, {
@@ -248,35 +244,35 @@ export const remove = mutation({
   args: { namespaceId: v.id("namespaces") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Must be signed in");
+    if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
 
     const user = await ctx.db.get(userId);
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
     await checkPermission(ctx, args.namespaceId, user._id, "owner");
 
     const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error("Namespace not found");
+    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
 
-    // Cascade delete: links, members, invites
+    // Cascade delete: links, members, invites.
+    // Uses .collect() to ensure ALL related records are deleted, not just the
+    // first 500 (which was the previous bug with .take(500)).
     const links = await ctx.db
       .query("links")
-      .withIndex("by_namespace_slug", (q) =>
-        q.eq("namespace", args.namespaceId),
-      )
-      .take(500);
+      .withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId))
+      .collect();
     for (const link of links) await ctx.db.delete(link._id);
 
     const members = await ctx.db
       .query("namespace_members")
       .withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId))
-      .take(100);
+      .collect();
     for (const member of members) await ctx.db.delete(member._id);
 
     const invites = await ctx.db
       .query("namespace_invites")
       .withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId))
-      .take(50);
+      .collect();
     for (const invite of invites) await ctx.db.delete(invite._id);
 
     await logAudit(ctx, {

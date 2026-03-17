@@ -1,4 +1,5 @@
 import type { BulkEntry } from "./bulk-utils";
+import { DOWNLOAD_FILENAME_BULK_ZIP, DOWNLOAD_FILENAME_BULK_PDF } from "./constants";
 
 export interface QrOptions {
   fgColor: string;
@@ -10,11 +11,7 @@ export interface QrOptions {
 
 export type ExportFormat = "png" | "webp" | "svg";
 
-function createQRCode(
-  QRCodeStyling: any,
-  url: string,
-  options: QrOptions,
-): any {
+function createQRCode(QRCodeStyling: any, url: string, options: QrOptions): any {
   const { fgColor, bgColor, dotStyle, logo, size } = options;
   return new QRCodeStyling({
     width: size,
@@ -48,10 +45,7 @@ async function renderToBlob(qr: any, format: ExportFormat): Promise<Blob> {
   if (!canvas) throw new Error("Canvas not found");
 
   return new Promise((resolve) => {
-    canvas.toBlob(
-      (blob) => resolve(blob!),
-      format === "webp" ? "image/webp" : "image/png",
-    );
+    canvas.toBlob((blob) => resolve(blob!), format === "webp" ? "image/webp" : "image/png");
   });
 }
 
@@ -80,17 +74,14 @@ export async function generateZip(
       zip.file(`${entry.filename}.${ext}`, blob);
     });
     await Promise.all(promises);
-    onProgress?.(
-      Math.min(i + CHUNK_SIZE, validEntries.length),
-      validEntries.length,
-    );
+    onProgress?.(Math.min(i + CHUNK_SIZE, validEntries.length), validEntries.length);
 
     // Yield to UI between chunks
     await new Promise((r) => setTimeout(r, 0));
   }
 
   const blob = await zip.generateAsync({ type: "blob" });
-  downloadBlob(blob, "qrni-bulk.zip");
+  downloadBlob(blob, DOWNLOAD_FILENAME_BULK_ZIP);
 }
 
 export async function generatePdf(
@@ -147,21 +138,15 @@ export async function generatePdf(
 
       pdf.setFontSize(8);
       pdf.setTextColor(100);
-      const labelText =
-        entry.label.length > 25
-          ? entry.label.slice(0, 22) + "..."
-          : entry.label;
+      const labelText = entry.label.length > 25 ? entry.label.slice(0, 22) + "..." : entry.label;
       pdf.text(labelText, x + qrSize / 2, y + qrSize + 6, { align: "center" });
     }
 
-    onProgress?.(
-      Math.min(i + CHUNK_SIZE, validEntries.length),
-      validEntries.length,
-    );
+    onProgress?.(Math.min(i + CHUNK_SIZE, validEntries.length), validEntries.length);
     await new Promise((r) => setTimeout(r, 0));
   }
 
-  pdf.save("qrni-bulk.pdf");
+  pdf.save(DOWNLOAD_FILENAME_BULK_PDF);
 }
 
 function downloadBlob(blob: Blob, filename: string): void {
