@@ -1,8 +1,21 @@
+import type { BulkEntry } from "./bulk-utils";
+
+export interface QrOptions {
+  fgColor: string;
+  bgColor: string;
+  dotStyle: string;
+  logo?: string | null;
+  size: number;
+}
+
+type ExportFormat = "png" | "webp" | "svg";
+
 function createQRCode(
-  QRCodeStyling,
-  url,
-  { fgColor, bgColor, dotStyle, logo, size },
-) {
+  QRCodeStyling: any,
+  url: string,
+  options: QrOptions,
+): any {
+  const { fgColor, bgColor, dotStyle, logo, size } = options;
   return new QRCodeStyling({
     width: size,
     height: size,
@@ -17,7 +30,7 @@ function createQRCode(
   });
 }
 
-async function renderToBlob(qr, format) {
+async function renderToBlob(qr: any, format: ExportFormat): Promise<Blob> {
   const container = document.createElement("div");
   qr.append(container);
 
@@ -36,7 +49,7 @@ async function renderToBlob(qr, format) {
 
   return new Promise((resolve) => {
     canvas.toBlob(
-      (blob) => resolve(blob),
+      (blob) => resolve(blob!),
       format === "webp" ? "image/webp" : "image/png",
     );
   });
@@ -44,7 +57,12 @@ async function renderToBlob(qr, format) {
 
 const CHUNK_SIZE = 10;
 
-export async function generateZip(entries, options, format, onProgress) {
+export async function generateZip(
+  entries: BulkEntry[],
+  options: QrOptions,
+  format: ExportFormat,
+  onProgress?: (done: number, total: number) => void,
+): Promise<void> {
   const [{ default: QRCodeStyling }, { default: JSZip }] = await Promise.all([
     import("qr-code-styling"),
     import("jszip"),
@@ -75,7 +93,11 @@ export async function generateZip(entries, options, format, onProgress) {
   downloadBlob(blob, "qrni-bulk.zip");
 }
 
-export async function generatePdf(entries, options, onProgress) {
+export async function generatePdf(
+  entries: BulkEntry[],
+  options: QrOptions,
+  onProgress?: (done: number, total: number) => void,
+): Promise<void> {
   const [{ default: QRCodeStyling }, { jsPDF }] = await Promise.all([
     import("qr-code-styling"),
     import("jspdf"),
@@ -142,7 +164,7 @@ export async function generatePdf(entries, options, onProgress) {
   pdf.save("qrni-bulk.pdf");
 }
 
-function downloadBlob(blob, filename) {
+function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;

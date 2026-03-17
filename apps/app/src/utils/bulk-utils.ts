@@ -2,14 +2,23 @@ import Papa from "papaparse";
 
 const MAX_ENTRIES = 500;
 
-export function isValidUrl(url) {
+export interface BulkEntry {
+  index: number;
+  label: string;
+  url: string;
+  filename: string;
+  valid: boolean;
+  error: string | null;
+}
+
+export function isValidUrl(url: string): boolean {
   return (
     typeof url === "string" &&
     (url.startsWith("http://") || url.startsWith("https://"))
   );
 }
 
-export function sanitizeLabel(label) {
+export function sanitizeLabel(label: string | number): string {
   return (
     String(label)
       .trim()
@@ -20,8 +29,8 @@ export function sanitizeLabel(label) {
   );
 }
 
-export function deduplicateLabels(entries) {
-  const counts = {};
+export function deduplicateLabels(entries: BulkEntry[]): BulkEntry[] {
+  const counts: Record<string, number> = {};
   return entries.map((entry) => {
     const base = entry.filename;
     counts[base] = (counts[base] || 0) + 1;
@@ -32,13 +41,13 @@ export function deduplicateLabels(entries) {
 
 const HEADER_NAMES = ["label", "name", "url", "link"];
 
-function hasHeaderRow(fields) {
+function hasHeaderRow(fields: string[]): boolean {
   return fields.some((f) => HEADER_NAMES.includes(f.toLowerCase().trim()));
 }
 
-export function parseCSV(text) {
+export function parseCSV(text: string): BulkEntry[] {
   // First try with headers
-  const withHeader = Papa.parse(text.trim(), {
+  const withHeader = Papa.parse<Record<string, string>>(text.trim(), {
     header: true,
     skipEmptyLines: true,
   });
@@ -47,20 +56,26 @@ export function parseCSV(text) {
   if (withHeader.meta.fields && hasHeaderRow(withHeader.meta.fields)) {
     const entries = withHeader.data.slice(0, MAX_ENTRIES).map((row, i) => {
       const label = (
-        row.label ||
-        row.Label ||
-        row.name ||
-        row.Name ||
+        row["label"] ||
+        row["Label"] ||
+        row["name"] ||
+        row["Name"] ||
         ""
       ).trim();
-      const url = (row.url || row.URL || row.link || row.Link || "").trim();
+      const url = (
+        row["url"] ||
+        row["URL"] ||
+        row["link"] ||
+        row["Link"] ||
+        ""
+      ).trim();
       return buildEntry(i, label, url);
     });
     return deduplicateLabels(entries);
   }
 
   // No header — treat as two-column: label, url
-  const noHeader = Papa.parse(text.trim(), {
+  const noHeader = Papa.parse<string[]>(text.trim(), {
     header: false,
     skipEmptyLines: true,
   });
@@ -74,7 +89,7 @@ export function parseCSV(text) {
   return deduplicateLabels(entries);
 }
 
-function buildEntry(i, label, url) {
+function buildEntry(i: number, label: string, url: string): BulkEntry {
   const valid = isValidUrl(url);
   const error = !label
     ? "Missing label"
@@ -93,8 +108,8 @@ function buildEntry(i, label, url) {
   };
 }
 
-export function parseJSON(text) {
-  let data;
+export function parseJSON(text: string): BulkEntry[] {
+  let data: unknown;
   try {
     data = JSON.parse(text.trim());
   } catch {
@@ -123,31 +138,33 @@ export function parseJSON(text) {
     ];
   }
 
-  const entries = data.slice(0, MAX_ENTRIES).map((item, i) => {
-    const label = item.label || item.name || "";
-    const url = item.url || item.link || "";
-    const valid = isValidUrl(url);
-    const error = !label.trim()
-      ? "Missing label"
-      : !url.trim()
-        ? "Missing URL"
-        : !valid
-          ? "Invalid URL (must start with http:// or https://)"
-          : null;
-    return {
-      index: i + 1,
-      label: label.trim(),
-      url: url.trim(),
-      filename: sanitizeLabel(label),
-      valid: !!label.trim() && valid,
-      error,
-    };
-  });
+  const entries = (data as Record<string, unknown>[])
+    .slice(0, MAX_ENTRIES)
+    .map((item, i) => {
+      const label = String(item["label"] ?? item["name"] ?? "");
+      const url = String(item["url"] ?? item["link"] ?? "");
+      const valid = isValidUrl(url);
+      const error = !label.trim()
+        ? "Missing label"
+        : !url.trim()
+          ? "Missing URL"
+          : !valid
+            ? "Invalid URL (must start with http:// or https://)"
+            : null;
+      return {
+        index: i + 1,
+        label: label.trim(),
+        url: url.trim(),
+        filename: sanitizeLabel(label),
+        valid: !!label.trim() && valid,
+        error,
+      };
+    });
 
   return deduplicateLabels(entries);
 }
 
-export function parseFile(text, filename) {
+export function parseFile(text: string, filename: string): BulkEntry[] {
   if (filename.toLowerCase().endsWith(".json")) return parseJSON(text);
   return parseCSV(text);
 }

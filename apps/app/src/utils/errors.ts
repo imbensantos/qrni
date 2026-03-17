@@ -2,7 +2,7 @@
  * Strip Convex framework noise from error messages so users see
  * only the application-level text.
  */
-export function cleanConvexError(message) {
+export function cleanConvexError(message: string): string {
   return message
     .replace(/\[CONVEX [^\]]*\]\s*/g, "")
     .replace(/\[Request ID: [^\]]*\]\s*/g, "")
