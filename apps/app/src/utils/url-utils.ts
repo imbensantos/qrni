@@ -7,5 +7,5 @@ export function buildShortLinkUrl(slug: string, namespace?: string): string {
   if (namespace) {
     return `${origin}/${namespace}/${slug}`;
   }
-  return `${origin}/s/${slug}`;
+  return `${origin}/${slug}`;
 }
