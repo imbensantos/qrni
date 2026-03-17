@@ -479,11 +479,7 @@ export const updateLinkInternal = internalMutation({
       }
       updates.shortCode = newShortCode;
       if (link.autoSlug && !link.namespace) {
-        const allLinks = await ctx.db
-          .query("links")
-          .withIndex("by_owner", (q) => q.eq("owner", user._id))
-          .collect();
-        const customCount = allLinks.filter((l) => !l.namespace && !l.autoSlug).length;
+        const customCount = await countCustomLinks(ctx, user._id);
         if (customCount >= MAX_CUSTOM_LINKS_PER_USER) {
           throw new Error(ERR.CUSTOM_LINK_LIMIT);
         }
