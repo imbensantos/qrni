@@ -1,38 +1,106 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-
-// Mock navigator.vibrate BEFORE web-haptics loads so isSupported is true
-const mockVibrate = vi.hoisted(() => {
-  const fn = vi.fn(() => true);
-  Object.defineProperty(navigator, "vibrate", {
-    value: fn,
-    writable: true,
-    configurable: true,
-  });
-  return fn;
-});
-
+import { WebHaptics, defaultPatterns } from "web-haptics";
 import SizeSlider from "./SizeSlider";
 
+// Spy on the real library — no mocking, the actual trigger method runs
+const triggerSpy = vi.spyOn(WebHaptics.prototype, "trigger");
+
 beforeEach(() => {
-  mockVibrate.mockClear();
+  triggerSpy.mockClear();
 });
 
+afterEach(() => {
+  // Clean up any DOM elements the library injected
+  document.querySelectorAll("label[for^='web-haptics']").forEach((el) => el.remove());
+});
+
+/**
+ * Replicate the library's vibration pattern math so we can validate
+ * that a trigger argument produces perceptible output.
+ * Ported from web-haptics/dist/chunk-4NSAIXAB.mjs (functions C, w, M).
+ */
+const CHUNK_SIZE = 20;
+
+function intensityPulse(duration: number, intensity: number): number[] {
+  if (intensity >= 1) return [duration];
+  if (intensity <= 0) return [];
+  const onTime = Math.max(1, Math.round(CHUNK_SIZE * intensity));
+  const offTime = CHUNK_SIZE - onTime;
+  const result: number[] = [];
+  let remaining = duration;
+  while (remaining >= CHUNK_SIZE) {
+    result.push(onTime, offTime);
+    remaining -= CHUNK_SIZE;
+  }
+  if (remaining > 0) {
+    const tail = Math.max(1, Math.round(remaining * intensity));
+    result.push(tail);
+    const gap = remaining - tail;
+    if (gap > 0) result.push(gap);
+  }
+  return result;
+}
+
+type Vibration = { duration: number; intensity?: number; delay?: number };
+
+function resolveInput(input: unknown): Vibration[] | null {
+  if (typeof input === "number") return [{ duration: input }];
+  if (typeof input === "string") {
+    const preset = (defaultPatterns as Record<string, { pattern: Vibration[] }>)[input];
+    if (!preset) return null;
+    return preset.pattern.map((v) => ({ ...v }));
+  }
+  return null;
+}
+
+function buildVibratePattern(vibrations: Vibration[], defaultIntensity = 0.5): number[] {
+  const result: number[] = [];
+  for (const v of vibrations) {
+    const intensity = Math.max(0, Math.min(1, v.intensity ?? defaultIntensity));
+    const delay = v.delay ?? 0;
+    if (delay > 0) {
+      if (result.length > 0 && result.length % 2 === 0) {
+        result[result.length - 1] += delay;
+      } else {
+        if (result.length === 0) result.push(0);
+        result.push(delay);
+      }
+    }
+    const pulses = intensityPulse(v.duration, intensity);
+    if (pulses.length === 0) {
+      if (result.length > 0 && result.length % 2 === 0) {
+        result[result.length - 1] += v.duration;
+      } else if (v.duration > 0) {
+        result.push(0);
+        result.push(v.duration);
+      }
+      continue;
+    }
+    for (const d of pulses) result.push(d);
+  }
+  return result;
+}
+
+/** Sum of vibrate-on segments (even indices in the pattern). */
+function totalVibrateMs(pattern: number[]): number {
+  return pattern.filter((_, i) => i % 2 === 0).reduce((a, b) => a + b, 0);
+}
+
+// ---------- helpers ----------
+
 function renderSlider(overrides = {}) {
-  const props = {
-    size: 512,
-    onSizeChange: vi.fn(),
-    ...overrides,
-  };
+  const props = { size: 512, onSizeChange: vi.fn(), ...overrides };
   render(<SizeSlider {...props} />);
   return props;
 }
 
+// ---------- tests ----------
+
 describe("SizeSlider", () => {
   it("renders the slider with correct value", () => {
     renderSlider({ size: 1024 });
-    const slider = screen.getByRole("slider");
-    expect(slider).toHaveValue("1024");
+    expect(screen.getByRole("slider")).toHaveValue("1024");
   });
 
   it("displays the current size", () => {
@@ -42,44 +110,52 @@ describe("SizeSlider", () => {
 
   it("calls onSizeChange when slider value changes", () => {
     const props = renderSlider({ size: 512 });
-    const slider = screen.getByRole("slider");
-    fireEvent.change(slider, { target: { value: "1024" } });
+    fireEvent.change(screen.getByRole("slider"), { target: { value: "1024" } });
     expect(props.onSizeChange).toHaveBeenCalledWith(1024);
   });
 
-  it("triggers navigator.vibrate on native input event", () => {
+  it("calls the real library trigger on native input event", () => {
+    renderSlider();
+    screen.getByRole("slider").dispatchEvent(new Event("input", { bubbles: true }));
+    expect(triggerSpy).toHaveBeenCalled();
+  });
+
+  it("passes a haptic argument that produces perceptible vibration", () => {
+    renderSlider();
+    screen.getByRole("slider").dispatchEvent(new Event("input", { bubbles: true }));
+
+    const arg = triggerSpy.mock.calls[0][0];
+    const vibrations = resolveInput(arg);
+    expect(vibrations).not.toBeNull();
+
+    const pattern = buildVibratePattern(vibrations!);
+    const onTimeMs = totalVibrateMs(pattern);
+    // Minimum perceptible vibration is ~10ms on most devices
+    expect(onTimeMs).toBeGreaterThanOrEqual(10);
+  });
+
+  it("calls trigger on touchmove", () => {
+    renderSlider();
+    screen.getByRole("slider").dispatchEvent(new Event("touchmove", { bubbles: true }));
+    expect(triggerSpy).toHaveBeenCalled();
+  });
+
+  it("calls trigger on each input event during continuous drag", () => {
     renderSlider();
     const slider = screen.getByRole("slider");
     slider.dispatchEvent(new Event("input", { bubbles: true }));
-    expect(mockVibrate).toHaveBeenCalled();
-    // Verify the vibration pattern has perceptible duration (>=10ms on-time)
-    const pattern = mockVibrate.mock.calls[0][0] as number[];
-    const totalVibrateDuration = pattern.filter((_, i) => i % 2 === 0).reduce((a, b) => a + b, 0);
-    expect(totalVibrateDuration).toBeGreaterThanOrEqual(10);
-  });
-
-  it("triggers navigator.vibrate on touchmove", () => {
-    renderSlider();
-    const slider = screen.getByRole("slider");
-    slider.dispatchEvent(new Event("touchmove", { bubbles: true }));
-    expect(mockVibrate).toHaveBeenCalled();
-  });
-
-  it("triggers vibration on each input event during continuous drag", () => {
-    renderSlider();
-    const slider = screen.getByRole("slider");
     slider.dispatchEvent(new Event("input", { bubbles: true }));
     slider.dispatchEvent(new Event("input", { bubbles: true }));
-    slider.dispatchEvent(new Event("input", { bubbles: true }));
-    expect(mockVibrate.mock.calls.length).toBeGreaterThanOrEqual(3);
+    expect(triggerSpy.mock.calls.length).toBeGreaterThanOrEqual(3);
   });
 
-  it("cleans up event listeners on unmount", () => {
+  it("cleans up event listeners on unmount", async () => {
     const { unmount } = render(<SizeSlider size={512} onSizeChange={vi.fn()} />);
     const slider = screen.getByRole("slider");
     unmount();
-    mockVibrate.mockClear();
+    triggerSpy.mockClear();
     slider.dispatchEvent(new Event("input", { bubbles: true }));
-    expect(mockVibrate).not.toHaveBeenCalled();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(triggerSpy).not.toHaveBeenCalled();
   });
 });
