@@ -47,7 +47,8 @@
 }
 
 .mode-toggle {
-  display: inline-flex;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
   align-self: flex-start;
   background: var(--bg-muted);
   border-radius: var(--radius-md);
@@ -78,14 +79,13 @@
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
+  text-align: center;
   font-family: "Outfit", sans-serif;
   font-size: 13px;
   font-weight: 500;
   color: var(--text-tertiary);
   cursor: pointer;
-  transition:
-    color 0.2s ease,
-    font-weight 0.2s ease;
+  transition: color 0.2s ease;
   position: relative;
   z-index: 1;
 }
@@ -101,7 +101,7 @@
 
 .mode-btn.active {
   color: var(--text-primary);
-  font-weight: 600;
+  text-shadow: 0.5px 0 0 currentColor;
 }
 
 .sidebar-panel {
