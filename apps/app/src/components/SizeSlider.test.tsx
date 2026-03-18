@@ -1,102 +1,24 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { WebHaptics, defaultPatterns } from "web-haptics";
 import SizeSlider from "./SizeSlider";
 
-// Spy on the real library — no mocking, the actual trigger method runs
-const triggerSpy = vi.spyOn(WebHaptics.prototype, "trigger");
+const clickSpy = vi.spyOn(HTMLLabelElement.prototype, "click");
 
 beforeEach(() => {
-  triggerSpy.mockClear();
+  clickSpy.mockClear();
   vi.useFakeTimers();
 });
 
 afterEach(() => {
   vi.useRealTimers();
-  document.querySelectorAll("label[for^='web-haptics']").forEach((el) => el.remove());
+  document.querySelectorAll("label[for^='slider-haptic']").forEach((el) => el.remove());
 });
-
-/**
- * Replicate the library's vibration pattern math so we can validate
- * that a trigger argument produces perceptible output.
- * Ported from web-haptics/dist/chunk-4NSAIXAB.mjs (functions C, w, M).
- */
-const CHUNK_SIZE = 20;
-
-function intensityPulse(duration: number, intensity: number): number[] {
-  if (intensity >= 1) return [duration];
-  if (intensity <= 0) return [];
-  const onTime = Math.max(1, Math.round(CHUNK_SIZE * intensity));
-  const offTime = CHUNK_SIZE - onTime;
-  const result: number[] = [];
-  let remaining = duration;
-  while (remaining >= CHUNK_SIZE) {
-    result.push(onTime, offTime);
-    remaining -= CHUNK_SIZE;
-  }
-  if (remaining > 0) {
-    const tail = Math.max(1, Math.round(remaining * intensity));
-    result.push(tail);
-    const gap = remaining - tail;
-    if (gap > 0) result.push(gap);
-  }
-  return result;
-}
-
-type Vibration = { duration: number; intensity?: number; delay?: number };
-
-function resolveInput(input: unknown): Vibration[] | null {
-  if (typeof input === "number") return [{ duration: input }];
-  if (typeof input === "string") {
-    const preset = (defaultPatterns as Record<string, { pattern: Vibration[] }>)[input];
-    if (!preset) return null;
-    return preset.pattern.map((v) => ({ ...v }));
-  }
-  return null;
-}
-
-function buildVibratePattern(vibrations: Vibration[], defaultIntensity = 0.5): number[] {
-  const result: number[] = [];
-  for (const v of vibrations) {
-    const intensity = Math.max(0, Math.min(1, v.intensity ?? defaultIntensity));
-    const delay = v.delay ?? 0;
-    if (delay > 0) {
-      if (result.length > 0 && result.length % 2 === 0) {
-        result[result.length - 1] += delay;
-      } else {
-        if (result.length === 0) result.push(0);
-        result.push(delay);
-      }
-    }
-    const pulses = intensityPulse(v.duration, intensity);
-    if (pulses.length === 0) {
-      if (result.length > 0 && result.length % 2 === 0) {
-        result[result.length - 1] += v.duration;
-      } else if (v.duration > 0) {
-        result.push(0);
-        result.push(v.duration);
-      }
-      continue;
-    }
-    for (const d of pulses) result.push(d);
-  }
-  return result;
-}
-
-/** Sum of vibrate-on segments (even indices in the pattern). */
-function totalVibrateMs(pattern: number[]): number {
-  return pattern.filter((_, i) => i % 2 === 0).reduce((a, b) => a + b, 0);
-}
-
-// ---------- helpers ----------
 
 function renderSlider(overrides = {}) {
   const props = { size: 512, onSizeChange: vi.fn(), ...overrides };
   render(<SizeSlider {...props} />);
   return props;
 }
-
-// ---------- tests ----------
 
 describe("SizeSlider", () => {
   it("renders the slider with correct value", () => {
@@ -115,52 +37,58 @@ describe("SizeSlider", () => {
     expect(props.onSizeChange).toHaveBeenCalledWith(1024);
   });
 
-  it("triggers haptic on touchStart (first contact with slider)", () => {
+  it("creates an offscreen checkbox-switch for haptic feedback", () => {
+    renderSlider();
+    const label = document.querySelector("label[for^='slider-haptic']");
+    expect(label).toBeInTheDocument();
+    const checkbox = label!.querySelector("input[type='checkbox'][switch]");
+    expect(checkbox).toBeInTheDocument();
+    // Must be off-screen but NOT display:none (iOS needs it in the render tree)
+    expect(label!.style.display).not.toBe("none");
+    expect(label!.style.position).toBe("fixed");
+  });
+
+  it("clicks the haptic label on touchStart", () => {
     renderSlider();
     fireEvent.touchStart(screen.getByRole("slider"));
-    expect(triggerSpy).toHaveBeenCalled();
+    expect(clickSpy).toHaveBeenCalled();
   });
 
-  it("triggers haptic on touchMove (drag gesture)", () => {
+  it("clicks the haptic label on touchMove after throttle", () => {
     renderSlider();
     const slider = screen.getByRole("slider");
-    // First touch consumes the throttle
     fireEvent.touchStart(slider);
-    triggerSpy.mockClear();
-    // Advance past throttle window
+    clickSpy.mockClear();
+
+    // Within throttle window — no click
+    fireEvent.touchMove(slider);
+    expect(clickSpy).not.toHaveBeenCalled();
+
+    // After throttle window — click fires
     vi.advanceTimersByTime(80);
     fireEvent.touchMove(slider);
-    expect(triggerSpy).toHaveBeenCalled();
+    expect(clickSpy).toHaveBeenCalled();
   });
 
-  it("passes a haptic argument that produces perceptible vibration", () => {
-    renderSlider();
-    fireEvent.touchStart(screen.getByRole("slider"));
-
-    const arg = triggerSpy.mock.calls[0][0];
-    const vibrations = resolveInput(arg);
-    expect(vibrations).not.toBeNull();
-
-    const pattern = buildVibratePattern(vibrations!);
-    const onTimeMs = totalVibrateMs(pattern);
-    expect(onTimeMs).toBeGreaterThanOrEqual(10);
-  });
-
-  it("throttles haptic triggers during rapid drag", () => {
+  it("throttles rapid touch events", () => {
     renderSlider();
     const slider = screen.getByRole("slider");
 
     fireEvent.touchStart(slider);
-    expect(triggerSpy).toHaveBeenCalledTimes(1);
+    expect(clickSpy).toHaveBeenCalledTimes(1);
 
-    // Rapid moves within throttle window are skipped
     fireEvent.touchMove(slider);
     fireEvent.touchMove(slider);
-    expect(triggerSpy).toHaveBeenCalledTimes(1);
+    fireEvent.touchMove(slider);
+    // All within throttle window — still 1
+    expect(clickSpy).toHaveBeenCalledTimes(1);
 
-    // After throttle period, next move fires
     vi.advanceTimersByTime(80);
     fireEvent.touchMove(slider);
-    expect(triggerSpy).toHaveBeenCalledTimes(2);
+    expect(clickSpy).toHaveBeenCalledTimes(2);
+
+    vi.advanceTimersByTime(80);
+    fireEvent.touchMove(slider);
+    expect(clickSpy).toHaveBeenCalledTimes(3);
   });
 });
