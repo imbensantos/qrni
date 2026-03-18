@@ -283,6 +283,12 @@
   flex-shrink: 0;
 }
 
+.pp-card-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .pp-card-icon {
   color: var(--accent-primary);
   display: flex;
@@ -1103,6 +1109,8 @@
 
   .pp-card-header-right {
     flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-between;
   }
 
   .pp-link-row {

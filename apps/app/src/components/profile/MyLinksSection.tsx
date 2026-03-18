@@ -35,27 +35,29 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete }: MyLinksSectionProps)
           <span className="pp-slug-info">
             {customSlugCount} of {MAX_CUSTOM_LINKS} custom slugs used
           </span>
-          <button
-            className="pp-add-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              trigger("nudge");
-              onAdd(null, null);
-            }}
-          >
-            <IconPlus size={12} />
-            Add
-          </button>
-          <button
-            className={`pp-icon-btn pp-chevron-toggle${expanded ? " pp-chevron-toggle--open" : ""}`}
-            onClick={() => {
-              trigger(8);
-              setExpanded((e) => !e);
-            }}
-            title={expanded ? "Collapse" : "Expand"}
-          >
-            <IconChevronDown size={16} />
-          </button>
+          <div className="pp-card-actions-group">
+            <button
+              className="pp-add-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                trigger("nudge");
+                onAdd(null, null);
+              }}
+            >
+              <IconPlus size={12} />
+              Add
+            </button>
+            <button
+              className={`pp-icon-btn pp-chevron-toggle${expanded ? " pp-chevron-toggle--open" : ""}`}
+              onClick={() => {
+                trigger(8);
+                setExpanded((e) => !e);
+              }}
+              title={expanded ? "Collapse" : "Expand"}
+            >
+              <IconChevronDown size={16} />
+            </button>
+          </div>
         </div>
       </div>
 
