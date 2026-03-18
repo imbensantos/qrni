@@ -55,4 +55,13 @@ describe("buildInviteEmailHtml", () => {
     expect(html).toContain("&lt;script&gt;");
     expect(html).toContain("proj&amp;&lt;&gt;");
   });
+
+  it("escapes quotes in acceptUrl to prevent href attribute breakout", () => {
+    const html = buildInviteEmailHtml({
+      ...baseArgs,
+      acceptUrl: 'https://evil.com" onclick="alert(1)',
+    });
+    expect(html).not.toContain('href="https://evil.com" onclick');
+    expect(html).toContain("&quot;");
+  });
 });

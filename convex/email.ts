@@ -16,14 +16,17 @@ export const sendInviteEmail = internalAction({
   handler: async (_ctx, args) => {
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
-      console.error("RESEND_API_KEY not set, skipping invite email");
-      return;
+      throw new Error("RESEND_API_KEY is not configured");
     }
 
     const appUrl = process.env.APP_URL;
     if (!appUrl) {
-      console.error("APP_URL not set, skipping invite email");
-      return;
+      throw new Error("APP_URL is not configured");
+    }
+
+    const emailFrom = process.env.EMAIL_FROM;
+    if (!emailFrom) {
+      throw new Error("EMAIL_FROM is not configured");
     }
 
     const acceptUrl = `${appUrl}/invite/${args.token}`;
@@ -34,16 +37,20 @@ export const sendInviteEmail = internalAction({
       acceptUrl,
     });
 
+    // Strip newlines from user-provided values to prevent header injection
+    const safeName = args.inviterName.replace(/[\r\n]/g, "");
+    const safeNamespace = args.namespaceName.replace(/[\r\n]/g, "");
+
     const resend = new Resend(apiKey);
     const { error } = await resend.emails.send({
-      from: "QRni <no-reply@qrni.to>",
+      from: emailFrom,
       to: args.to,
-      subject: `${args.inviterName} invited you to collaborate on ${args.namespaceName}`,
+      subject: `${safeName} invited you to collaborate on ${safeNamespace}`,
       html,
     });
 
     if (error) {
-      console.error("Failed to send invite email:", error);
+      throw new Error(`Failed to send invite email: ${error.message}`);
     }
   },
 });
