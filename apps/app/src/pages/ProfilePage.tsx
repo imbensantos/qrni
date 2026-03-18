@@ -16,6 +16,7 @@ import MyLinksSection from "../components/profile/MyLinksSection";
 import AllNamespaceLinksView from "../components/profile/AllNamespaceLinksView";
 import NamespaceSection from "../components/profile/NamespaceSection";
 import { formatMemberSince } from "../utils/ui-utils";
+import { MAX_NAMESPACES_PER_USER } from "../../../../convex/lib/constants";
 import { useProfileModals } from "../hooks/useProfileModals";
 import "./ProfilePage.css";
 
@@ -174,7 +175,9 @@ function ProfilePage() {
           {/* Namespace header */}
           <div className="pp-namespace-header">
             <span className="pp-card-title">Namespaces</span>
-            <span className="pp-slug-info">{ownedWithRole.length} of 5 namespaces used</span>
+            <span className="pp-slug-info">
+              {ownedWithRole.length} of {MAX_NAMESPACES_PER_USER} namespaces used
+            </span>
           </div>
 
           {/* Namespace Cards */}
@@ -201,7 +204,7 @@ function ProfilePage() {
               trigger("nudge");
               modals.openCreateNamespace();
             }}
-            disabled={ownedWithRole.length >= 5}
+            disabled={ownedWithRole.length >= MAX_NAMESPACES_PER_USER}
           >
             <IconPlus size={16} />
             Create new namespace

@@ -4,6 +4,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import type { Id } from "../../../../convex/_generated/dataModel";
 import { cleanConvexError } from "../utils/errors";
+import { MAX_NAMESPACES_PER_USER } from "../../../../convex/lib/constants";
 
 interface Namespace {
   _id: Id<"namespaces">;
@@ -175,9 +176,9 @@ function NamespaceDropdown({
                     Add
                   </button>
                 </div>
-              ) : ownedNamespacesCount >= 3 ? (
+              ) : ownedNamespacesCount >= MAX_NAMESPACES_PER_USER ? (
                 <span className="ns-limit-msg">
-                  Namespace limit reached ({ownedNamespacesCount} of 3)
+                  Namespace limit reached ({ownedNamespacesCount} of {MAX_NAMESPACES_PER_USER})
                 </span>
               ) : (
                 <button
