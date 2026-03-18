@@ -1,17 +1,16 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { WebHaptics } from "web-haptics";
 import SizeSlider from "./SizeSlider";
 
-const clickSpy = vi.spyOn(HTMLLabelElement.prototype, "click");
+const triggerSpy = vi.spyOn(WebHaptics.prototype, "trigger");
 
 beforeEach(() => {
-  clickSpy.mockClear();
-  vi.useFakeTimers();
+  triggerSpy.mockClear();
 });
 
 afterEach(() => {
-  vi.useRealTimers();
-  document.querySelectorAll("label[for^='slider-haptic']").forEach((el) => el.remove());
+  document.querySelectorAll("label[for^='web-haptics']").forEach((el) => el.remove());
 });
 
 function renderSlider(overrides = {}) {
@@ -37,58 +36,19 @@ describe("SizeSlider", () => {
     expect(props.onSizeChange).toHaveBeenCalledWith(1024);
   });
 
-  it("creates an offscreen checkbox-switch for haptic feedback", () => {
+  it("triggers haptic on change with nudge preset", () => {
     renderSlider();
-    const label = document.querySelector("label[for^='slider-haptic']");
-    expect(label).toBeInTheDocument();
-    const checkbox = label!.querySelector("input[type='checkbox'][switch]");
-    expect(checkbox).toBeInTheDocument();
-    // Must be off-screen but NOT display:none (iOS needs it in the render tree)
-    expect(label!.style.display).not.toBe("none");
-    expect(label!.style.position).toBe("fixed");
+    fireEvent.change(screen.getByRole("slider"), { target: { value: "1024" } });
+    expect(triggerSpy.mock.calls[0][0]).toBe("nudge");
   });
 
-  it("clicks the haptic label on touchStart", () => {
-    renderSlider();
-    fireEvent.touchStart(screen.getByRole("slider"));
-    expect(clickSpy).toHaveBeenCalled();
-  });
-
-  it("clicks the haptic label on touchMove after throttle", () => {
+  it("triggers haptic on each change during drag", () => {
     renderSlider();
     const slider = screen.getByRole("slider");
-    fireEvent.touchStart(slider);
-    clickSpy.mockClear();
-
-    // Within throttle window — no click
-    fireEvent.touchMove(slider);
-    expect(clickSpy).not.toHaveBeenCalled();
-
-    // After throttle window — click fires
-    vi.advanceTimersByTime(80);
-    fireEvent.touchMove(slider);
-    expect(clickSpy).toHaveBeenCalled();
-  });
-
-  it("throttles rapid touch events", () => {
-    renderSlider();
-    const slider = screen.getByRole("slider");
-
-    fireEvent.touchStart(slider);
-    expect(clickSpy).toHaveBeenCalledTimes(1);
-
-    fireEvent.touchMove(slider);
-    fireEvent.touchMove(slider);
-    fireEvent.touchMove(slider);
-    // All within throttle window — still 1
-    expect(clickSpy).toHaveBeenCalledTimes(1);
-
-    vi.advanceTimersByTime(80);
-    fireEvent.touchMove(slider);
-    expect(clickSpy).toHaveBeenCalledTimes(2);
-
-    vi.advanceTimersByTime(80);
-    fireEvent.touchMove(slider);
-    expect(clickSpy).toHaveBeenCalledTimes(3);
+    fireEvent.change(slider, { target: { value: "256" } });
+    fireEvent.change(slider, { target: { value: "768" } });
+    fireEvent.change(slider, { target: { value: "1024" } });
+    expect(triggerSpy).toHaveBeenCalledTimes(3);
+    expect(triggerSpy.mock.calls[0][0]).toBe("nudge");
   });
 });

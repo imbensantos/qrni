@@ -1,67 +1,12 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useWebHaptics } from "web-haptics/react";
 
 interface SizeSliderProps {
   size: number;
   onSizeChange: (size: number) => void;
 }
 
-const HAPTIC_THROTTLE_MS = 80;
-
-/**
- * Inline haptic trigger that bypasses web-haptics.
- * Uses a visible-but-offscreen checkbox switch instead of display:none.
- * iOS Safari may suppress haptic feedback for display:none elements.
- */
-function useSliderHaptic() {
-  const labelRef = useRef<HTMLLabelElement | null>(null);
-  const lastRef = useRef(0);
-
-  useEffect(() => {
-    const id = `slider-haptic-${Date.now()}`;
-    const label = document.createElement("label");
-    label.htmlFor = id;
-    // Off-screen but still rendered (NOT display:none)
-    Object.assign(label.style, {
-      position: "fixed",
-      top: "-9999px",
-      left: "-9999px",
-      pointerEvents: "none",
-      opacity: "0",
-    });
-
-    const input = document.createElement("input");
-    input.type = "checkbox";
-    input.setAttribute("switch", "");
-    input.id = id;
-    Object.assign(input.style, {
-      position: "fixed",
-      top: "-9999px",
-      left: "-9999px",
-    });
-
-    label.appendChild(input);
-    document.body.appendChild(label);
-    labelRef.current = label;
-
-    return () => {
-      label.remove();
-      labelRef.current = null;
-    };
-  }, []);
-
-  const trigger = useCallback(() => {
-    const now = Date.now();
-    if (now - lastRef.current >= HAPTIC_THROTTLE_MS) {
-      lastRef.current = now;
-      labelRef.current?.click();
-    }
-  }, []);
-
-  return trigger;
-}
-
 function SizeSlider({ size, onSizeChange }: SizeSliderProps) {
-  const triggerHaptic = useSliderHaptic();
+  const { trigger } = useWebHaptics();
 
   return (
     <section className="control-section" role="group" aria-labelledby="size-label">
@@ -94,9 +39,10 @@ function SizeSlider({ size, onSizeChange }: SizeSliderProps) {
         max={2048}
         step={64}
         value={size}
-        onChange={(e) => onSizeChange(Number(e.target.value))}
-        onTouchStart={() => triggerHaptic()}
-        onTouchMove={() => triggerHaptic()}
+        onChange={(e) => {
+          onSizeChange(Number(e.target.value));
+          trigger("nudge");
+        }}
         className="size-slider"
         aria-label="QR code size in pixels"
         aria-valuemin={128}
