@@ -115,15 +115,27 @@ describe("SizeSlider", () => {
     expect(props.onSizeChange).toHaveBeenCalledWith(1024);
   });
 
-  it("triggers haptic on first change", () => {
+  it("triggers haptic on touchStart (first contact with slider)", () => {
     renderSlider();
-    fireEvent.change(screen.getByRole("slider"), { target: { value: "1024" } });
+    fireEvent.touchStart(screen.getByRole("slider"));
+    expect(triggerSpy).toHaveBeenCalled();
+  });
+
+  it("triggers haptic on touchMove (drag gesture)", () => {
+    renderSlider();
+    const slider = screen.getByRole("slider");
+    // First touch consumes the throttle
+    fireEvent.touchStart(slider);
+    triggerSpy.mockClear();
+    // Advance past throttle window
+    vi.advanceTimersByTime(80);
+    fireEvent.touchMove(slider);
     expect(triggerSpy).toHaveBeenCalled();
   });
 
   it("passes a haptic argument that produces perceptible vibration", () => {
     renderSlider();
-    fireEvent.change(screen.getByRole("slider"), { target: { value: "1024" } });
+    fireEvent.touchStart(screen.getByRole("slider"));
 
     const arg = triggerSpy.mock.calls[0][0];
     const vibrations = resolveInput(arg);
@@ -131,7 +143,6 @@ describe("SizeSlider", () => {
 
     const pattern = buildVibratePattern(vibrations!);
     const onTimeMs = totalVibrateMs(pattern);
-    // Minimum perceptible vibration is ~10ms on most devices
     expect(onTimeMs).toBeGreaterThanOrEqual(10);
   });
 
@@ -139,18 +150,17 @@ describe("SizeSlider", () => {
     renderSlider();
     const slider = screen.getByRole("slider");
 
-    // First change fires immediately
-    fireEvent.change(slider, { target: { value: "256" } });
+    fireEvent.touchStart(slider);
     expect(triggerSpy).toHaveBeenCalledTimes(1);
 
-    // Rapid changes within throttle window are skipped
-    fireEvent.change(slider, { target: { value: "384" } });
-    fireEvent.change(slider, { target: { value: "640" } });
+    // Rapid moves within throttle window are skipped
+    fireEvent.touchMove(slider);
+    fireEvent.touchMove(slider);
     expect(triggerSpy).toHaveBeenCalledTimes(1);
 
-    // After throttle period, next change fires
+    // After throttle period, next move fires
     vi.advanceTimersByTime(80);
-    fireEvent.change(slider, { target: { value: "768" } });
+    fireEvent.touchMove(slider);
     expect(triggerSpy).toHaveBeenCalledTimes(2);
   });
 });

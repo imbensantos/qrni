@@ -51,10 +51,9 @@ function SizeSlider({ size, onSizeChange }: SizeSliderProps) {
         max={2048}
         step={64}
         value={size}
-        onChange={(e) => {
-          onSizeChange(Number(e.target.value));
-          throttledTrigger();
-        }}
+        onChange={(e) => onSizeChange(Number(e.target.value))}
+        onTouchStart={() => throttledTrigger()}
+        onTouchMove={() => throttledTrigger()}
         className="size-slider"
         aria-label="QR code size in pixels"
         aria-valuemin={128}
