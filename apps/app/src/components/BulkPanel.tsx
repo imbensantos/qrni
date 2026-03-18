@@ -262,6 +262,9 @@ function BulkPanel({
       <div className="panel-spacer" />
 
       <footer className="panel-footer panel-footer-desktop">
+        <p className="copyright-footer">
+          &copy; {new Date().getFullYear()} QRni. All rights reserved.
+        </p>
         <span>Powered by</span>
         <a
           href="https://imbensantos.com"

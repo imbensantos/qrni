@@ -1,8 +1,15 @@
 /* ─── Page Shell ─────────────────────────────────────────────────────────────── */
 
 .profile-page {
-  min-height: 100vh;
+  flex: 1;
   background: var(--bg-page);
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-page-footer {
+  margin-top: auto;
+  padding-bottom: 20px;
 }
 
 .pp-body {

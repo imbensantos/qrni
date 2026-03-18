@@ -1,0 +1,160 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+.privacy-page {
+  flex: 1;
+  background: var(--bg-page);
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.privacy-body {
+  max-width: 720px;
+  margin: 32px auto;
+  padding: 32px 40px 64px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
+
+.privacy-back-link {
+  font-family: "Outfit", sans-serif;
+}
+
+.privacy-body > .privacy-back-link {
+  display: inline-block;
+  margin-bottom: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.privacy-back-link:hover {
+  color: var(--accent-primary);
+}
+
+.privacy-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.privacy-effective-date {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-bottom: 24px;
+}
+
+/* Sections */
+.privacy-body h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 32px;
+  margin-bottom: 12px;
+}
+
+.privacy-body h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-top: 16px;
+  margin-bottom: 6px;
+}
+
+.privacy-body p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.privacy-body ul {
+  padding-left: 20px;
+  margin-bottom: 12px;
+}
+
+.privacy-body li {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.privacy-body code {
+  background: var(--bg-surface);
+  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+  font-size: 13px;
+}
+
+.privacy-body a[href^="mailto:"] {
+  color: var(--accent-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.privacy-body a[href^="mailto:"]:hover {
+  opacity: 0.8;
+}
+
+/* Table */
+.privacy-table-wrap {
+  overflow-x: auto;
+  margin: 12px 0 16px;
+}
+
+.privacy-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.privacy-table th {
+  text-align: left;
+  padding: 10px 14px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.privacy-table td {
+  padding: 10px 14px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.privacy-table tr:last-child td {
+  border-bottom: none;
+}
+
+.privacy-page-footer {
+  margin-top: auto;
+  padding-bottom: 20px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .privacy-body {
+    padding: 20px 16px 48px;
+  }
+
+  .privacy-title {
+    font-size: 22px;
+  }
+}

@@ -1,11 +1,8 @@
-import {
-  createRouter,
-  createRoute,
-  createRootRoute,
-} from "@tanstack/react-router";
+import { createRouter, createRoute, createRootRoute } from "@tanstack/react-router";
 import App from "./App";
 import QRGeneratorPage from "./pages/QRGeneratorPage";
 import ProfilePage from "./pages/ProfilePage";
+import PrivacyPage from "./pages/PrivacyPage";
 
 const rootRoute = createRootRoute({
   component: App,
@@ -23,7 +20,13 @@ const profileRoute = createRoute({
   component: ProfilePage,
 });
 
-export const routeTree = rootRoute.addChildren([indexRoute, profileRoute]);
+const privacyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/privacy",
+  component: PrivacyPage,
+});
+
+export const routeTree = rootRoute.addChildren([indexRoute, profileRoute, privacyRoute]);
 export const router = createRouter({ routeTree });
 
 declare module "@tanstack/react-router" {

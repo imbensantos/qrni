@@ -5,7 +5,7 @@ import react from "@vitejs/plugin-react";
 const SHORT_CODE_RE = /^\/[a-zA-Z0-9][a-zA-Z0-9_-]{0,59}$/;
 const NAMESPACED_RE = /^\/[a-z][a-z0-9-]{0,29}\/[a-zA-Z0-9_-]{1,60}$/;
 // App routes that should never be treated as short links
-const APP_ROUTES = new Set(["/profile"]);
+const APP_ROUTES = new Set(["/profile", "/privacy"]);
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {

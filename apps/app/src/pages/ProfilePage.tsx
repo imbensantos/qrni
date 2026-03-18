@@ -246,6 +246,21 @@ function ProfilePage() {
         namespaceName={modals.renameNsModal.namespaceName ?? undefined}
         namespaceDescription={modals.renameNsModal.namespaceDescription ?? undefined}
       />
+
+      <footer className="panel-footer profile-page-footer">
+        <p className="copyright-footer">
+          &copy; {new Date().getFullYear()} QRni. All rights reserved.
+        </p>
+        <span>Powered by</span>
+        <a
+          href="https://imbensantos.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Visit imBento website"
+        >
+          <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
+        </a>
+      </footer>
     </main>
   );
 }

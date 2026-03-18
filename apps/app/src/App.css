@@ -168,3 +168,12 @@
 .skip-link:focus {
   top: 0;
 }
+
+.copyright-footer {
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-subtle);
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}

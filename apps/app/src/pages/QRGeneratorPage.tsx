@@ -63,7 +63,6 @@ function QRGeneratorPage() {
             Bulk
           </button>
         </div>
-        <hr className="divider" />
         {mode === "single" ? (
           <ControlsPanel
             url={url}
