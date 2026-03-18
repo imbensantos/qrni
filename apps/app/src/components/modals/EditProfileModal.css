@@ -178,7 +178,7 @@
   font-size: 14px;
   font-weight: 500;
   padding: 10px 20px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   border: 1.5px solid var(--border-subtle);
   background: transparent;
   color: var(--text-primary);
@@ -198,7 +198,7 @@
   font-size: 14px;
   font-weight: 500;
   padding: 10px 20px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   border: none;
   background: var(--accent-primary);
   color: white;

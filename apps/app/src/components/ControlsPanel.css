@@ -54,7 +54,7 @@
 
 .url-input:focus {
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(216, 149, 117, 0.2);
+  box-shadow: var(--ring-accent);
 }
 
 .url-input::placeholder {
@@ -101,7 +101,7 @@
 .color-swatch {
   width: 24px;
   height: 24px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
 }
 
@@ -301,9 +301,7 @@
 }
 
 .size-slider:focus-visible::-webkit-slider-thumb {
-  box-shadow:
-    0 0 0 3px rgba(216, 149, 117, 0.4),
-    0 2px 6px rgba(26, 25, 24, 0.12);
+  box-shadow: var(--ring-accent), var(--shadow-thumb);
 }
 
 .size-slider::-webkit-slider-thumb {
@@ -313,7 +311,7 @@
   border-radius: 50%;
   background: var(--bg-card);
   border: 2px solid var(--accent-primary);
-  box-shadow: 0 2px 6px rgba(26, 25, 24, 0.12);
+  box-shadow: var(--shadow-thumb);
   cursor: pointer;
 }
 
@@ -467,9 +465,9 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #ffffff;
+  background: var(--bg-card);
   transition: transform 0.2s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-subtle);
 }
 
 .toggle-switch.on .toggle-knob {
@@ -566,7 +564,7 @@
 
 .namespace-dropdown-trigger:focus-visible {
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(216, 149, 117, 0.2);
+  box-shadow: var(--ring-accent);
   outline: none;
 }
 
@@ -592,7 +590,7 @@
   list-style: none;
   margin: 0;
   padding: 4px;
-  z-index: 100;
+  z-index: 50;
   max-height: 200px;
   overflow-y: auto;
 }
@@ -715,7 +713,7 @@
 
 .create-shortlink-btn:hover:not(:disabled) {
   background: var(--accent-secondary);
-  color: #ffffff;
+  color: var(--bg-card);
 }
 
 .create-shortlink-btn:disabled {

@@ -96,7 +96,7 @@
   display: flex;
   align-items: center;
   height: 44px;
-  border: 1px solid var(--border-subtle);
+  border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-md);
   background: var(--bg-card);
   overflow: hidden;
@@ -105,11 +105,6 @@
 
 .alm-slug-row:focus-within {
   border-color: var(--accent-primary);
-  border-width: 2px;
-}
-
-.alm-slug-row:focus-within .alm-slug-prefix {
-  padding-left: 11px; /* compensate for 2px border */
 }
 
 .alm-slug-row.has-error {
@@ -151,7 +146,7 @@
   display: flex;
   align-items: center;
   height: 44px;
-  border: 1px solid var(--border-subtle);
+  border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-md);
   background: var(--bg-card);
   gap: 8px;
@@ -162,8 +157,6 @@
 
 .alm-dest-row:focus-within {
   border-color: var(--accent-primary);
-  border-width: 2px;
-  padding: 0 13px; /* compensate for 2px border */
 }
 
 .alm-dest-row.has-error {

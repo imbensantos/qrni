@@ -86,7 +86,7 @@
 
 .cnm-input {
   height: 44px;
-  border: 1px solid var(--border-subtle);
+  border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 0 14px;
   font-size: 14px;
@@ -99,8 +99,6 @@
 
 .cnm-input:focus {
   border-color: var(--accent-primary);
-  border-width: 2px;
-  padding: 0 13px; /* compensate for thicker border */
 }
 
 .cnm-input::placeholder {
@@ -109,7 +107,7 @@
 
 .cnm-textarea {
   height: 72px;
-  border: 1px solid var(--border-subtle);
+  border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 14px;
   font-size: 14px;
@@ -123,8 +121,6 @@
 
 .cnm-textarea:focus {
   border-color: var(--accent-primary);
-  border-width: 2px;
-  padding: 13px; /* compensate for thicker border */
 }
 
 .cnm-textarea::placeholder {

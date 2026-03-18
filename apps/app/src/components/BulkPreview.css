@@ -185,14 +185,14 @@
 .bulk-progress-bar {
   height: 8px;
   background: var(--bg-muted);
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   overflow: hidden;
 }
 
 .bulk-progress-fill {
   height: 100%;
   background: var(--accent-primary);
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   transition: width 0.3s ease;
 }
 
@@ -232,7 +232,7 @@
 }
 
 .bulk-export-error-dismiss:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--bg-muted);
 }
 
 /* Export */
@@ -244,11 +244,11 @@
 
 .bulk-btn-secondary {
   background: var(--text-secondary);
-  box-shadow: 0 4px 16px rgba(109, 108, 106, 0.2);
+  box-shadow: var(--shadow-button-secondary);
 }
 
 .bulk-btn-secondary:hover:not(:disabled) {
-  box-shadow: 0 6px 20px rgba(109, 108, 106, 0.3);
+  box-shadow: var(--shadow-button-secondary-hover);
 }
 
 /* Mobile */

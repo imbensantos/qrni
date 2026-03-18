@@ -21,7 +21,7 @@
 .edit-link-icon {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: var(--radius-pill);
   background: var(--accent-warm);
   color: var(--accent-primary);
   display: flex;

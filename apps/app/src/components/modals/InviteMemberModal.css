@@ -91,7 +91,7 @@
 
 .imm-email-input {
   width: 100%;
-  border: 1px solid var(--border-subtle);
+  border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 10px 12px 10px 36px;
   font-size: 14px;
@@ -122,7 +122,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid var(--border-subtle);
+  border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 0 12px;
   font-size: 13px;
@@ -147,7 +147,7 @@
   left: 0;
   right: 0;
   background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-dropdown);
   z-index: 10;
@@ -194,7 +194,7 @@
 
 .imm-send-btn {
   background: var(--accent-primary);
-  color: #fff;
+  color: var(--bg-card);
   border: none;
   border-radius: var(--radius-md);
   padding: 10px 20px;
@@ -278,18 +278,18 @@
 .imm-avatar {
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: var(--radius-pill);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--bg-card);
   font-size: 13px;
   font-weight: 700;
   flex-shrink: 0;
 }
 
 .imm-avatar--pending {
-  background: var(--bg-muted) !important;
+  background: var(--bg-muted) !important; /* !important needed to override inline style */
   color: var(--text-tertiary);
   border: 1.5px solid var(--border-subtle);
 }
