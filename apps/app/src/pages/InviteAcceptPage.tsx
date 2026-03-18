@@ -8,7 +8,7 @@ import "./InviteAcceptPage.css";
 function InviteAcceptPage() {
   const { token } = useParams({ from: "/invite/$token" });
   const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
-  const { signIn } = useAuthActions();
+  const { signIn, signOut } = useAuthActions();
   const invite = useQuery(api.collaboration.getInviteByToken, { token });
   const acceptInvite = useMutation(api.collaboration.acceptInvite);
   const [status, setStatus] = useState<"idle" | "accepting" | "accepted" | "error">("idle");
@@ -21,9 +21,21 @@ function InviteAcceptPage() {
       await acceptInvite({ token });
       setStatus("accepted");
     } catch (err) {
+      const message = (err as Error).message || "Failed to accept invite";
       setStatus("error");
-      setError((err as Error).message || "Failed to accept invite");
+      if (message.includes("already own")) {
+        setError("You already own this namespace.");
+      } else if (message.includes("already a member")) {
+        setError("You're already a member of this namespace.");
+      } else {
+        setError(message);
+      }
     }
+  }
+
+  async function handleSwitchAccount() {
+    await signOut();
+    void signIn("google");
   }
 
   // Loading state
@@ -99,6 +111,69 @@ function InviteAcceptPage() {
     );
   }
 
+  // Invite details (shared across states below)
+  const inviteDetails = (
+    <>
+      <p className="invite-subtitle">{invite.inviterName} invited you to collaborate on</p>
+      <div className="invite-namespace-badge">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#D89575"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+        </svg>
+        <span>{invite.namespaceName}</span>
+      </div>
+      <div className="invite-role-row">
+        <span className="invite-role-label">as</span>
+        <span className="invite-role-badge">
+          {invite.role.charAt(0).toUpperCase() + invite.role.slice(1)}
+        </span>
+      </div>
+    </>
+  );
+
+  // Email mismatch — signed in as wrong account
+  if (isAuthenticated && invite.emailMatch === false) {
+    return (
+      <div className="invite-page">
+        <div className="invite-card">
+          <div className="invite-icon-circle invite-icon-warning">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#D4A64A"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          </div>
+          <h1 className="invite-title">Wrong account</h1>
+          <p className="invite-subtitle">
+            This invite was sent to a different email address. Please switch to the correct account
+            to accept.
+          </p>
+          {inviteDetails}
+          <button className="invite-cta" onClick={handleSwitchAccount}>
+            Switch account
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Main invite view
   return (
     <div className="invite-page">
@@ -121,30 +196,7 @@ function InviteAcceptPage() {
           </svg>
         </div>
         <h1 className="invite-title">You're invited!</h1>
-        <p className="invite-subtitle">{invite.inviterName} invited you to collaborate on</p>
-
-        <div className="invite-namespace-badge">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#D89575"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-          </svg>
-          <span>{invite.namespaceName}</span>
-        </div>
-
-        <div className="invite-role-row">
-          <span className="invite-role-label">as</span>
-          <span className="invite-role-badge">
-            {invite.role.charAt(0).toUpperCase() + invite.role.slice(1)}
-          </span>
-        </div>
+        {inviteDetails}
 
         {!isAuthenticated ? (
           <button className="invite-cta" onClick={() => signIn("google")}>

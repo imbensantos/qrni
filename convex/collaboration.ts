@@ -327,12 +327,25 @@ export const getInviteByToken = query({
 
     const inviter = await ctx.db.get(invite.createdBy);
 
+    // Check if the signed-in user's email matches the invite (without leaking the invite email)
+    let emailMatch: boolean | null = null;
+    const userId = await getAuthUserId(ctx);
+    if (userId) {
+      const user = await ctx.db.get(userId);
+      if (invite.type === "email" && invite.email) {
+        emailMatch = !!user?.email && invite.email === user.email.toLowerCase().trim();
+      } else {
+        // Link-type invites don't restrict by email
+        emailMatch = true;
+      }
+    }
+
     return {
       namespaceName: namespace.slug,
       role: invite.role,
       type: invite.type,
-      email: invite.email,
       inviterName: inviter?.name || inviter?.email || "Someone",
+      emailMatch,
     };
   },
 });

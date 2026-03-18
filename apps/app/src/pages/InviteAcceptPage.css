@@ -42,6 +42,10 @@
   background: #fdeae6;
 }
 
+.invite-icon-warning {
+  background: #fef5e0;
+}
+
 .invite-title {
   font-family: "Outfit", sans-serif;
   font-size: 26px;
