@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { useAction } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { cleanConvexError } from "../../utils/errors";
@@ -25,6 +26,7 @@ function PencilCircleIcon() {
 }
 
 function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
+  const { trigger } = useWebHaptics();
   const [slug, setSlug] = useState("");
   const [destinationUrl, setDestinationUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -97,12 +99,17 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
               <h2 id="edit-link-title" className="edit-link-title">
                 Edit link
               </h2>
-              <p className="edit-link-subtitle">
-                Update the slug or destination URL
-              </p>
+              <p className="edit-link-subtitle">Update the slug or destination URL</p>
             </div>
           </div>
-          <button className="edit-link-close" onClick={onClose} type="button">
+          <button
+            className="edit-link-close"
+            onClick={() => {
+              trigger("nudge");
+              onClose();
+            }}
+            type="button"
+          >
             <IconClose size={18} />
           </button>
         </div>
@@ -119,14 +126,14 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
                 type="text"
                 className="edit-link-input slug-input"
                 value={slug}
+                onKeyDown={() => trigger(8)}
+                onBeforeInput={() => trigger(8)}
                 onChange={(e) => setSlug(e.target.value)}
                 placeholder="my-slug"
                 autoComplete="off"
               />
             </div>
-            <span className="edit-link-hint">
-              Only letters, numbers, and hyphens allowed
-            </span>
+            <span className="edit-link-hint">Only letters, numbers, and hyphens allowed</span>
           </div>
 
           <div className="edit-link-field">
@@ -142,6 +149,8 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
                 type="url"
                 className="edit-link-input destination-input"
                 value={destinationUrl}
+                onKeyDown={() => trigger(8)}
+                onBeforeInput={() => trigger(8)}
                 onChange={(e) => setDestinationUrl(e.target.value)}
                 placeholder="https://example.com"
                 autoComplete="off"
@@ -151,19 +160,13 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
 
           {link && (
             <div className="edit-link-info-row">
-              <span className="edit-link-info-item">
-                Created: {formatDate(link.createdAt)}
-              </span>
+              <span className="edit-link-info-item">Created: {formatDate(link.createdAt)}</span>
               <span className="edit-link-info-separator" />
-              <span className="edit-link-info-item">
-                Clicks: {link.clickCount ?? 0}
-              </span>
+              <span className="edit-link-info-item">Clicks: {link.clickCount ?? 0}</span>
               {namespacePart && (
                 <>
                   <span className="edit-link-info-separator" />
-                  <span className="edit-link-info-item">
-                    Namespace: {namespacePart}
-                  </span>
+                  <span className="edit-link-info-item">Namespace: {namespacePart}</span>
                 </>
               )}
             </div>
@@ -175,7 +178,10 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
             <button
               type="button"
               className="edit-link-btn cancel"
-              onClick={onClose}
+              onClick={() => {
+                trigger("nudge");
+                onClose();
+              }}
             >
               Cancel
             </button>
@@ -183,6 +189,7 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
               type="submit"
               className="edit-link-btn save"
               disabled={submitting}
+              onClick={() => trigger("nudge")}
             >
               {submitting ? "Saving..." : "Save changes"}
             </button>

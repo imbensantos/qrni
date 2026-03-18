@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import ModalBackdrop from "./ModalBackdrop";
@@ -8,15 +9,7 @@ import { getColorFromHash } from "../../utils/ui-utils";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import "./InviteMemberModal.css";
 
-const AVATAR_COLORS = [
-  "#D89575",
-  "#3D8A5A",
-  "#7B68AE",
-  "#5B8FD4",
-  "#D4795B",
-  "#8A6D3D",
-  "#5BAED4",
-];
+const AVATAR_COLORS = ["#D89575", "#3D8A5A", "#7B68AE", "#5B8FD4", "#D4795B", "#8A6D3D", "#5BAED4"];
 
 type InviteRole = "editor" | "viewer";
 
@@ -33,6 +26,7 @@ function InviteMemberModal({
   namespaceId,
   namespaceName,
 }: InviteMemberModalProps) {
+  const { trigger } = useWebHaptics();
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<InviteRole>("editor");
   const [roleOpen, setRoleOpen] = useState(false);
@@ -40,14 +34,8 @@ function InviteMemberModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const roleRef = useRef<HTMLDivElement | null>(null);
 
-  const members = useQuery(
-    api.collaboration.listMembers,
-    namespaceId ? { namespaceId } : "skip",
-  );
-  const invites = useQuery(
-    api.collaboration.listInvites,
-    namespaceId ? { namespaceId } : "skip",
-  );
+  const members = useQuery(api.collaboration.listMembers, namespaceId ? { namespaceId } : "skip");
+  const invites = useQuery(api.collaboration.listInvites, namespaceId ? { namespaceId } : "skip");
   const createEmailInvite = useMutation(api.collaboration.createEmailInvite);
   const revokeInvite = useMutation(api.collaboration.revokeInvite);
 
@@ -116,15 +104,16 @@ function InviteMemberModal({
             </div>
             <div>
               <h2 className="imm-title">Invite to {namespaceName}</h2>
-              <p className="imm-subtitle">
-                Add collaborators to this namespace
-              </p>
+              <p className="imm-subtitle">Add collaborators to this namespace</p>
             </div>
           </div>
           <button
             type="button"
             className="imm-close"
-            onClick={onClose}
+            onClick={() => {
+              trigger("nudge");
+              onClose();
+            }}
             aria-label="Close"
           >
             <IconClose size={18} />
@@ -152,6 +141,8 @@ function InviteMemberModal({
                 className="imm-email-input"
                 type="email"
                 value={email}
+                onKeyDown={() => trigger(8)}
+                onBeforeInput={() => trigger(8)}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   setError("");
@@ -164,7 +155,10 @@ function InviteMemberModal({
               <button
                 type="button"
                 className="imm-role-trigger"
-                onClick={() => setRoleOpen(!roleOpen)}
+                onClick={() => {
+                  trigger(8);
+                  setRoleOpen(!roleOpen);
+                }}
               >
                 <span>{role.charAt(0).toUpperCase() + role.slice(1)}</span>
                 <span style={{ color: "#9C9B99", display: "contents" }}>
@@ -179,6 +173,7 @@ function InviteMemberModal({
                       type="button"
                       className={`imm-role-option ${r === role ? "imm-role-option--active" : ""}`}
                       onClick={() => {
+                        trigger("nudge");
                         setRole(r);
                         setRoleOpen(false);
                       }}
@@ -193,6 +188,7 @@ function InviteMemberModal({
               type="submit"
               className="imm-send-btn"
               disabled={!email.trim() || isSubmitting}
+              onClick={() => trigger("nudge")}
             >
               {isSubmitting ? "Sending..." : "Send invite"}
             </button>
@@ -217,14 +213,10 @@ function InviteMemberModal({
                     ),
                   }}
                 >
-                  {(member.user?.name || member.user?.email || "?")
-                    .charAt(0)
-                    .toUpperCase()}
+                  {(member.user?.name || member.user?.email || "?").charAt(0).toUpperCase()}
                 </div>
                 <div className="imm-member-info">
-                  <span className="imm-member-name">
-                    {member.user?.name || "Unknown"}
-                  </span>
+                  <span className="imm-member-name">{member.user?.name || "Unknown"}</span>
                   <span className="imm-member-email">{member.user?.email}</span>
                 </div>
                 <div className="imm-role-actions">
@@ -264,9 +256,7 @@ function InviteMemberModal({
                   <span className="imm-pending-status">Invitation sent</span>
                 </div>
                 <div className="imm-role-actions">
-                  <span className="imm-role-badge imm-role-pending">
-                    Pending
-                  </span>
+                  <span className="imm-role-badge imm-role-pending">Pending</span>
                   <button
                     type="button"
                     className="imm-revoke-btn"
@@ -280,9 +270,7 @@ function InviteMemberModal({
             ))}
 
             {!members?.length && !pendingInvites.length && (
-              <p className="imm-empty">
-                No members yet. Send an invite to get started.
-              </p>
+              <p className="imm-empty">No members yet. Send an invite to get started.</p>
             )}
           </div>
         </div>

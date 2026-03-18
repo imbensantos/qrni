@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import ModalBackdrop from "./ModalBackdrop";
@@ -18,6 +19,7 @@ interface EditProfileModalProps {
 }
 
 function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProps) {
+  const { trigger } = useWebHaptics();
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -62,7 +64,10 @@ function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProps) {
           <h2 className="edit-profile-modal-title">Edit profile</h2>
           <button
             className="edit-profile-modal-close"
-            onClick={onClose}
+            onClick={() => {
+              trigger("nudge");
+              onClose();
+            }}
             type="button"
           >
             <svg
@@ -111,14 +116,14 @@ function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProps) {
             <label className="edit-profile-label" htmlFor="edit-profile-name">
               Display name
             </label>
-            <div
-              className={`edit-profile-input-wrapper ${error ? "has-error" : ""}`}
-            >
+            <div className={`edit-profile-input-wrapper ${error ? "has-error" : ""}`}>
               <input
                 id="edit-profile-name"
                 type="text"
                 className="edit-profile-input"
                 value={name}
+                onKeyDown={() => trigger(8)}
+                onBeforeInput={() => trigger(8)}
                 onChange={(e) => {
                   setName(e.target.value);
                   setError("");
@@ -142,16 +147,17 @@ function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProps) {
                 disabled
               />
             </div>
-            <p className="edit-profile-hint">
-              Email is managed by your Google account
-            </p>
+            <p className="edit-profile-hint">Email is managed by your Google account</p>
           </div>
 
           <div className="edit-profile-modal-actions">
             <button
               type="button"
               className="edit-profile-btn-cancel"
-              onClick={onClose}
+              onClick={() => {
+                trigger("nudge");
+                onClose();
+              }}
             >
               Cancel
             </button>
@@ -159,6 +165,7 @@ function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProps) {
               type="submit"
               className="edit-profile-btn-save"
               disabled={submitting}
+              onClick={() => trigger("nudge")}
             >
               {submitting ? "Saving..." : "Save changes"}
             </button>

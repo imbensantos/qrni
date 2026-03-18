@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import type { Id } from "../../../../convex/_generated/dataModel";
@@ -24,6 +25,7 @@ function NamespaceDropdown({
   onNamespaceSelect,
   onNamespaceCreated,
 }: NamespaceDropdownProps) {
+  const { trigger } = useWebHaptics();
   const [nsDropdownOpen, setNsDropdownOpen] = useState(false);
   const [nsFocusedIndex, setNsFocusedIndex] = useState(0);
   const [creatingNs, setCreatingNs] = useState(false);
@@ -40,16 +42,19 @@ function NamespaceDropdown({
         slug: newNsSlug.trim().toLowerCase(),
       });
       onNamespaceCreated(nsId);
+      trigger("success");
       setNewNsSlug("");
       setCreatingNs(false);
       setNsDropdownOpen(false);
     } catch (err) {
       const msg = cleanConvexError((err as Error).message);
       setNsCreateError(msg || "Failed to create namespace");
+      trigger("error");
     }
   };
 
   const handleSelect = (value: string) => {
+    trigger("nudge");
     setNsDropdownOpen(false);
     if (value === "none") {
       onNamespaceSelect(null);
@@ -87,6 +92,7 @@ function NamespaceDropdown({
           type="button"
           className="namespace-dropdown-trigger"
           onClick={() => {
+            trigger(8);
             setNsDropdownOpen(!nsDropdownOpen);
             setNsFocusedIndex(0);
           }}
@@ -148,18 +154,23 @@ function NamespaceDropdown({
                     value={newNsSlug}
                     onChange={(e) => setNewNsSlug(e.target.value)}
                     onKeyDown={(e) => {
+                      trigger(8);
                       if (e.key === "Enter") handleCreateNamespace();
                       if (e.key === "Escape") {
                         setCreatingNs(false);
                         setNsCreateError(null);
                       }
                     }}
+                    onBeforeInput={() => trigger(8)}
                     autoFocus
                   />
                   <button
                     type="button"
                     className="ns-create-confirm"
-                    onClick={handleCreateNamespace}
+                    onClick={() => {
+                      trigger("nudge");
+                      handleCreateNamespace();
+                    }}
                   >
                     Add
                   </button>
@@ -172,6 +183,7 @@ function NamespaceDropdown({
                   className="ns-create-trigger"
                   onClick={(e) => {
                     e.stopPropagation();
+                    trigger("nudge");
                     setCreatingNs(true);
                     setNsCreateError(null);
                   }}

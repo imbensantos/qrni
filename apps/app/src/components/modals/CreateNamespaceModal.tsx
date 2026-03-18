@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { cleanConvexError } from "../../utils/errors";
@@ -12,6 +13,7 @@ interface CreateNamespaceModalProps {
 }
 
 function CreateNamespaceModal({ isOpen, onClose }: CreateNamespaceModalProps) {
+  const { trigger } = useWebHaptics();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
@@ -66,15 +68,16 @@ function CreateNamespaceModal({ isOpen, onClose }: CreateNamespaceModalProps) {
               <h2 id="cnm-title" className="cnm-title">
                 Create namespace
               </h2>
-              <p className="cnm-subtitle">
-                Organize your links under a custom path
-              </p>
+              <p className="cnm-subtitle">Organize your links under a custom path</p>
             </div>
           </div>
           <button
             type="button"
             className="cnm-close-btn"
-            onClick={onClose}
+            onClick={() => {
+              trigger("nudge");
+              onClose();
+            }}
             aria-label="Close"
           >
             <IconClose size={18} />
@@ -90,6 +93,8 @@ function CreateNamespaceModal({ isOpen, onClose }: CreateNamespaceModalProps) {
             className="cnm-input"
             type="text"
             value={name}
+            onKeyDown={() => trigger(8)}
+            onBeforeInput={() => trigger(8)}
             onChange={handleNameChange}
             placeholder="my-portfolio"
             autoFocus
@@ -113,6 +118,8 @@ function CreateNamespaceModal({ isOpen, onClose }: CreateNamespaceModalProps) {
             id="namespace-desc"
             className="cnm-textarea"
             value={description}
+            onKeyDown={() => trigger(8)}
+            onBeforeInput={() => trigger(8)}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="What is this namespace for?"
             rows={3}
@@ -122,13 +129,21 @@ function CreateNamespaceModal({ isOpen, onClose }: CreateNamespaceModalProps) {
         {error && <p className="cnm-error">{error}</p>}
 
         <div className="cnm-actions">
-          <button type="button" className="cnm-btn-cancel" onClick={onClose}>
+          <button
+            type="button"
+            className="cnm-btn-cancel"
+            onClick={() => {
+              trigger("nudge");
+              onClose();
+            }}
+          >
             Cancel
           </button>
           <button
             type="submit"
             className="cnm-btn-create"
             disabled={isSubmitting}
+            onClick={() => trigger("nudge")}
           >
             {isSubmitting ? "Creating..." : "Create namespace"}
           </button>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { cleanConvexError } from "../../utils/errors";
@@ -19,6 +20,7 @@ function DeleteNamespaceModal({
   namespaceId,
   namespaceName,
 }: DeleteNamespaceModalProps) {
+  const { trigger } = useWebHaptics();
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const removeNamespace = useMutation(api.namespaces.remove);
@@ -52,9 +54,8 @@ function DeleteNamespaceModal({
         <h2 className="delete-modal-title">Delete namespace?</h2>
 
         <p className="delete-modal-warning">
-          This will permanently delete the namespace{" "}
-          <strong>{namespaceName}</strong> and all links inside it. Anyone using
-          these links will get a 404 error. This action cannot be undone.
+          This will permanently delete the namespace <strong>{namespaceName}</strong> and all links
+          inside it. Anyone using these links will get a 404 error. This action cannot be undone.
         </p>
 
         {error && <div className="delete-modal-error">{error}</div>}
@@ -62,14 +63,20 @@ function DeleteNamespaceModal({
         <div className="delete-modal-actions">
           <button
             className="delete-modal-cancel"
-            onClick={onClose}
+            onClick={() => {
+              trigger("nudge");
+              onClose();
+            }}
             disabled={submitting}
           >
             Cancel
           </button>
           <button
             className="delete-modal-confirm"
-            onClick={handleDelete}
+            onClick={() => {
+              trigger("nudge");
+              handleDelete();
+            }}
             disabled={submitting}
           >
             {submitting ? "Deleting..." : "Delete namespace"}

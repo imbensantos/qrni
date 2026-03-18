@@ -377,8 +377,13 @@ function ControlsPanel({
           max={2048}
           step={64}
           value={size}
-          onChange={(e) => onSizeChange(Number(e.target.value))}
-          onInput={() => trigger(15)}
+          onChange={(e) => {
+            onSizeChange(Number(e.target.value));
+            trigger(15);
+          }}
+          onPointerMove={(e) => {
+            if (e.pressure > 0) trigger(15);
+          }}
           className="size-slider"
           aria-label="QR code size in pixels"
           aria-valuemin={128}

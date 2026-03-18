@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { IconCopy, IconCheck } from "../Icons";
 
 interface CopyButtonProps {
@@ -50,25 +51,29 @@ function legacyCopy(text: string): boolean {
 }
 
 function CopyButton({ text }: CopyButtonProps) {
+  const { trigger } = useWebHaptics();
   const [state, setState] = useState<"idle" | "copied" | "error">("idle");
 
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(text);
+      trigger("success");
       setState("copied");
       setTimeout(() => setState("idle"), 2000);
     } catch {
       // Fallback: legacy textarea + execCommand approach
       const success = legacyCopy(text);
       if (success) {
+        trigger("success");
         setState("copied");
         setTimeout(() => setState("idle"), 2000);
       } else {
+        trigger("error");
         setState("error");
         setTimeout(() => setState("idle"), 2000);
       }
     }
-  }, [text]);
+  }, [text, trigger]);
 
   return (
     <button

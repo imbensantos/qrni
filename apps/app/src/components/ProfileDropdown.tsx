@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useWebHaptics } from "web-haptics/react";
 import { Link } from "@tanstack/react-router";
 import { useClickOutside } from "../hooks/useClickOutside";
 import "./ProfileDropdown.css";
@@ -15,6 +16,7 @@ interface ProfileDropdownProps {
 }
 
 function ProfileDropdown({ user }: ProfileDropdownProps) {
+  const { trigger } = useWebHaptics();
   const [open, setOpen] = useState(false);
   const { signOut } = useAuthActions();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -28,7 +30,10 @@ function ProfileDropdown({ user }: ProfileDropdownProps) {
     <div className="pd" ref={dropdownRef}>
       <button
         className="pd-trigger"
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          trigger(8);
+          setOpen(!open);
+        }}
         aria-expanded={open}
         aria-haspopup="true"
         aria-label="Profile menu"
@@ -68,11 +73,12 @@ function ProfileDropdown({ user }: ProfileDropdownProps) {
           <Link
             to="/profile"
             className="pd-menu-info"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              trigger("nudge");
+              setOpen(false);
+            }}
           >
-            <span className="pd-menu-name">
-              {user.name || user.email || "User"}
-            </span>
+            <span className="pd-menu-name">{user.name || user.email || "User"}</span>
             {user.email && <span className="pd-menu-email">{user.email}</span>}
           </Link>
           <div className="pd-menu-divider" />
@@ -80,6 +86,7 @@ function ProfileDropdown({ user }: ProfileDropdownProps) {
             className="pd-menu-item"
             role="menuitem"
             onClick={() => {
+              trigger("nudge");
               signOut();
               setOpen(false);
             }}

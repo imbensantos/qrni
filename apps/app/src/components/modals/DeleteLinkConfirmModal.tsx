@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import ModalBackdrop from "./ModalBackdrop";
@@ -15,11 +16,8 @@ interface DeleteLinkConfirmModalProps {
   link: Link | null;
 }
 
-function DeleteLinkConfirmModal({
-  isOpen,
-  onClose,
-  link,
-}: DeleteLinkConfirmModalProps) {
+function DeleteLinkConfirmModal({ isOpen, onClose, link }: DeleteLinkConfirmModalProps) {
+  const { trigger } = useWebHaptics();
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const deleteLink = useMutation(api.links.deleteLink);
@@ -44,11 +42,7 @@ function DeleteLinkConfirmModal({
   }
 
   return (
-    <ModalBackdrop
-      isOpen={isOpen}
-      onClose={onClose}
-      titleId="delete-modal-title"
-    >
+    <ModalBackdrop isOpen={isOpen} onClose={onClose} titleId="delete-modal-title">
       <div className="delete-modal">
         <div className="delete-modal-icon">
           <IconTrash size={28} />
@@ -59,9 +53,8 @@ function DeleteLinkConfirmModal({
         </h2>
 
         <p className="delete-modal-warning">
-          This will permanently delete the short link{" "}
-          <strong>{shortUrl}</strong> and its QR code. Anyone using this link
-          will get a 404 error. This action cannot be undone.
+          This will permanently delete the short link <strong>{shortUrl}</strong> and its QR code.
+          Anyone using this link will get a 404 error. This action cannot be undone.
         </p>
 
         <div className="delete-modal-preview">
@@ -74,14 +67,20 @@ function DeleteLinkConfirmModal({
         <div className="delete-modal-actions">
           <button
             className="delete-modal-cancel"
-            onClick={onClose}
+            onClick={() => {
+              trigger("nudge");
+              onClose();
+            }}
             disabled={submitting}
           >
             Cancel
           </button>
           <button
             className="delete-modal-confirm"
-            onClick={handleDelete}
+            onClick={() => {
+              trigger("nudge");
+              handleDelete();
+            }}
             disabled={submitting}
           >
             {submitting ? "Deleting..." : "Delete link"}

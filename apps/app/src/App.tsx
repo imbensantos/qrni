@@ -51,7 +51,7 @@ function App() {
       </a>
       <div className="app">
         <header className="header">
-          <Link to="/" className="logo-link">
+          <Link to="/" className="logo-link" onClick={() => trigger("nudge")}>
             <h1 className="logo">QRni ✨</h1>
           </Link>
           {isLoading && !cachedUser ? (

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { useAction } from "convex/react";
 import { getAppHost } from "../../utils/url-utils";
 import { api } from "../../../../../convex/_generated/api";
@@ -16,6 +17,7 @@ interface AddLinkModalProps {
 }
 
 function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }: AddLinkModalProps) {
+  const { trigger } = useWebHaptics();
   const [slug, setSlug] = useState("");
   const [destinationUrl, setDestinationUrl] = useState("");
   const [slugError, setSlugError] = useState("");
@@ -103,7 +105,15 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }: AddLinkMo
               <p className="alm-subtitle">Create a custom short link</p>
             </div>
           </div>
-          <button type="button" className="alm-close-btn" onClick={onClose} aria-label="Close">
+          <button
+            type="button"
+            className="alm-close-btn"
+            onClick={() => {
+              trigger("nudge");
+              onClose();
+            }}
+            aria-label="Close"
+          >
             <IconClose size={18} />
           </button>
         </div>
@@ -122,6 +132,8 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }: AddLinkMo
                 type="text"
                 className="alm-dest-input"
                 value={destinationUrl}
+                onKeyDown={() => trigger(8)}
+                onBeforeInput={() => trigger(8)}
                 onChange={(e) => {
                   setDestinationUrl(e.target.value);
                   setUrlError("");
@@ -145,6 +157,8 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }: AddLinkMo
                 type="text"
                 className="alm-slug-input"
                 value={slug}
+                onKeyDown={() => trigger(8)}
+                onBeforeInput={() => trigger(8)}
                 onChange={(e) => {
                   setSlug(e.target.value);
                   setSlugError("");
@@ -161,10 +175,22 @@ function AddLinkModal({ isOpen, onClose, namespaceId, namespaceSlug }: AddLinkMo
         </div>
 
         <div className="alm-actions">
-          <button type="button" className="alm-btn-cancel" onClick={onClose}>
+          <button
+            type="button"
+            className="alm-btn-cancel"
+            onClick={() => {
+              trigger("nudge");
+              onClose();
+            }}
+          >
             Cancel
           </button>
-          <button type="submit" className="alm-btn-create" disabled={submitting}>
+          <button
+            type="submit"
+            className="alm-btn-create"
+            disabled={submitting}
+            onClick={() => trigger("nudge")}
+          >
             {submitting ? "Creating..." : "Create link"}
           </button>
         </div>

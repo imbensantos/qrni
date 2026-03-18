@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { cleanConvexError } from "../../utils/errors";
@@ -22,6 +23,7 @@ function RenameNamespaceModal({
   namespaceName,
   namespaceDescription,
 }: RenameNamespaceModalProps) {
+  const { trigger } = useWebHaptics();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
@@ -47,8 +49,7 @@ function RenameNamespaceModal({
   }
 
   const hasChanges =
-    sanitizedName !== namespaceName ||
-    description !== (namespaceDescription || "");
+    sanitizedName !== namespaceName || description !== (namespaceDescription || "");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -61,10 +62,7 @@ function RenameNamespaceModal({
       await updateNamespace({
         namespaceId: namespaceId!,
         newSlug: sanitizedName !== namespaceName ? sanitizedName : undefined,
-        description:
-          description !== (namespaceDescription || "")
-            ? description
-            : undefined,
+        description: description !== (namespaceDescription || "") ? description : undefined,
       });
       onClose();
     } catch (err) {
@@ -95,7 +93,10 @@ function RenameNamespaceModal({
           <button
             type="button"
             className="cnm-close-btn"
-            onClick={onClose}
+            onClick={() => {
+              trigger("nudge");
+              onClose();
+            }}
             aria-label="Close"
           >
             <IconClose size={18} />
@@ -111,6 +112,8 @@ function RenameNamespaceModal({
             className="cnm-input"
             type="text"
             value={name}
+            onKeyDown={() => trigger(8)}
+            onBeforeInput={() => trigger(8)}
             onChange={handleNameChange}
             placeholder="my-portfolio"
             autoFocus
@@ -134,6 +137,8 @@ function RenameNamespaceModal({
             id="edit-namespace-desc"
             className="cnm-textarea"
             value={description}
+            onKeyDown={() => trigger(8)}
+            onBeforeInput={() => trigger(8)}
             onChange={(e) => {
               setDescription(e.target.value);
               setError("");
@@ -146,13 +151,21 @@ function RenameNamespaceModal({
         {error && <p className="cnm-error">{error}</p>}
 
         <div className="cnm-actions">
-          <button type="button" className="cnm-btn-cancel" onClick={onClose}>
+          <button
+            type="button"
+            className="cnm-btn-cancel"
+            onClick={() => {
+              trigger("nudge");
+              onClose();
+            }}
+          >
             Cancel
           </button>
           <button
             type="submit"
             className="cnm-btn-create"
             disabled={isSubmitting || !hasChanges}
+            onClick={() => trigger("nudge")}
           >
             {isSubmitting ? "Saving..." : "Save changes"}
           </button>
