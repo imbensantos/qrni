@@ -75,6 +75,20 @@ function ControlsPanel({
   const [shortLinkError, setShortLinkError] = useState<string | null>(null);
   const [pendingNsId, setPendingNsId] = useState<Id<"namespaces"> | null>(null);
 
+  // Native input event for slider haptics (React synthetic events unreliable on mobile)
+  const sliderRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const el = sliderRef.current;
+    if (!el) return;
+    const handler = () => trigger(15);
+    el.addEventListener("input", handler);
+    el.addEventListener("touchmove", handler);
+    return () => {
+      el.removeEventListener("input", handler);
+      el.removeEventListener("touchmove", handler);
+    };
+  }, [trigger]);
+
   // Race condition guard: ignore stale results after unmount
   const mountedRef = useRef(true);
   useEffect(() => {
@@ -261,6 +275,8 @@ function ControlsPanel({
                   className="url-input"
                   placeholder="e.g., my-link"
                   value={customSlug}
+                  onKeyDown={() => trigger(8)}
+                  onBeforeInput={() => trigger(8)}
                   onChange={(e) => setCustomSlug(e.target.value)}
                 />
               </section>
@@ -372,18 +388,13 @@ function ControlsPanel({
           </span>
         </div>
         <input
+          ref={sliderRef}
           type="range"
           min={128}
           max={2048}
           step={64}
           value={size}
-          onChange={(e) => {
-            onSizeChange(Number(e.target.value));
-            trigger(15);
-          }}
-          onPointerMove={(e) => {
-            if (e.pressure > 0) trigger(15);
-          }}
+          onChange={(e) => onSizeChange(Number(e.target.value))}
           className="size-slider"
           aria-label="QR code size in pixels"
           aria-valuemin={128}

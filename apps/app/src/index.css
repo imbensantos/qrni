@@ -67,11 +67,11 @@ body {
   background: var(--bg-page);
 }
 
-/* Prevent mobile Safari auto-zoom on focus */
+/* Prevent mobile Safari auto-zoom on focus — !important overrides component CSS */
 input,
 textarea,
 select {
-  font-size: 16px;
+  font-size: 16px !important;
 }
 
 #root {
