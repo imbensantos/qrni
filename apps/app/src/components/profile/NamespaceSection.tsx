@@ -143,6 +143,17 @@ function NamespaceSection({
             </button>
           )}
 
+          {/* Add link */}
+          {canEdit && (
+            <button
+              className="pp-add-link-btn"
+              onClick={() => onAdd(namespace._id, namespace.slug)}
+            >
+              <IconPlus size={12} />
+              Add link
+            </button>
+          )}
+
           {/* Kebab menu */}
           {isOwner && (
             <div className="pp-kebab" ref={kebabRef}>
@@ -239,30 +250,19 @@ function NamespaceSection({
           </div>
 
           {/* Footer */}
-          {(totalLinks > 3 || canEdit) && (
+          {totalLinks > 3 && (
             <>
               <div className="pp-row-divider" />
               <div className="pp-ns-footer">
                 <div className="pp-ns-footer-left">
-                  {totalLinks > 3 && (
-                    <button
-                      className="pp-view-all-btn"
-                      onClick={() => onViewAll(namespace._id, namespace.slug)}
-                    >
-                      View all {totalLinks} links
-                      <IconArrowRight size={12} />
-                    </button>
-                  )}
-                </div>
-                {canEdit && (
                   <button
-                    className="pp-add-link-btn"
-                    onClick={() => onAdd(namespace._id, namespace.slug)}
+                    className="pp-view-all-btn"
+                    onClick={() => onViewAll(namespace._id, namespace.slug)}
                   >
-                    <IconPlus size={12} />
-                    Add link
+                    View all {totalLinks} links
+                    <IconArrowRight size={12} />
                   </button>
-                )}
+                </div>
               </div>
             </>
           )}

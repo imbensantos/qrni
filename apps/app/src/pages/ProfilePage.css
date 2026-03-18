@@ -252,7 +252,6 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-card);
-  overflow: hidden;
 }
 
 /* Card header — used by My Links and Namespace cards */
@@ -343,6 +342,7 @@
 
 .pp-collapse-inner {
   overflow: hidden;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
 .pp-chevron-toggle svg {
