@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { useQuery } from "convex/react";
 import { getAppOrigin } from "../../utils/url-utils";
 import { api } from "../../../../../convex/_generated/api";
@@ -30,6 +31,7 @@ function AllNamespaceLinksView({
   onAdd,
   onInvite,
 }: AllNamespaceLinksViewProps) {
+  const { trigger } = useWebHaptics();
   const [page, setPage] = useState(0);
 
   // TODO: This fetches all links client-side then slices for pagination.
@@ -51,7 +53,13 @@ function AllNamespaceLinksView({
 
   return (
     <div className="all-links-view">
-      <button className="all-links-back" onClick={onBack}>
+      <button
+        className="all-links-back"
+        onClick={() => {
+          trigger("nudge");
+          onBack();
+        }}
+      >
         &larr; Back to profile
       </button>
 
@@ -67,11 +75,20 @@ function AllNamespaceLinksView({
         <div className="all-links-header-actions">
           <button
             className="namespace-invite-btn"
-            onClick={() => onInvite(namespaceId, namespaceName)}
+            onClick={() => {
+              trigger("nudge");
+              onInvite(namespaceId, namespaceName);
+            }}
           >
             Invite
           </button>
-          <button className="section-add-btn" onClick={() => onAdd(namespaceId, namespaceName)}>
+          <button
+            className="section-add-btn"
+            onClick={() => {
+              trigger("nudge");
+              onAdd(namespaceId, namespaceName);
+            }}
+          >
             <IconPlus size={14} /> Add link
           </button>
         </div>
@@ -114,14 +131,20 @@ function AllNamespaceLinksView({
                       <div className="pp-link-meta">
                         <button
                           className="pp-icon-btn"
-                          onClick={() => onEdit(link)}
+                          onClick={() => {
+                            trigger("nudge");
+                            onEdit(link);
+                          }}
                           title="Edit link"
                         >
                           <IconPencil size={14} />
                         </button>
                         <button
                           className="pp-icon-btn pp-icon-btn--delete"
-                          onClick={() => onDelete(link)}
+                          onClick={() => {
+                            trigger("nudge");
+                            onDelete(link);
+                          }}
                           title="Delete link"
                         >
                           <IconTrash size={14} />
@@ -139,7 +162,10 @@ function AllNamespaceLinksView({
               <button
                 className="page-btn"
                 disabled={page === 0}
-                onClick={() => setPage((p) => p - 1)}
+                onClick={() => {
+                  trigger(8);
+                  setPage((p) => p - 1);
+                }}
               >
                 &lsaquo;
               </button>
@@ -147,7 +173,10 @@ function AllNamespaceLinksView({
                 <button
                   key={i}
                   className={`page-btn${page === i ? " active" : ""}`}
-                  onClick={() => setPage(i)}
+                  onClick={() => {
+                    trigger(8);
+                    setPage(i);
+                  }}
                 >
                   {i + 1}
                 </button>
@@ -155,7 +184,10 @@ function AllNamespaceLinksView({
               <button
                 className="page-btn"
                 disabled={page === totalPages - 1}
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => {
+                  trigger(8);
+                  setPage((p) => p + 1);
+                }}
               >
                 &rsaquo;
               </button>

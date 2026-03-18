@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { MAX_CUSTOM_LINKS } from "../../utils/constants";
 import { getAppOrigin, getAppHost } from "../../utils/url-utils";
 import { IconLink, IconPlus, IconClick, IconPencil, IconTrash, IconChevronDown } from "../Icons";
@@ -15,6 +16,7 @@ interface MyLinksSectionProps {
 }
 
 function MyLinksSection({ links, onAdd, onEdit, onDelete }: MyLinksSectionProps) {
+  const { trigger } = useWebHaptics();
   const [expanded, setExpanded] = useState(true);
   const personalLinks = links ? links.filter((l) => !l.namespace) : [];
   const customSlugCount = personalLinks.filter((l) => !l.autoSlug).length;
@@ -37,6 +39,7 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete }: MyLinksSectionProps)
             className="pp-add-btn"
             onClick={(e) => {
               e.stopPropagation();
+              trigger("nudge");
               onAdd(null, null);
             }}
           >
@@ -45,7 +48,10 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete }: MyLinksSectionProps)
           </button>
           <button
             className={`pp-icon-btn pp-chevron-toggle${expanded ? " pp-chevron-toggle--open" : ""}`}
-            onClick={() => setExpanded((e) => !e)}
+            onClick={() => {
+              trigger(8);
+              setExpanded((e) => !e);
+            }}
             title={expanded ? "Collapse" : "Expand"}
           >
             <IconChevronDown size={16} />
@@ -90,14 +96,20 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete }: MyLinksSectionProps)
                         </span>
                         <button
                           className="pp-icon-btn"
-                          onClick={() => onEdit(link)}
+                          onClick={() => {
+                            trigger("nudge");
+                            onEdit(link);
+                          }}
                           title="Edit link"
                         >
                           <IconPencil size={14} />
                         </button>
                         <button
                           className="pp-icon-btn pp-icon-btn--delete"
-                          onClick={() => onDelete(link)}
+                          onClick={() => {
+                            trigger("nudge");
+                            onDelete(link);
+                          }}
                           title="Delete link"
                         >
                           <IconTrash size={14} />

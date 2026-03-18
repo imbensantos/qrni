@@ -10,6 +10,7 @@ import InviteMemberModal from "../components/modals/InviteMemberModal";
 import EditProfileModal from "../components/modals/EditProfileModal";
 import DeleteNamespaceModal from "../components/modals/DeleteNamespaceModal";
 import RenameNamespaceModal from "../components/modals/RenameNamespaceModal";
+import { useWebHaptics } from "web-haptics/react";
 import { IconPencil, IconPlus } from "../components/Icons";
 import MyLinksSection from "../components/profile/MyLinksSection";
 import AllNamespaceLinksView from "../components/profile/AllNamespaceLinksView";
@@ -51,6 +52,7 @@ function ProfilePage() {
   const myLinks = useQuery(api.links.listMyLinks);
   const namespaces = useQuery(api.namespaces.listMine);
 
+  const { trigger } = useWebHaptics();
   const modals = useProfileModals();
 
   const modalHandlers = {
@@ -128,7 +130,10 @@ function ProfilePage() {
                   <span className="pp-user-name">{displayName}</span>
                   <button
                     className="pp-edit-profile-btn"
-                    onClick={modals.openEditProfile}
+                    onClick={() => {
+                      trigger("nudge");
+                      modals.openEditProfile();
+                    }}
                     title="Edit profile"
                   >
                     <IconPencil size={14} />
@@ -192,7 +197,10 @@ function ProfilePage() {
           {/* Create Namespace */}
           <button
             className="pp-create-namespace-btn"
-            onClick={modals.openCreateNamespace}
+            onClick={() => {
+              trigger("nudge");
+              modals.openCreateNamespace();
+            }}
             disabled={ownedWithRole.length >= 5}
           >
             <IconPlus size={16} />

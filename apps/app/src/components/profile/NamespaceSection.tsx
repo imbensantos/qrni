@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { useQuery } from "convex/react";
 import { getAppOrigin } from "../../utils/url-utils";
 import { api } from "../../../../../convex/_generated/api";
@@ -54,6 +55,7 @@ function NamespaceSection({
   onRename,
   onDeleteNamespace,
 }: NamespaceSectionProps) {
+  const { trigger } = useWebHaptics();
   const [expanded, setExpanded] = useState(true);
   const [kebabOpen, setKebabOpen] = useState(false);
   const kebabRef = useRef(null);
@@ -136,7 +138,10 @@ function NamespaceSection({
           {isOwner && import.meta.env.VITE_FEATURE_INVITES === "true" && (
             <button
               className="pp-invite-btn"
-              onClick={() => onInvite(namespace._id, namespace.slug)}
+              onClick={() => {
+                trigger("nudge");
+                onInvite(namespace._id, namespace.slug);
+              }}
             >
               <IconUserPlus size={13} />
               Invite
@@ -147,7 +152,10 @@ function NamespaceSection({
           {canEdit && (
             <button
               className="pp-add-link-btn"
-              onClick={() => onAdd(namespace._id, namespace.slug)}
+              onClick={() => {
+                trigger("nudge");
+                onAdd(namespace._id, namespace.slug);
+              }}
             >
               <IconPlus size={12} />
               Add link
@@ -160,20 +168,32 @@ function NamespaceSection({
               <button
                 className="pp-icon-btn"
                 title="More options"
-                onClick={() => setKebabOpen((o) => !o)}
+                onClick={() => {
+                  trigger(8);
+                  setKebabOpen((o) => !o);
+                }}
               >
                 <IconEllipsis size={16} />
               </button>
               {kebabOpen && (
                 <div className="pp-kebab-menu">
-                  <button className="pp-kebab-item" onClick={handleEditNamespace}>
+                  <button
+                    className="pp-kebab-item"
+                    onClick={() => {
+                      trigger("nudge");
+                      handleEditNamespace();
+                    }}
+                  >
                     <IconPencil size={16} />
                     Edit namespace
                   </button>
                   <div className="pp-kebab-divider" />
                   <button
                     className="pp-kebab-item pp-kebab-item--danger"
-                    onClick={handleDeleteNamespace}
+                    onClick={() => {
+                      trigger("nudge");
+                      handleDeleteNamespace();
+                    }}
                   >
                     <IconTrash size={16} />
                     Delete namespace
@@ -186,7 +206,10 @@ function NamespaceSection({
           {/* Expand/Collapse */}
           <button
             className={`pp-icon-btn pp-chevron-toggle${expanded ? " pp-chevron-toggle--open" : ""}`}
-            onClick={() => setExpanded((e) => !e)}
+            onClick={() => {
+              trigger(8);
+              setExpanded((e) => !e);
+            }}
             title={expanded ? "Collapse" : "Expand"}
           >
             <IconChevronDown size={16} />
@@ -226,14 +249,20 @@ function NamespaceSection({
                           <>
                             <button
                               className="pp-icon-btn"
-                              onClick={() => onEdit(link)}
+                              onClick={() => {
+                                trigger("nudge");
+                                onEdit(link);
+                              }}
                               title="Edit link"
                             >
                               <IconPencil size={14} />
                             </button>
                             <button
                               className="pp-icon-btn pp-icon-btn--delete"
-                              onClick={() => onDelete(link)}
+                              onClick={() => {
+                                trigger("nudge");
+                                onDelete(link);
+                              }}
                               title="Delete link"
                             >
                               <IconTrash size={14} />
@@ -257,7 +286,10 @@ function NamespaceSection({
                 <div className="pp-ns-footer-left">
                   <button
                     className="pp-view-all-btn"
-                    onClick={() => onViewAll(namespace._id, namespace.slug)}
+                    onClick={() => {
+                      trigger("nudge");
+                      onViewAll(namespace._id, namespace.slug);
+                    }}
                   >
                     View all {totalLinks} links
                     <IconArrowRight size={12} />

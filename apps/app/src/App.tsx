@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useWebHaptics } from "web-haptics/react";
 import { Outlet, Link } from "@tanstack/react-router";
 import { api } from "../../../convex/_generated/api";
 import { useAuth } from "./hooks/useAuth";
@@ -11,6 +12,7 @@ import "./App.css";
 
 function App() {
   const { signIn } = useAuthActions();
+  const { trigger } = useWebHaptics();
   const { isLoading } = useAuth();
   const user = useQuery(api.users.currentUser);
   const cachedUser = getCachedUser();
@@ -57,7 +59,13 @@ function App() {
           ) : dropdownUser ? (
             <ProfileDropdown user={dropdownUser} />
           ) : (
-            <button className="signin-btn" onClick={() => signIn("google")}>
+            <button
+              className="signin-btn"
+              onClick={() => {
+                trigger("nudge");
+                signIn("google");
+              }}
+            >
               Sign in
             </button>
           )}
