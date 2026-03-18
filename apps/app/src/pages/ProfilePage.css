@@ -346,7 +346,8 @@
 .pp-collapse {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.25s ease;
+  transition: grid-template-rows 0.2s ease-out;
+  will-change: grid-template-rows;
 }
 
 .pp-collapse--open {
@@ -356,10 +357,11 @@
 .pp-collapse-inner {
   overflow: hidden;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  contain: layout style paint;
 }
 
 .pp-chevron-toggle svg {
-  transition: transform 0.25s ease;
+  transition: transform 0.2s ease-out;
 }
 
 .pp-chevron-toggle--open svg {
@@ -391,34 +393,6 @@
   justify-content: space-between;
   padding: 10px 20px;
   gap: 16px;
-  animation: pp-row-in 0.3s ease both;
-}
-
-.pp-link-list > div:nth-child(1) .pp-link-row {
-  animation-delay: 0ms;
-}
-.pp-link-list > div:nth-child(2) .pp-link-row {
-  animation-delay: 50ms;
-}
-.pp-link-list > div:nth-child(3) .pp-link-row {
-  animation-delay: 100ms;
-}
-.pp-link-list > div:nth-child(4) .pp-link-row {
-  animation-delay: 150ms;
-}
-.pp-link-list > div:nth-child(5) .pp-link-row {
-  animation-delay: 200ms;
-}
-
-@keyframes pp-row-in {
-  from {
-    opacity: 0;
-    transform: translateX(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
 }
 
 .pp-link-info {

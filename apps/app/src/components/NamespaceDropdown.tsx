@@ -175,8 +175,10 @@ function NamespaceDropdown({
                     Add
                   </button>
                 </div>
-              ) : ownedNamespacesCount >= 5 ? (
-                <span className="ns-limit-msg">Namespace limit reached (5 of 5)</span>
+              ) : ownedNamespacesCount >= 3 ? (
+                <span className="ns-limit-msg">
+                  Namespace limit reached ({ownedNamespacesCount} of 3)
+                </span>
               ) : (
                 <button
                   type="button"

@@ -1,7 +1,7 @@
 // ============ LIMITS ============
 
 /** Maximum namespaces a single user can own */
-export const MAX_NAMESPACES_PER_USER = 5;
+export const MAX_NAMESPACES_PER_USER = 3;
 
 /** Maximum custom (non-auto, non-namespaced) short links per user */
 export const MAX_CUSTOM_LINKS_PER_USER = 5;
