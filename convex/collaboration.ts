@@ -1,4 +1,5 @@
 import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { generateShortCode } from "./lib/shortCode";
@@ -59,6 +60,15 @@ export const createEmailInvite = mutation({
         email: normalizedEmail,
         role: args.role,
       },
+    });
+
+    // Schedule the invite email (fire-and-forget — don't block the mutation)
+    await ctx.scheduler.runAfter(0, internal.email.sendInviteEmail, {
+      to: normalizedEmail,
+      inviterName: user.name || user.email || "Someone",
+      namespaceName: namespace.slug,
+      role: args.role,
+      token,
     });
 
     return inviteId;
