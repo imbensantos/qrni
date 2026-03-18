@@ -45,7 +45,7 @@ export function buildInviteEmailHtml(args: InviteEmailArgs): string {
     <!-- Logo row -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr><td align="center" style="padding-bottom:24px;">
-      <span style="font-size:24px;font-weight:700;color:#1A1918;letter-spacing:-0.5px;">&#9638;&#9638; QRni</span>
+      <span style="font-size:24px;font-weight:700;color:#1A1918;letter-spacing:-0.5px;">QRni</span>
     </td></tr>
     </table>
 
@@ -58,8 +58,8 @@ export function buildInviteEmailHtml(args: InviteEmailArgs): string {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr><td align="center" style="padding-bottom:12px;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-      <tr><td width="64" height="64" align="center" valign="middle" style="width:64px;height:64px;background-color:#C8F0D8;border-radius:50%;font-size:28px;">
-        &#128101;
+      <tr><td width="64" height="64" align="center" valign="middle" style="width:64px;height:64px;background-color:#C8F0D8;border-radius:50%;font-size:24px;font-weight:700;color:#3D8A5A;">
+        +
       </td></tr>
       </table>
     </td></tr>
@@ -84,8 +84,7 @@ export function buildInviteEmailHtml(args: InviteEmailArgs): string {
     <tr><td align="center" style="padding-bottom:8px;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="background:#FAFAF8;border:1px solid #E5E4E1;border-radius:12px;">
       <tr>
-        <td style="padding:12px 20px;font-size:14px;color:#D89575;">&#128193;</td>
-        <td style="padding:12px 20px 12px 0;font-size:18px;font-weight:600;color:#1A1918;">${namespace}</td>
+        <td style="padding:12px 20px;font-size:18px;font-weight:600;color:#1A1918;">${namespace}</td>
       </tr>
       </table>
     </td></tr>
