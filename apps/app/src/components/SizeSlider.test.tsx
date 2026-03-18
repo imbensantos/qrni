@@ -11,7 +11,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  // Clean up any DOM elements the library injected
   document.querySelectorAll("label[for^='web-haptics']").forEach((el) => el.remove());
 });
 
@@ -114,15 +113,15 @@ describe("SizeSlider", () => {
     expect(props.onSizeChange).toHaveBeenCalledWith(1024);
   });
 
-  it("calls the real library trigger on native input event", () => {
+  it("triggers haptic on change (fires during drag on all platforms)", () => {
     renderSlider();
-    screen.getByRole("slider").dispatchEvent(new Event("input", { bubbles: true }));
+    fireEvent.change(screen.getByRole("slider"), { target: { value: "1024" } });
     expect(triggerSpy).toHaveBeenCalled();
   });
 
   it("passes a haptic argument that produces perceptible vibration", () => {
     renderSlider();
-    screen.getByRole("slider").dispatchEvent(new Event("input", { bubbles: true }));
+    fireEvent.change(screen.getByRole("slider"), { target: { value: "1024" } });
 
     const arg = triggerSpy.mock.calls[0][0];
     const vibrations = resolveInput(arg);
@@ -134,28 +133,12 @@ describe("SizeSlider", () => {
     expect(onTimeMs).toBeGreaterThanOrEqual(10);
   });
 
-  it("calls trigger on touchmove", () => {
-    renderSlider();
-    screen.getByRole("slider").dispatchEvent(new Event("touchmove", { bubbles: true }));
-    expect(triggerSpy).toHaveBeenCalled();
-  });
-
-  it("calls trigger on each input event during continuous drag", () => {
+  it("triggers haptic on each change during continuous drag", () => {
     renderSlider();
     const slider = screen.getByRole("slider");
-    slider.dispatchEvent(new Event("input", { bubbles: true }));
-    slider.dispatchEvent(new Event("input", { bubbles: true }));
-    slider.dispatchEvent(new Event("input", { bubbles: true }));
-    expect(triggerSpy.mock.calls.length).toBeGreaterThanOrEqual(3);
-  });
-
-  it("cleans up event listeners on unmount", async () => {
-    const { unmount } = render(<SizeSlider size={512} onSizeChange={vi.fn()} />);
-    const slider = screen.getByRole("slider");
-    unmount();
-    triggerSpy.mockClear();
-    slider.dispatchEvent(new Event("input", { bubbles: true }));
-    await new Promise((r) => setTimeout(r, 50));
-    expect(triggerSpy).not.toHaveBeenCalled();
+    fireEvent.change(slider, { target: { value: "256" } });
+    fireEvent.change(slider, { target: { value: "768" } });
+    fireEvent.change(slider, { target: { value: "1024" } });
+    expect(triggerSpy).toHaveBeenCalledTimes(3);
   });
 });

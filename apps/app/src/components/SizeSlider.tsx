@@ -1,4 +1,3 @@
-import { useRef, useEffect } from "react";
 import { useWebHaptics } from "web-haptics/react";
 
 interface SizeSliderProps {
@@ -8,19 +7,6 @@ interface SizeSliderProps {
 
 function SizeSlider({ size, onSizeChange }: SizeSliderProps) {
   const { trigger } = useWebHaptics();
-  const sliderRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const el = sliderRef.current;
-    if (!el) return;
-    const handler = () => trigger("rigid");
-    el.addEventListener("input", handler);
-    el.addEventListener("touchmove", handler);
-    return () => {
-      el.removeEventListener("input", handler);
-      el.removeEventListener("touchmove", handler);
-    };
-  }, [trigger]);
 
   return (
     <section className="control-section" role="group" aria-labelledby="size-label">
@@ -48,13 +34,15 @@ function SizeSlider({ size, onSizeChange }: SizeSliderProps) {
         </span>
       </div>
       <input
-        ref={sliderRef}
         type="range"
         min={128}
         max={2048}
         step={64}
         value={size}
-        onChange={(e) => onSizeChange(Number(e.target.value))}
+        onChange={(e) => {
+          onSizeChange(Number(e.target.value));
+          trigger("rigid");
+        }}
         className="size-slider"
         aria-label="QR code size in pixels"
         aria-valuemin={128}
