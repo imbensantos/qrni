@@ -134,20 +134,6 @@ function NamespaceSection({
             </div>
           )}
 
-          {/* Invite (owner only, behind feature flag) */}
-          {isOwner && import.meta.env.VITE_FEATURE_INVITES === "true" && (
-            <button
-              className="pp-invite-btn"
-              onClick={() => {
-                trigger("nudge");
-                onInvite(namespace._id, namespace.slug);
-              }}
-            >
-              <IconUserPlus size={13} />
-              Invite
-            </button>
-          )}
-
           {/* Add link */}
           {canEdit && (
             <button
@@ -177,6 +163,18 @@ function NamespaceSection({
               </button>
               {kebabOpen && (
                 <div className="pp-kebab-menu">
+                  <button
+                    className="pp-kebab-item"
+                    onClick={() => {
+                      trigger("nudge");
+                      setKebabOpen(false);
+                      onInvite(namespace._id, namespace.slug);
+                    }}
+                  >
+                    <IconUserPlus size={16} />
+                    Invite members
+                  </button>
+                  <div className="pp-kebab-divider" />
                   <button
                     className="pp-kebab-item"
                     onClick={() => {
