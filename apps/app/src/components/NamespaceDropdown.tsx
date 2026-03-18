@@ -85,9 +85,14 @@ function NamespaceDropdown({
 
   return (
     <section className="control-section" role="group" aria-labelledby="namespace-label">
-      <label id="namespace-label" className="control-label">
-        Namespace
-      </label>
+      <div className="control-header">
+        <label id="namespace-label" className="control-label">
+          Namespace
+        </label>
+        <span className="slug-counter">
+          {ownedNamespacesCount} of {MAX_NAMESPACES_PER_USER} used
+        </span>
+      </div>
       <div className="namespace-dropdown-wrapper">
         <button
           type="button"
