@@ -1,0 +1,57 @@
+{
+  "planPath": "docs/plans/2026-03-17-full-audit-fixes.md",
+  "tasks": [
+    {
+      "id": 1,
+      "subject": "Task 1: Fix permission error messages to prevent enumeration",
+      "status": "pending"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Rename creatorIp to sessionId and sanitize HTTP errors",
+      "status": "pending"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Optimize custom link limit check (eliminate .collect())",
+      "status": "pending"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Guard localStorage and extract magic number constants",
+      "status": "pending"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Centralize domain references through url-utils",
+      "status": "pending"
+    },
+    { "id": 6, "subject": "Task 6: Extract error categorization helper", "status": "pending" },
+    {
+      "id": 7,
+      "subject": "Task 7: Remove dead CSS and fix hardcoded colors in ErrorBoundary",
+      "status": "pending"
+    },
+    {
+      "id": 8,
+      "subject": "Task 8: Add unit tests for convex/lib modules",
+      "status": "pending",
+      "blockedBy": [1]
+    },
+    {
+      "id": 9,
+      "subject": "Task 9: Add unit tests for frontend components",
+      "status": "pending",
+      "blockedBy": [7]
+    },
+    {
+      "id": 10,
+      "subject": "Task 10: Add unit tests for url-utils and cached-user",
+      "status": "pending",
+      "blockedBy": [5]
+    },
+    { "id": 11, "subject": "Task 11: Add skip-to-main-content link for a11y", "status": "pending" },
+    { "id": 12, "subject": "Task 12: Add scope attributes to table headers", "status": "pending" }
+  ],
+  "lastUpdated": "2026-03-17T00:00:00Z"
+}
