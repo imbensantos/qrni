@@ -301,6 +301,32 @@ export const listInvites = query({
   },
 });
 
+export const getInviteByToken = query({
+  args: { token: v.string() },
+  handler: async (ctx, args) => {
+    const invite = await ctx.db
+      .query("namespace_invites")
+      .withIndex("by_token", (q) => q.eq("token", args.token))
+      .first();
+
+    if (!invite || invite.revoked) return null;
+    if (invite.expiresAt !== undefined && Date.now() > invite.expiresAt) return null;
+
+    const namespace = await ctx.db.get(invite.namespace);
+    if (!namespace) return null;
+
+    const inviter = await ctx.db.get(invite.createdBy);
+
+    return {
+      namespaceName: namespace.slug,
+      role: invite.role,
+      type: invite.type,
+      email: invite.email,
+      inviterName: inviter?.name || inviter?.email || "Someone",
+    };
+  },
+});
+
 export const transferOwnership = mutation({
   args: {
     namespaceId: v.id("namespaces"),
