@@ -177,3 +177,13 @@
   font-size: 12px;
   color: var(--text-tertiary);
 }
+
+.footer-link {
+  color: var(--text-tertiary);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.footer-link:hover {
+  color: var(--accent-primary);
+}

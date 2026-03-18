@@ -330,10 +330,9 @@
 
 .panel-footer {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
   font-size: 12px;
   font-weight: 500;
   color: var(--text-tertiary);
@@ -345,6 +344,17 @@
   margin: 0;
   padding: 0;
   border: none;
+}
+
+.panel-footer .powered-by {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.panel-footer .footer-link {
+  display: inline;
+  color: var(--text-tertiary);
 }
 
 .panel-footer a {

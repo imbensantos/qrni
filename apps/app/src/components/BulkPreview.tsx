@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { Link } from "@tanstack/react-router";
 import { useWebHaptics } from "web-haptics/react";
 import { generateZip, generatePdf, type ExportFormat } from "../utils/bulk-export";
 import { isValidUrl, sanitizeLabel, deduplicateLabels, type BulkEntry } from "../utils/bulk-utils";
@@ -142,17 +143,22 @@ function BulkPreview({
           </p>
           <footer className="panel-footer panel-footer-mobile">
             <p className="copyright-footer">
-              &copy; {new Date().getFullYear()} QRni. All rights reserved.
+              &copy; {new Date().getFullYear()} QRni &middot;{" "}
+              <Link to="/privacy" className="footer-link">
+                Privacy
+              </Link>
             </p>
-            <span>Powered by</span>
-            <a
-              href="https://imbensantos.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Visit imBento website"
-            >
-              <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
-            </a>
+            <span className="powered-by">
+              Powered by
+              <a
+                href="https://imbensantos.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Visit imBento website"
+              >
+                <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
+              </a>
+            </span>
           </footer>
         </div>
       </section>

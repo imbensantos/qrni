@@ -229,15 +229,17 @@ function PrivacyPage() {
         <p className="copyright-footer">
           &copy; {new Date().getFullYear()} QRni. All rights reserved.
         </p>
-        <span>Powered by</span>
-        <a
-          href="https://imbensantos.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Visit imBento website"
-        >
-          <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
-        </a>
+        <span className="powered-by">
+          Powered by
+          <a
+            href="https://imbensantos.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit imBento website"
+          >
+            <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
+          </a>
+        </span>
       </footer>
     </main>
   );
