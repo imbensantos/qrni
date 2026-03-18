@@ -3,6 +3,7 @@ import App from "./App";
 import QRGeneratorPage from "./pages/QRGeneratorPage";
 import ProfilePage from "./pages/ProfilePage";
 import PrivacyPage from "./pages/PrivacyPage";
+import InviteAcceptPage from "./pages/InviteAcceptPage";
 
 const rootRoute = createRootRoute({
   component: App,
@@ -26,7 +27,18 @@ const privacyRoute = createRoute({
   component: PrivacyPage,
 });
 
-export const routeTree = rootRoute.addChildren([indexRoute, profileRoute, privacyRoute]);
+const inviteRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/invite/$token",
+  component: InviteAcceptPage,
+});
+
+export const routeTree = rootRoute.addChildren([
+  indexRoute,
+  profileRoute,
+  privacyRoute,
+  inviteRoute,
+]);
 export const router = createRouter({ routeTree });
 
 declare module "@tanstack/react-router" {
