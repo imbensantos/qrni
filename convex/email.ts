@@ -35,6 +35,7 @@ export const sendInviteEmail = internalAction({
       namespaceName: args.namespaceName,
       role: args.role,
       acceptUrl,
+      appUrl,
     });
 
     // Strip newlines from user-provided values to prevent header injection

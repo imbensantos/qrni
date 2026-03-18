@@ -6,6 +6,7 @@ const SHORT_CODE_RE = /^\/[a-zA-Z0-9][a-zA-Z0-9_-]{0,59}$/;
 const NAMESPACED_RE = /^\/[a-z][a-z0-9-]{0,29}\/[a-zA-Z0-9_-]{1,60}$/;
 // App routes that should never be treated as short links
 const APP_ROUTES = new Set(["/profile", "/privacy"]);
+const APP_ROUTE_PREFIXES = ["/invite/"];
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -42,6 +43,7 @@ export default defineConfig(({ mode }) => {
             if (
               path &&
               !APP_ROUTES.has(path) &&
+              !APP_ROUTE_PREFIXES.some((prefix) => path.startsWith(prefix)) &&
               (SHORT_CODE_RE.test(path) || NAMESPACED_RE.test(path))
             ) {
               try {

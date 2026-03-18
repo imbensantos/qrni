@@ -3,6 +3,7 @@ interface InviteEmailArgs {
   namespaceName: string;
   role: "editor" | "viewer";
   acceptUrl: string;
+  appUrl: string;
 }
 
 function escapeHtml(raw: string): string {
@@ -45,7 +46,7 @@ export function buildInviteEmailHtml(args: InviteEmailArgs): string {
     <!-- Logo row -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr><td align="center" style="padding-bottom:24px;">
-      <span style="font-size:24px;font-weight:700;color:#1A1918;letter-spacing:-0.5px;">QRni</span>
+      <a href="https://qrni.to" target="_blank" rel="noopener noreferrer" style="font-size:24px;font-weight:700;color:#1A1918;letter-spacing:-0.5px;text-decoration:none;">QRni</a>
     </td></tr>
     </table>
 
@@ -74,27 +75,16 @@ export function buildInviteEmailHtml(args: InviteEmailArgs): string {
 
     <!-- Subtitle -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tr><td align="center" style="padding-bottom:16px;">
+    <tr><td align="center" style="padding-bottom:20px;">
       <p style="margin:0;font-size:15px;color:#6D6C6A;line-height:1.5;">${inviter} invited you to collaborate on</p>
     </td></tr>
     </table>
 
-    <!-- Namespace badge -->
+    <!-- Namespace + role (single row, wraps on small screens) -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tr><td align="center" style="padding-bottom:8px;">
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="background:#FAFAF8;border:1px solid #E5E4E1;border-radius:12px;">
-      <tr>
-        <td style="padding:12px 20px;font-size:18px;font-weight:600;color:#1A1918;">${namespace}</td>
-      </tr>
-      </table>
-    </td></tr>
-    </table>
-
-    <!-- Role row: "as [Editor]" -->
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tr><td align="center" style="padding-bottom:24px;">
-      <span style="font-size:14px;color:#9C9B99;">as</span>
-      <span style="display:inline-block;margin-left:8px;padding:4px 12px;background:#C8F0D8;color:#3D8A5A;font-size:13px;font-weight:600;border-radius:100px;">${role}</span>
+    <tr><td align="center" style="padding-bottom:28px;font-size:0;">
+      <span style="display:inline-block;padding:12px 24px;margin:4px;background:#FAFAF8;border:1px solid #E5E4E1;border-radius:12px;font-size:18px;font-weight:600;color:#1A1918;vertical-align:middle;">${namespace}</span><!--
+      --><span style="display:inline-block;vertical-align:middle;margin:4px 0 4px 8px;white-space:nowrap;"><span style="font-size:14px;color:#9C9B99;vertical-align:middle;">as</span> <span style="display:inline-block;padding:6px 16px;margin-left:10px;background:#C8F0D8;color:#3D8A5A;font-size:13px;font-weight:600;border-radius:100px;vertical-align:middle;">${role}</span></span>
     </td></tr>
     </table>
 
@@ -135,8 +125,8 @@ export function buildInviteEmailHtml(args: InviteEmailArgs): string {
   <!-- Bottom footer (outside card) -->
   <table role="presentation" width="520" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;width:100%;">
   <tr><td align="center" style="padding:16px 0 0 0;">
-    <p style="margin:0 0 10px 0;font-size:12px;color:#9C9B99;">&copy; QRni ${year}. All rights reserved.</p>
-    <p style="margin:0;font-size:11px;color:#9C9B99;">Powered by <a href="https://imbensantos.com" target="_blank" rel="noopener noreferrer" style="color:#6D6C6A;font-weight:600;text-decoration:none;">Imbento</a></p>
+    <p style="margin:0 0 10px 0;font-size:12px;color:#9C9B99;">&copy; <a href="https://qrni.to" target="_blank" rel="noopener noreferrer" style="color:#9C9B99;text-decoration:none;">QRni</a> ${year}. All rights reserved.</p>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;"><tr><td style="font-size:11px;color:#9C9B99;vertical-align:middle;padding-right:6px;">Powered by</td><td style="vertical-align:middle;"><a href="https://imbensantos.com" target="_blank" rel="noopener noreferrer" style="text-decoration:none;"><img src="${escapeHtml(args.appUrl)}/imbento-logo-email.png" alt="Imbento" height="36" style="height:36px;width:auto;display:block;" /></a></td></tr></table>
   </td></tr>
   </table>
 

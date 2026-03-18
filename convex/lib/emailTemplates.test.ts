@@ -7,6 +7,7 @@ describe("buildInviteEmailHtml", () => {
     namespaceName: "my-project",
     role: "editor" as const,
     acceptUrl: "https://app.qrni.to/invite/abc123",
+    appUrl: "https://app.qrni.to",
   };
 
   it("returns an HTML string containing the inviter name", () => {
