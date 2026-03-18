@@ -14,210 +14,136 @@ function escapeHtml(raw: string): string {
     .replace(/'/g, "&#39;");
 }
 
-function capitalizeRole(role: "editor" | "viewer"): string {
-  return role === "editor" ? "Editor" : "Viewer";
-}
-
 export function buildInviteEmailHtml(args: InviteEmailArgs): string {
-  const { inviterName, namespaceName, role, acceptUrl } = args;
-
-  const safeInviterName = escapeHtml(inviterName);
-  const safeNamespaceName = escapeHtml(namespaceName);
-  const safeAcceptUrl = escapeHtml(acceptUrl);
-  const safeRole = capitalizeRole(role);
+  const inviter = escapeHtml(args.inviterName);
+  const namespace = escapeHtml(args.namespaceName);
+  const role = args.role === "editor" ? "Editor" : "Viewer";
+  const url = escapeHtml(args.acceptUrl);
   const year = new Date().getFullYear();
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>You've been invited to ${safeNamespaceName} on QRni</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background-color: #F5F4F1;
-      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      color: #2C2C2C;
-      padding: 40px 20px;
-    }
-
-    .wrapper {
-      max-width: 560px;
-      margin: 0 auto;
-    }
-
-    .logo {
-      text-align: center;
-      margin-bottom: 24px;
-      font-size: 22px;
-      font-weight: 700;
-      color: #3D8A5A;
-      letter-spacing: -0.5px;
-    }
-
-    .card {
-      background: #FFFFFF;
-      border-radius: 16px;
-      padding: 40px 36px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    }
-
-    .icon-wrap {
-      width: 56px;
-      height: 56px;
-      background: #C8F0D8;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 24px;
-    }
-
-    .heading {
-      font-size: 22px;
-      font-weight: 700;
-      color: #1A1A1A;
-      text-align: center;
-      margin-bottom: 12px;
-    }
-
-    .subtext {
-      font-size: 15px;
-      color: #555555;
-      text-align: center;
-      line-height: 1.6;
-      margin-bottom: 28px;
-    }
-
-    .namespace-badge {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #F5F4F1;
-      border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 28px;
-    }
-
-    .namespace-badge .folder-icon {
-      flex-shrink: 0;
-    }
-
-    .namespace-badge .details {
-      flex: 1;
-    }
-
-    .namespace-badge .ns-name {
-      font-size: 15px;
-      font-weight: 600;
-      color: #1A1A1A;
-    }
-
-    .namespace-badge .role-badge {
-      display: inline-block;
-      margin-top: 4px;
-      padding: 2px 10px;
-      background: #C8F0D8;
-      color: #3D8A5A;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .cta-btn {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      background: #3D8A5A;
-      color: #FFFFFF !important;
-      text-decoration: none;
-      text-align: center;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 24px;
-    }
-
-    .expiry-notice {
-      font-size: 13px;
-      color: #888888;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .ignore-notice {
-      font-size: 13px;
-      color: #AAAAAA;
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 28px;
-      font-size: 12px;
-      color: #AAAAAA;
-      line-height: 1.8;
-    }
-
-    .footer a {
-      color: #888888;
-      text-decoration: none;
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>You're invited to ${namespace}</title>
+<!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+</style>
 </head>
-<body>
-  <div class="wrapper">
-    <div class="logo">QRni</div>
+<body style="margin:0;padding:0;background-color:#F5F4F1;font-family:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
 
-    <div class="card">
-      <!-- User-plus icon in green circle -->
-      <div class="icon-wrap">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16 11C17.66 11 18.99 9.66 18.99 8C18.99 6.34 17.66 5 16 5C14.34 5 13 6.34 13 8C13 9.66 14.34 11 16 11ZM8 11C9.66 11 10.99 9.66 10.99 8C10.99 6.34 9.66 5 8 5C6.34 5 5 6.34 5 8C5 9.66 6.34 11 8 11ZM8 13C5.67 13 1 14.17 1 16.5V19H15V16.5C15 14.17 10.33 13 8 13ZM16 13C15.71 13 15.38 13.02 15.03 13.05C16.19 13.89 17 15.02 17 16.5V19H23V16.5C23 14.17 18.33 13 16 13Z" fill="#3D8A5A"/>
-        </svg>
-      </div>
+<!-- Outer wrapper -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F5F4F1;">
+<tr><td align="center" style="padding:40px 20px;">
 
-      <h1 class="heading">You&rsquo;ve been invited!</h1>
+  <!-- Card -->
+  <table role="presentation" width="520" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;width:100%;background:#FFFFFF;border-radius:16px;box-shadow:0 2px 12px rgba(26,25,24,0.03);">
+  <tr><td style="padding:40px 40px 0 40px;">
 
-      <p class="subtext">
-        <strong>${safeInviterName}</strong> has invited you to collaborate on a namespace in QRni.
-      </p>
+    <!-- Logo row -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding-bottom:24px;">
+      <span style="font-size:24px;font-weight:700;color:#1A1918;letter-spacing:-0.5px;">&#9638;&#9638; QRni</span>
+    </td></tr>
+    </table>
 
-      <!-- Namespace badge with folder icon -->
-      <div class="namespace-badge">
-        <div class="folder-icon">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="32" height="32" rx="8" fill="#FAE8DC"/>
-            <path d="M7 11C7 9.895 7.895 9 9 9H13.586C13.851 9 14.105 9.105 14.293 9.293L15.707 10.707C15.895 10.895 16.149 11 16.414 11H23C24.105 11 25 11.895 25 13V22C25 23.105 24.105 24 23 24H9C7.895 24 7 23.105 7 22V11Z" fill="#D89575"/>
-          </svg>
-        </div>
-        <div class="details">
-          <div class="ns-name">${safeNamespaceName}</div>
-          <span class="role-badge">${safeRole}</span>
-        </div>
-      </div>
+    <!-- Divider -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td style="border-top:1px solid #E5E4E1;padding-bottom:24px;"></td></tr>
+    </table>
 
-      <a href="${safeAcceptUrl}" class="cta-btn">Accept Invitation</a>
+    <!-- Icon circle -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding-bottom:12px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+      <tr><td width="64" height="64" align="center" valign="middle" style="width:64px;height:64px;background-color:#C8F0D8;border-radius:50%;font-size:28px;">
+        &#128101;
+      </td></tr>
+      </table>
+    </td></tr>
+    </table>
 
-      <p class="expiry-notice">This invitation expires in 7 days.</p>
+    <!-- Heading -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding-bottom:12px;">
+      <h1 style="margin:0;font-size:26px;font-weight:600;color:#1A1918;letter-spacing:-0.5px;">You're invited!</h1>
+    </td></tr>
+    </table>
 
-      <p class="ignore-notice">If you didn&rsquo;t expect this invitation, you can safely ignore this email.</p>
-    </div>
+    <!-- Subtitle -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding-bottom:16px;">
+      <p style="margin:0;font-size:15px;color:#6D6C6A;line-height:1.5;">${inviter} invited you to collaborate on</p>
+    </td></tr>
+    </table>
 
-    <div class="footer">
-      <p>&copy; QRni ${year}. All rights reserved.</p>
-      <p>Powered by <a href="https://imbensantos.com" target="_blank" rel="noopener noreferrer">Imbento</a></p>
-    </div>
-  </div>
+    <!-- Namespace badge -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding-bottom:8px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="background:#FAFAF8;border:1px solid #E5E4E1;border-radius:12px;">
+      <tr>
+        <td style="padding:12px 20px;font-size:14px;color:#D89575;">&#128193;</td>
+        <td style="padding:12px 20px 12px 0;font-size:18px;font-weight:600;color:#1A1918;">${namespace}</td>
+      </tr>
+      </table>
+    </td></tr>
+    </table>
+
+    <!-- Role row: "as [Editor]" -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding-bottom:24px;">
+      <span style="font-size:14px;color:#9C9B99;">as</span>
+      <span style="display:inline-block;margin-left:8px;padding:4px 12px;background:#C8F0D8;color:#3D8A5A;font-size:13px;font-weight:600;border-radius:100px;">${role}</span>
+    </td></tr>
+    </table>
+
+    <!-- CTA Button -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding-bottom:24px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td align="center" bgcolor="#3D8A5A" style="background:#3D8A5A;border-radius:12px;">
+        <a href="${url}" target="_blank" style="display:block;padding:14px 24px;font-size:16px;font-weight:600;color:#FFFFFF;text-decoration:none;letter-spacing:-0.2px;">Accept Invitation</a>
+      </td></tr>
+      </table>
+    </td></tr>
+    </table>
+
+    <!-- Expiry notice -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding-bottom:24px;">
+      <p style="margin:0;font-size:12px;color:#9C9B99;">This invitation expires in 7 days.</p>
+    </td></tr>
+    </table>
+
+    <!-- Divider -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td style="border-top:1px solid #E5E4E1;padding-bottom:24px;"></td></tr>
+    </table>
+
+    <!-- Ignore notice -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding-bottom:40px;">
+      <p style="margin:0;font-size:12px;color:#9C9B99;line-height:1.5;">If you didn't expect this invitation, you can safely ignore this email.</p>
+    </td></tr>
+    </table>
+
+  </td></tr>
+  </table>
+  <!-- End card -->
+
+  <!-- Bottom footer (outside card) -->
+  <table role="presentation" width="520" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;width:100%;">
+  <tr><td align="center" style="padding:16px 0 0 0;">
+    <p style="margin:0 0 10px 0;font-size:12px;color:#9C9B99;">&copy; QRni ${year}. All rights reserved.</p>
+    <p style="margin:0;font-size:11px;color:#9C9B99;">Powered by <a href="https://imbensantos.com" target="_blank" rel="noopener noreferrer" style="color:#6D6C6A;font-weight:600;text-decoration:none;">Imbento</a></p>
+  </td></tr>
+  </table>
+
+</td></tr>
+</table>
+
 </body>
 </html>`;
 }
