@@ -1,3 +1,4 @@
+import { useRef, useCallback } from "react";
 import { useWebHaptics } from "web-haptics/react";
 
 interface SizeSliderProps {
@@ -5,8 +6,19 @@ interface SizeSliderProps {
   onSizeChange: (size: number) => void;
 }
 
+const HAPTIC_THROTTLE_MS = 80;
+
 function SizeSlider({ size, onSizeChange }: SizeSliderProps) {
   const { trigger } = useWebHaptics();
+  const lastHapticRef = useRef(0);
+
+  const throttledTrigger = useCallback(() => {
+    const now = Date.now();
+    if (now - lastHapticRef.current >= HAPTIC_THROTTLE_MS) {
+      lastHapticRef.current = now;
+      trigger("rigid");
+    }
+  }, [trigger]);
 
   return (
     <section className="control-section" role="group" aria-labelledby="size-label">
@@ -41,7 +53,7 @@ function SizeSlider({ size, onSizeChange }: SizeSliderProps) {
         value={size}
         onChange={(e) => {
           onSizeChange(Number(e.target.value));
-          trigger("rigid");
+          throttledTrigger();
         }}
         className="size-slider"
         aria-label="QR code size in pixels"

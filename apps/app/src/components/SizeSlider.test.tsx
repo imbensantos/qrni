@@ -8,9 +8,11 @@ const triggerSpy = vi.spyOn(WebHaptics.prototype, "trigger");
 
 beforeEach(() => {
   triggerSpy.mockClear();
+  vi.useFakeTimers();
 });
 
 afterEach(() => {
+  vi.useRealTimers();
   document.querySelectorAll("label[for^='web-haptics']").forEach((el) => el.remove());
 });
 
@@ -113,7 +115,7 @@ describe("SizeSlider", () => {
     expect(props.onSizeChange).toHaveBeenCalledWith(1024);
   });
 
-  it("triggers haptic on change (fires during drag on all platforms)", () => {
+  it("triggers haptic on first change", () => {
     renderSlider();
     fireEvent.change(screen.getByRole("slider"), { target: { value: "1024" } });
     expect(triggerSpy).toHaveBeenCalled();
@@ -133,12 +135,22 @@ describe("SizeSlider", () => {
     expect(onTimeMs).toBeGreaterThanOrEqual(10);
   });
 
-  it("triggers haptic on each change during continuous drag", () => {
+  it("throttles haptic triggers during rapid drag", () => {
     renderSlider();
     const slider = screen.getByRole("slider");
+
+    // First change fires immediately
     fireEvent.change(slider, { target: { value: "256" } });
+    expect(triggerSpy).toHaveBeenCalledTimes(1);
+
+    // Rapid changes within throttle window are skipped
+    fireEvent.change(slider, { target: { value: "384" } });
+    fireEvent.change(slider, { target: { value: "640" } });
+    expect(triggerSpy).toHaveBeenCalledTimes(1);
+
+    // After throttle period, next change fires
+    vi.advanceTimersByTime(80);
     fireEvent.change(slider, { target: { value: "768" } });
-    fireEvent.change(slider, { target: { value: "1024" } });
-    expect(triggerSpy).toHaveBeenCalledTimes(3);
+    expect(triggerSpy).toHaveBeenCalledTimes(2);
   });
 });
