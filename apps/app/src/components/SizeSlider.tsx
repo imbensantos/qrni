@@ -13,7 +13,7 @@ function SizeSlider({ size, onSizeChange }: SizeSliderProps) {
   useEffect(() => {
     const el = sliderRef.current;
     if (!el) return;
-    const handler = () => trigger(15);
+    const handler = () => trigger("rigid");
     el.addEventListener("input", handler);
     el.addEventListener("touchmove", handler);
     return () => {

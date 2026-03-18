@@ -1,15 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+
+// Mock navigator.vibrate BEFORE web-haptics loads so isSupported is true
+const mockVibrate = vi.hoisted(() => {
+  const fn = vi.fn(() => true);
+  Object.defineProperty(navigator, "vibrate", {
+    value: fn,
+    writable: true,
+    configurable: true,
+  });
+  return fn;
+});
+
 import SizeSlider from "./SizeSlider";
 
-const mockTrigger = vi.fn();
-
-vi.mock("web-haptics/react", () => ({
-  useWebHaptics: () => ({ trigger: mockTrigger, cancel: vi.fn(), isSupported: true }),
-}));
-
 beforeEach(() => {
-  mockTrigger.mockClear();
+  mockVibrate.mockClear();
 });
 
 function renderSlider(overrides = {}) {
@@ -41,37 +47,39 @@ describe("SizeSlider", () => {
     expect(props.onSizeChange).toHaveBeenCalledWith(1024);
   });
 
-  it("triggers haptic feedback on native input event", () => {
+  it("triggers navigator.vibrate on native input event", () => {
     renderSlider();
     const slider = screen.getByRole("slider");
-    // Native input event — this is what fires during drag on mobile
     slider.dispatchEvent(new Event("input", { bubbles: true }));
-    expect(mockTrigger).toHaveBeenCalledWith(15);
+    expect(mockVibrate).toHaveBeenCalled();
+    // Verify the vibration pattern has perceptible duration (>=10ms on-time)
+    const pattern = mockVibrate.mock.calls[0][0] as number[];
+    const totalVibrateDuration = pattern.filter((_, i) => i % 2 === 0).reduce((a, b) => a + b, 0);
+    expect(totalVibrateDuration).toBeGreaterThanOrEqual(10);
   });
 
-  it("triggers haptic feedback on touchmove", () => {
+  it("triggers navigator.vibrate on touchmove", () => {
     renderSlider();
     const slider = screen.getByRole("slider");
     slider.dispatchEvent(new Event("touchmove", { bubbles: true }));
-    expect(mockTrigger).toHaveBeenCalledWith(15);
+    expect(mockVibrate).toHaveBeenCalled();
   });
 
-  it("triggers haptic on each input event during continuous drag", () => {
+  it("triggers vibration on each input event during continuous drag", () => {
     renderSlider();
     const slider = screen.getByRole("slider");
     slider.dispatchEvent(new Event("input", { bubbles: true }));
     slider.dispatchEvent(new Event("input", { bubbles: true }));
     slider.dispatchEvent(new Event("input", { bubbles: true }));
-    expect(mockTrigger).toHaveBeenCalledTimes(3);
+    expect(mockVibrate.mock.calls.length).toBeGreaterThanOrEqual(3);
   });
 
   it("cleans up event listeners on unmount", () => {
     const { unmount } = render(<SizeSlider size={512} onSizeChange={vi.fn()} />);
     const slider = screen.getByRole("slider");
     unmount();
-    mockTrigger.mockClear();
-    // After unmount, events should not trigger haptics
+    mockVibrate.mockClear();
     slider.dispatchEvent(new Event("input", { bubbles: true }));
-    expect(mockTrigger).not.toHaveBeenCalled();
+    expect(mockVibrate).not.toHaveBeenCalled();
   });
 });
