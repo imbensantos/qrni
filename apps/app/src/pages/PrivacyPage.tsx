@@ -249,6 +249,18 @@ function PrivacyPage() {
       </div>
 
       <AdSlot
+        slot="PRIVACY_PILLAR_LEFT_SLOT_ID"
+        format="vertical"
+        responsive={false}
+        className="ad-slot--pillar ad-slot--pillar-left"
+      />
+      <AdSlot
+        slot="PRIVACY_PILLAR_RIGHT_SLOT_ID"
+        format="vertical"
+        responsive={false}
+        className="ad-slot--pillar ad-slot--pillar-right"
+      />
+      <AdSlot
         slot="PRIVACY_SLOT_ID"
         format="horizontal"
         className="ad-slot--static-page"

@@ -12,6 +12,17 @@
     sans-serif;
   display: flex;
   flex-direction: column;
+  /*
+   * AdSense injects height:auto !important on ancestor elements of ad slots,
+   * which breaks scrolling. min-height + max-height together resist that
+   * override and act as a fixed height, while overflow-y:auto enables scrolling
+   * when the privacy policy content is taller than the viewport.
+   */
+  min-height: calc(100vh - 65px);
+  min-height: calc(100dvh - 65px);
+  max-height: calc(100vh - 65px);
+  max-height: calc(100dvh - 65px);
+  overflow-y: auto;
 }
 
 .privacy-body {
@@ -98,14 +109,14 @@
   font-size: 13px;
 }
 
-.privacy-body a[href^="mailto:"] {
+.privacy-body a {
   color: var(--accent-primary);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
-.privacy-body a[href^="mailto:"]:hover {
-  opacity: 0.8;
+.privacy-body a:hover {
+  color: var(--accent-primary-hover);
 }
 
 /* Table */
@@ -151,6 +162,14 @@
 
 /* Mobile */
 @media (max-width: 768px) {
+  /* On mobile, .app has height:auto so the fixed-height trick is not needed.
+     Remove max-height so the page flows naturally and scrolls via the document. */
+  .privacy-page {
+    min-height: 0;
+    max-height: none;
+    overflow-y: visible;
+  }
+
   .privacy-body {
     padding: 20px 16px 48px;
   }
