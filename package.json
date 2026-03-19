@@ -23,7 +23,8 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "convex": "^1.33.0"
+    "convex": "^1.33.0",
+    "resend": "^6.9.4"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

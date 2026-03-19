@@ -10,9 +10,11 @@
 
 import type * as auth from "../auth.js";
 import type * as collaboration from "../collaboration.js";
+import type * as email from "../email.js";
 import type * as http from "../http.js";
 import type * as lib_auditLog from "../lib/auditLog.js";
 import type * as lib_constants from "../lib/constants.js";
+import type * as lib_emailTemplates from "../lib/emailTemplates.js";
 import type * as lib_linkHelpers from "../lib/linkHelpers.js";
 import type * as lib_permissions from "../lib/permissions.js";
 import type * as lib_shortCode from "../lib/shortCode.js";
@@ -23,18 +25,16 @@ import type * as redirects from "../redirects.js";
 import type * as safeBrowsing from "../safeBrowsing.js";
 import type * as users from "../users.js";
 
-import type {
-  ApiFromModules,
-  FilterApi,
-  FunctionReference,
-} from "convex/server";
+import type { ApiFromModules, FilterApi, FunctionReference } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   collaboration: typeof collaboration;
+  email: typeof email;
   http: typeof http;
   "lib/auditLog": typeof lib_auditLog;
   "lib/constants": typeof lib_constants;
+  "lib/emailTemplates": typeof lib_emailTemplates;
   "lib/linkHelpers": typeof lib_linkHelpers;
   "lib/permissions": typeof lib_permissions;
   "lib/shortCode": typeof lib_shortCode;
@@ -54,10 +54,7 @@ declare const fullApi: ApiFromModules<{
  * const myFunctionReference = api.myModule.myFunction;
  * ```
  */
-export declare const api: FilterApi<
-  typeof fullApi,
-  FunctionReference<any, "public">
->;
+export declare const api: FilterApi<typeof fullApi, FunctionReference<any, "public">>;
 
 /**
  * A utility for referencing Convex functions in your app's internal API.
@@ -67,9 +64,6 @@ export declare const api: FilterApi<
  * const myFunctionReference = internal.myModule.myFunction;
  * ```
  */
-export declare const internal: FilterApi<
-  typeof fullApi,
-  FunctionReference<any, "internal">
->;
+export declare const internal: FilterApi<typeof fullApi, FunctionReference<any, "internal">>;
 
 export declare const components: {};

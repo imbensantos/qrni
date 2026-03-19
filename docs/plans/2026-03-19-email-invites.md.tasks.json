@@ -1,0 +1,43 @@
+{
+  "planPath": "docs/plans/2026-03-19-email-invites.md",
+  "tasks": [
+    { "id": 0, "subject": "Task 0: Install Resend and set env var", "status": "pending" },
+    {
+      "id": 1,
+      "subject": "Task 1: Create the email HTML template",
+      "status": "pending",
+      "blockedBy": [0]
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Create sendInviteEmail Convex action",
+      "status": "pending",
+      "blockedBy": [0, 1]
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Wire createEmailInvite to schedule email",
+      "status": "pending",
+      "blockedBy": [2]
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Create getInviteByToken query",
+      "status": "pending",
+      "blockedBy": [0]
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Create /invite/$token route and page",
+      "status": "pending",
+      "blockedBy": [4]
+    },
+    {
+      "id": 6,
+      "subject": "Task 6: Manual E2E verification",
+      "status": "pending",
+      "blockedBy": [3, 5]
+    }
+  ],
+  "lastUpdated": "2026-03-19T00:00:00Z"
+}
