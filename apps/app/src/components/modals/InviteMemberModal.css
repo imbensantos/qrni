@@ -390,6 +390,53 @@
   background: var(--color-error-bg);
 }
 
+/* Confirm remove */
+.imm-confirm-remove {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: #fff5f0;
+  border-radius: 10px;
+  border: 1px solid #e8c4b0;
+}
+
+.imm-confirm-remove p {
+  margin: 0 0 10px;
+  font-size: 0.875rem;
+  color: #5c5a57;
+}
+
+.imm-confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.imm-confirm-cancel {
+  padding: 6px 14px;
+  border: 1px solid #e0dfdc;
+  border-radius: 8px;
+  background: white;
+  color: #5c5a57;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.imm-confirm-remove-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #d4453a;
+  color: white;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.imm-confirm-remove-btn:hover {
+  background: #c03830;
+}
+
 /* Empty state */
 .imm-empty {
   font-size: 14px;

@@ -32,12 +32,17 @@ function InviteMemberModal({
   const [roleOpen, setRoleOpen] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState<{
+    membershipId: Id<"namespace_members">;
+    memberName: string;
+  } | null>(null);
   const roleRef = useRef<HTMLDivElement | null>(null);
 
   const members = useQuery(api.collaboration.listMembers, namespaceId ? { namespaceId } : "skip");
   const invites = useQuery(api.collaboration.listInvites, namespaceId ? { namespaceId } : "skip");
   const createEmailInvite = useMutation(api.collaboration.createEmailInvite);
   const revokeInvite = useMutation(api.collaboration.revokeInvite);
+  const removeMember = useMutation(api.collaboration.removeMember);
 
   useEffect(() => {
     if (isOpen) {
@@ -46,6 +51,7 @@ function InviteMemberModal({
       setRoleOpen(false);
       setError("");
       setIsSubmitting(false);
+      setConfirmRemove(null);
     }
   }, [isOpen]);
 
@@ -68,6 +74,17 @@ function InviteMemberModal({
       setError((err as Error).message || "Failed to send invite");
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleRemoveMember(membershipId: Id<"namespace_members">) {
+    if (!namespaceId) return;
+    try {
+      await removeMember({ namespaceId, membershipId });
+      setConfirmRemove(null);
+    } catch (err) {
+      setError((err as Error).message || "Failed to remove member");
+      setConfirmRemove(null);
     }
   }
 
@@ -227,6 +244,13 @@ function InviteMemberModal({
                     type="button"
                     className="imm-revoke-btn"
                     aria-label={`Remove ${member.user?.name || member.user?.email}`}
+                    onClick={() => {
+                      trigger("nudge");
+                      setConfirmRemove({
+                        membershipId: member._id,
+                        memberName: member.user?.name || member.user?.email || "this member",
+                      });
+                    }}
                   >
                     <IconClose size={14} />
                   </button>
@@ -273,6 +297,30 @@ function InviteMemberModal({
               <p className="imm-empty">No members yet. Send an invite to get started.</p>
             )}
           </div>
+
+          {confirmRemove && (
+            <div className="imm-confirm-remove">
+              <p>
+                Remove <strong>{confirmRemove.memberName}</strong> from this namespace?
+              </p>
+              <div className="imm-confirm-actions">
+                <button
+                  type="button"
+                  className="imm-confirm-cancel"
+                  onClick={() => setConfirmRemove(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="imm-confirm-remove-btn"
+                  onClick={() => handleRemoveMember(confirmRemove.membershipId)}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </ModalBackdrop>
