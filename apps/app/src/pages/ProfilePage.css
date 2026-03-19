@@ -13,9 +13,17 @@
 }
 
 .pp-body {
-  max-width: 800px;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
   margin: 0 auto;
   padding: 32px 40px;
+  max-width: 1200px;
+}
+
+.pp-body-content {
+  max-width: 800px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -1048,11 +1056,43 @@
   border-color: var(--accent-primary);
 }
 
+/* ─── Ad Slots ───────────────────────────────────────────────────────────────── */
+
+.ad-slot--pillar {
+  position: sticky;
+  top: 80px;
+  width: 160px;
+  height: 600px;
+  flex-shrink: 0;
+}
+
+.ad-slot--pillar-left {
+  order: -1;
+}
+
+.ad-slot--pillar-right {
+  order: 1;
+}
+
+.ad-slot--profile-infeed {
+  margin: 16px 0;
+}
+
+/* Hide pillar ads on smaller screens */
+@media (max-width: 1200px) {
+  .ad-slot--pillar {
+    display: none;
+  }
+}
+
 /* ─── Mobile Responsive ──────────────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
   .pp-body {
     padding: 20px 16px;
+  }
+
+  .pp-body-content {
     gap: 20px;
   }
 

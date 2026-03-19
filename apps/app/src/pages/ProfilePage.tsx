@@ -15,6 +15,7 @@ import { IconPencil, IconPlus } from "../components/Icons";
 import MyLinksSection from "../components/profile/MyLinksSection";
 import AllNamespaceLinksView from "../components/profile/AllNamespaceLinksView";
 import NamespaceSection from "../components/profile/NamespaceSection";
+import AdSlot from "../components/AdSlot";
 import { formatMemberSince } from "../utils/ui-utils";
 import { MAX_NAMESPACES_PER_USER } from "../../../../convex/lib/constants";
 import { useProfileModals } from "../hooks/useProfileModals";
@@ -110,105 +111,127 @@ function ProfilePage() {
         />
       ) : (
         <div className="pp-body">
-          {/* Profile Hero */}
-          <div className="pp-hero">
-            <div className="pp-hero-left">
-              {avatarUrl ? (
-                <img
-                  src={avatarUrl}
-                  alt={displayName}
-                  className="pp-avatar"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <div className="pp-avatar pp-avatar--fallback">
-                  {displayName.charAt(0).toUpperCase()}
-                </div>
-              )}
-
-              <div className="pp-user-info">
-                <div className="pp-user-name-row">
-                  <span className="pp-user-name">{displayName}</span>
-                  <button
-                    className="pp-edit-profile-btn"
-                    onClick={() => {
-                      trigger("nudge");
-                      modals.openEditProfile();
-                    }}
-                    title="Edit profile"
-                  >
-                    <IconPencil size={14} />
-                  </button>
-                </div>
-                {user.email && <span className="pp-user-email">{user.email}</span>}
-                {user.createdAt && (
-                  <span className="pp-user-since">{formatMemberSince(user.createdAt)}</span>
-                )}
-              </div>
-            </div>
-
-            {/* Stats row */}
-            <div className="pp-stats-row">
-              <div className="pp-stat-card">
-                <span className="pp-stat-number">{stats?.totalLinks ?? 0}</span>
-                <span className="pp-stat-label">Links</span>
-              </div>
-              <div className="pp-stat-card">
-                <span className="pp-stat-number">{stats?.totalClicks ?? 0}</span>
-                <span className="pp-stat-label">Clicks</span>
-              </div>
-              <div className="pp-stat-card">
-                <span className="pp-stat-number">{stats?.totalNamespaces ?? 0}</span>
-                <span className="pp-stat-label">Namespaces</span>
-              </div>
-            </div>
-          </div>
-
-          {/* My Links */}
-          <MyLinksSection
-            links={myLinks}
-            onAdd={modalHandlers.onAdd}
-            onEdit={modalHandlers.onEdit}
-            onDelete={modalHandlers.onDelete}
+          <AdSlot
+            slot="PROFILE_PILLAR_LEFT_SLOT_ID"
+            format="vertical"
+            responsive={false}
+            className="ad-slot--pillar ad-slot--pillar-left"
           />
+          <AdSlot
+            slot="PROFILE_PILLAR_RIGHT_SLOT_ID"
+            format="vertical"
+            responsive={false}
+            className="ad-slot--pillar ad-slot--pillar-right"
+          />
+          <div className="pp-body-content">
+            {/* Profile Hero */}
+            <div className="pp-hero">
+              <div className="pp-hero-left">
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={displayName}
+                    className="pp-avatar"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="pp-avatar pp-avatar--fallback">
+                    {displayName.charAt(0).toUpperCase()}
+                  </div>
+                )}
 
-          {/* Namespace header */}
-          <div className="pp-namespace-header">
-            <span className="pp-card-title">Namespaces</span>
-            <span className="pp-slug-info">
-              {ownedWithRole.length} of {MAX_NAMESPACES_PER_USER} namespaces used
-            </span>
-          </div>
+                <div className="pp-user-info">
+                  <div className="pp-user-name-row">
+                    <span className="pp-user-name">{displayName}</span>
+                    <button
+                      className="pp-edit-profile-btn"
+                      onClick={() => {
+                        trigger("nudge");
+                        modals.openEditProfile();
+                      }}
+                      title="Edit profile"
+                    >
+                      <IconPencil size={14} />
+                    </button>
+                  </div>
+                  {user.email && <span className="pp-user-email">{user.email}</span>}
+                  {user.createdAt && (
+                    <span className="pp-user-since">{formatMemberSince(user.createdAt)}</span>
+                  )}
+                </div>
+              </div>
 
-          {/* Namespace Cards */}
-          {allNamespaces.map((ns, index) => (
-            <NamespaceSection
-              key={ns._id}
-              namespace={ns}
-              role={ns.role}
-              colorIndex={index}
+              {/* Stats row */}
+              <div className="pp-stats-row">
+                <div className="pp-stat-card">
+                  <span className="pp-stat-number">{stats?.totalLinks ?? 0}</span>
+                  <span className="pp-stat-label">Links</span>
+                </div>
+                <div className="pp-stat-card">
+                  <span className="pp-stat-number">{stats?.totalClicks ?? 0}</span>
+                  <span className="pp-stat-label">Clicks</span>
+                </div>
+                <div className="pp-stat-card">
+                  <span className="pp-stat-number">{stats?.totalNamespaces ?? 0}</span>
+                  <span className="pp-stat-label">Namespaces</span>
+                </div>
+              </div>
+            </div>
+
+            {/* My Links */}
+            <MyLinksSection
+              links={myLinks}
               onAdd={modalHandlers.onAdd}
               onEdit={modalHandlers.onEdit}
               onDelete={modalHandlers.onDelete}
-              onInvite={modalHandlers.onInvite}
-              onViewAll={(nsId, nsName) => modals.openAllLinksView(nsId, nsName)}
-              onRename={(nsId, nsName, nsDesc) => modals.openRenameNs(nsId, nsName, nsDesc ?? null)}
-              onDeleteNamespace={(nsId, nsName) => modals.openDeleteNs(nsId, nsName)}
             />
-          ))}
 
-          {/* Create Namespace */}
-          <button
-            className="pp-create-namespace-btn"
-            onClick={() => {
-              trigger("nudge");
-              modals.openCreateNamespace();
-            }}
-            disabled={ownedWithRole.length >= MAX_NAMESPACES_PER_USER}
-          >
-            <IconPlus size={16} />
-            Create new namespace
-          </button>
+            <AdSlot
+              slot="PROFILE_INFEED_SLOT_ID"
+              format="horizontal"
+              className="ad-slot--profile-infeed"
+            />
+
+            {/* Namespace header */}
+            <div className="pp-namespace-header">
+              <span className="pp-card-title">Namespaces</span>
+              <span className="pp-slug-info">
+                {ownedWithRole.length} of {MAX_NAMESPACES_PER_USER} namespaces used
+              </span>
+            </div>
+
+            {/* Namespace Cards */}
+            {allNamespaces.map((ns, index) => (
+              <NamespaceSection
+                key={ns._id}
+                namespace={ns}
+                role={ns.role}
+                colorIndex={index}
+                onAdd={modalHandlers.onAdd}
+                onEdit={modalHandlers.onEdit}
+                onDelete={modalHandlers.onDelete}
+                onInvite={modalHandlers.onInvite}
+                onViewAll={(nsId, nsName) => modals.openAllLinksView(nsId, nsName)}
+                onRename={(nsId, nsName, nsDesc) =>
+                  modals.openRenameNs(nsId, nsName, nsDesc ?? null)
+                }
+                onDeleteNamespace={(nsId, nsName) => modals.openDeleteNs(nsId, nsName)}
+              />
+            ))}
+
+            {/* Create Namespace */}
+            <button
+              className="pp-create-namespace-btn"
+              onClick={() => {
+                trigger("nudge");
+                modals.openCreateNamespace();
+              }}
+              disabled={ownedWithRole.length >= MAX_NAMESPACES_PER_USER}
+            >
+              <IconPlus size={16} />
+              Create new namespace
+            </button>
+          </div>
         </div>
       )}
 
