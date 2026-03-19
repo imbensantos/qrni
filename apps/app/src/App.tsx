@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useWebHaptics } from "web-haptics/react";
-import { Outlet, Link } from "@tanstack/react-router";
+import { Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { api } from "../../../convex/_generated/api";
 import { useAuth } from "./hooks/useAuth";
 import { getCachedUser, cacheUser, clearCachedUser } from "./utils/cached-user";
@@ -10,12 +10,15 @@ import ProfileDropdown from "./components/ProfileDropdown";
 import ErrorBoundary from "./components/ErrorBoundary";
 import "./App.css";
 
+const INVITE_RETURN_KEY = "qrni_invite_return";
+
 function App() {
   const { signIn } = useAuthActions();
   const { trigger } = useWebHaptics();
   const { isLoading } = useAuth();
   const user = useQuery(api.users.currentUser);
   const cachedUser = getCachedUser();
+  const navigate = useNavigate();
 
   // Keep cache in sync with real auth state
   useEffect(() => {
@@ -31,6 +34,15 @@ function App() {
       }
     }
   }, [isLoading, user]);
+
+  // After OAuth account switch, redirect back to the invite page
+  useEffect(() => {
+    const returnPath = sessionStorage.getItem(INVITE_RETURN_KEY);
+    if (returnPath && !isLoading) {
+      sessionStorage.removeItem(INVITE_RETURN_KEY);
+      void navigate({ to: returnPath });
+    }
+  }, [isLoading, navigate]);
 
   // While loading: show cached user optimistically, or empty placeholder if no cache
   const displayUser = isLoading ? cachedUser : user;

@@ -5,6 +5,8 @@ import { api } from "../../../../convex/_generated/api";
 import { useParams } from "@tanstack/react-router";
 import "./InviteAcceptPage.css";
 
+const INVITE_RETURN_KEY = "qrni_invite_return";
+
 function InviteAcceptPage() {
   const { token } = useParams({ from: "/invite/$token" });
   const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
@@ -34,6 +36,8 @@ function InviteAcceptPage() {
   }
 
   async function handleSwitchAccount() {
+    // Persist the invite URL so we can return after OAuth
+    sessionStorage.setItem(INVITE_RETURN_KEY, `/invite/${token}`);
     await signOut();
     void signIn("google");
   }
