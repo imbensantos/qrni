@@ -139,21 +139,43 @@ function PrivacyPage() {
                   )
                 </td>
               </tr>
+              <tr>
+                <td>Google AdSense</td>
+                <td>Advertising</td>
+                <td>
+                  Cookies, device information, and browsing behavior for ad personalization (see{" "}
+                  <a
+                    href="https://policies.google.com/technologies/ads"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Google's ad policies
+                  </a>
+                  )
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
-        {/* TODO: When Google AdSense is added, update:
-           1. Remove "We do not use advertising networks" below
-           2. Add Google AdSense row to the third-party table (cookies, device info, browsing behavior)
-           3. Update the Cookies section to disclose advertising/tracking cookies */}
-        <p>We do not sell your data. We do not use advertising networks or tracking pixels.</p>
+        <p>
+          We use Google AdSense to display ads to free-tier users. Google may use cookies and device
+          identifiers to serve personalized ads. You can opt out of personalized advertising at{" "}
+          <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer">
+            Google Ad Settings
+          </a>
+          . We do not sell your data.
+        </p>
 
         <h3>4. Cookies</h3>
         <p>
-          QRni itself does not set cookies. Our authentication provider stores session tokens in
-          secure cookies to maintain your login session. These cookies are strictly necessary for
-          authentication and are cleared when you log out. We do not use cookies for advertising or
-          cross-site tracking.
+          QRni uses cookies for authentication (session tokens via our auth provider) and
+          advertising (Google AdSense may set cookies for ad personalization and measurement).
+          Authentication cookies are strictly necessary and are cleared when you log out. You can
+          manage ad cookie preferences through your{" "}
+          <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer">
+            Google Ad Settings
+          </a>
+          .
         </p>
 
         <h3>5. Data Retention</h3>
