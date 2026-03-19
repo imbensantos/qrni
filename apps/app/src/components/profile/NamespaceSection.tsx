@@ -34,6 +34,7 @@ interface NamespaceSectionProps {
   onViewAll: (namespaceId: Id<"namespaces">, namespaceSlug: string) => void;
   onRename: (namespaceId: Id<"namespaces">, slug: string, description: string | undefined) => void;
   onDeleteNamespace: (namespaceId: Id<"namespaces">, slug: string) => void;
+  onLeave: (namespaceId: Id<"namespaces">, namespaceName: string) => void;
 }
 
 function extractSlug(shortCode: string, namespaceSlug: string): string {
@@ -54,6 +55,7 @@ function NamespaceSection({
   onViewAll,
   onRename,
   onDeleteNamespace,
+  onLeave,
 }: NamespaceSectionProps) {
   const { trigger } = useWebHaptics();
   const [expanded, setExpanded] = useState(true);
@@ -159,57 +161,71 @@ function NamespaceSection({
           )}
 
           {/* Kebab menu */}
-          {isOwner && (
-            <div className="pp-kebab" ref={kebabRef}>
-              <button
-                className="pp-icon-btn"
-                title="More options"
-                onClick={() => {
-                  trigger(8);
-                  setKebabOpen((o) => !o);
-                }}
-              >
-                <IconEllipsis size={16} />
-              </button>
-              {kebabOpen && (
-                <div className="pp-kebab-menu">
-                  <button
-                    className="pp-kebab-item"
-                    onClick={() => {
-                      trigger("nudge");
-                      setKebabOpen(false);
-                      onInvite(namespace._id, namespace.slug);
-                    }}
-                  >
-                    <IconUserPlus size={16} />
-                    Invite members
-                  </button>
-                  <div className="pp-kebab-divider" />
-                  <button
-                    className="pp-kebab-item"
-                    onClick={() => {
-                      trigger("nudge");
-                      handleEditNamespace();
-                    }}
-                  >
-                    <IconPencil size={16} />
-                    Edit namespace
-                  </button>
-                  <div className="pp-kebab-divider" />
+          <div className="pp-kebab" ref={kebabRef}>
+            <button
+              className="pp-icon-btn"
+              title="More options"
+              onClick={() => {
+                trigger(8);
+                setKebabOpen((o) => !o);
+              }}
+            >
+              <IconEllipsis size={16} />
+            </button>
+            {kebabOpen && (
+              <div className="pp-kebab-menu">
+                {isOwner ? (
+                  <>
+                    <button
+                      className="pp-kebab-item"
+                      onClick={() => {
+                        trigger("nudge");
+                        setKebabOpen(false);
+                        onInvite(namespace._id, namespace.slug);
+                      }}
+                    >
+                      <IconUserPlus size={16} />
+                      Invite members
+                    </button>
+                    <div className="pp-kebab-divider" />
+                    <button
+                      className="pp-kebab-item"
+                      onClick={() => {
+                        trigger("nudge");
+                        handleEditNamespace();
+                      }}
+                    >
+                      <IconPencil size={16} />
+                      Edit namespace
+                    </button>
+                    <div className="pp-kebab-divider" />
+                    <button
+                      className="pp-kebab-item pp-kebab-item--danger"
+                      onClick={() => {
+                        trigger("nudge");
+                        handleDeleteNamespace();
+                      }}
+                    >
+                      <IconTrash size={16} />
+                      Delete namespace
+                    </button>
+                  </>
+                ) : (
                   <button
                     className="pp-kebab-item pp-kebab-item--danger"
                     onClick={() => {
                       trigger("nudge");
-                      handleDeleteNamespace();
+                      setKebabOpen(false);
+                      onLeave(namespace._id, namespace.slug);
                     }}
                   >
-                    <IconTrash size={16} />
-                    Delete namespace
+                    <IconArrowRight size={16} />
+                    Leave namespace
                   </button>
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
+          </div>
 
           {/* Expand/Collapse */}
           <button

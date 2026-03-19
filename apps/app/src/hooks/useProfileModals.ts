@@ -31,6 +31,12 @@ export interface DeleteNsModalState {
   namespaceName: string | null;
 }
 
+export interface LeaveNsModalState {
+  open: boolean;
+  namespaceId: Id<"namespaces"> | null;
+  namespaceName: string | null;
+}
+
 export interface RenameNsModalState {
   open: boolean;
   namespaceId: Id<"namespaces"> | null;
@@ -78,6 +84,11 @@ export function useProfileModals() {
   });
   const [allLinksView, setAllLinksView] = useState<AllLinksViewState>({
     active: false,
+    namespaceId: null,
+    namespaceName: null,
+  });
+  const [leaveNsModal, setLeaveNsModal] = useState<LeaveNsModalState>({
+    open: false,
     namespaceId: null,
     namespaceName: null,
   });
@@ -135,6 +146,12 @@ export function useProfileModals() {
   const closeAllLinksView = () =>
     setAllLinksView({ active: false, namespaceId: null, namespaceName: null });
 
+  const openLeaveNs = (nsId: Id<"namespaces">, nsName: string) =>
+    setLeaveNsModal({ open: true, namespaceId: nsId, namespaceName: nsName });
+
+  const closeLeaveNs = () =>
+    setLeaveNsModal({ open: false, namespaceId: null, namespaceName: null });
+
   return {
     // States
     addLinkModal,
@@ -146,6 +163,7 @@ export function useProfileModals() {
     deleteNsModal,
     renameNsModal,
     allLinksView,
+    leaveNsModal,
 
     // Handlers
     openAddLink,
@@ -166,5 +184,7 @@ export function useProfileModals() {
     closeRenameNs,
     openAllLinksView,
     closeAllLinksView,
+    openLeaveNs,
+    closeLeaveNs,
   };
 }
