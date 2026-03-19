@@ -284,6 +284,7 @@ export const listMembers = query({
                 _id: memberUser._id,
                 name: memberUser.name,
                 email: memberUser.email,
+                image: memberUser.image ?? memberUser.avatarUrl,
               }
             : null,
         };

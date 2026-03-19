@@ -113,22 +113,32 @@ function NamespaceSection({
           {/* Member avatar stack */}
           {members && members.length > 0 && (
             <div className="pp-member-stack">
-              {members.slice(0, 4).map((member, i) => (
+              {members.slice(0, 3).map((member, i) => (
                 <div
                   key={member._id}
                   className="pp-member-avatar"
-                  style={{
-                    background: getColorFromHash(i + 1, NAMESPACE_COLORS),
-                  }}
+                  style={
+                    member.user?.image
+                      ? undefined
+                      : { background: getColorFromHash(i + 1, NAMESPACE_COLORS) }
+                  }
                   title={member.user?.name || "Member"}
                 >
-                  {/* listMembers does not return image; show initials only */}
-                  {(member.user?.name || "?").charAt(0).toUpperCase()}
+                  {member.user?.image ? (
+                    <img
+                      src={member.user.image}
+                      alt=""
+                      className="pp-member-avatar-img"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    (member.user?.name || "?").charAt(0).toUpperCase()
+                  )}
                 </div>
               ))}
-              {members.length > 4 && (
-                <div className="pp-member-avatar" style={{ background: "#999" }}>
-                  +{members.length - 4}
+              {members.length > 3 && (
+                <div className="pp-member-avatar pp-member-avatar--count">
+                  +{members.length - 3}
                 </div>
               )}
             </div>
