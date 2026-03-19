@@ -46,7 +46,7 @@ export function buildInviteEmailHtml(args: InviteEmailArgs): string {
     <!-- Logo row -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr><td align="center" style="padding-bottom:24px;">
-      <a href="https://qrni.to" target="_blank" rel="noopener noreferrer" style="font-size:24px;font-weight:700;color:#1A1918;letter-spacing:-0.5px;text-decoration:none;">QRni</a>
+      <a href="${escapeHtml(args.appUrl)}" target="_blank" rel="noopener noreferrer" style="font-size:24px;font-weight:700;color:#1A1918;letter-spacing:-0.5px;text-decoration:none;">QRni</a>
     </td></tr>
     </table>
 
@@ -125,7 +125,7 @@ export function buildInviteEmailHtml(args: InviteEmailArgs): string {
   <!-- Bottom footer (outside card) -->
   <table role="presentation" width="520" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;width:100%;">
   <tr><td align="center" style="padding:16px 0 0 0;">
-    <p style="margin:0 0 10px 0;font-size:12px;color:#9C9B99;">&copy; <a href="https://qrni.to" target="_blank" rel="noopener noreferrer" style="color:#9C9B99;text-decoration:none;">QRni</a> ${year}. All rights reserved.</p>
+    <p style="margin:0 0 10px 0;font-size:12px;color:#9C9B99;">&copy; <a href="${escapeHtml(args.appUrl)}" target="_blank" rel="noopener noreferrer" style="color:#9C9B99;text-decoration:none;">QRni</a> ${year}. All rights reserved.</p>
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;"><tr><td style="font-size:11px;color:#9C9B99;vertical-align:middle;padding-right:6px;">Powered by</td><td style="vertical-align:middle;"><a href="https://imbensantos.com" target="_blank" rel="noopener noreferrer" style="text-decoration:none;"><img src="${escapeHtml(args.appUrl)}/imbento-logo-email.png" alt="Imbento" height="36" style="height:36px;width:auto;display:block;" /></a></td></tr></table>
   </td></tr>
   </table>
