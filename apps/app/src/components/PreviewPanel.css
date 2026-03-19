@@ -453,3 +453,12 @@
   outline: 2px solid var(--accent-secondary);
   outline-offset: 2px;
 }
+
+.ad-slot--preview {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 468px;
+  z-index: 1;
+}

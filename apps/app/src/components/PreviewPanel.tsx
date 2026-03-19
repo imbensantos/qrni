@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useWebHaptics } from "web-haptics/react";
 import QRCodeStyling from "qr-code-styling";
 import Doodles from "./Doodles";
+import AdSlot from "./AdSlot";
 import { buildShortLinkUrl } from "../utils/url-utils";
 import { DOWNLOAD_FILENAME_SINGLE } from "../utils/constants";
 import type { Id } from "../../../../convex/_generated/dataModel";
@@ -230,6 +231,7 @@ function PreviewPanel({
           </span>
         </footer>
       </div>
+      <AdSlot slot="PREVIEW_PANEL_SLOT_ID" format="horizontal" className="ad-slot--preview" />
     </section>
   );
 }
