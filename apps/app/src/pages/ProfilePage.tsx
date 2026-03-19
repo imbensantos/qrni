@@ -10,6 +10,7 @@ import InviteMemberModal from "../components/modals/InviteMemberModal";
 import EditProfileModal from "../components/modals/EditProfileModal";
 import DeleteNamespaceModal from "../components/modals/DeleteNamespaceModal";
 import RenameNamespaceModal from "../components/modals/RenameNamespaceModal";
+import LeaveNamespaceModal from "../components/modals/LeaveNamespaceModal";
 import { useWebHaptics } from "web-haptics/react";
 import { IconPencil, IconPlus } from "../components/Icons";
 import MyLinksSection from "../components/profile/MyLinksSection";
@@ -62,6 +63,7 @@ function ProfilePage() {
     onEdit: modals.openEditLink,
     onDelete: modals.openDeleteLink,
     onInvite: modals.openInvite,
+    onLeave: modals.openLeaveNs,
   };
 
   if (user === undefined) {
@@ -211,6 +213,7 @@ function ProfilePage() {
                 onEdit={modalHandlers.onEdit}
                 onDelete={modalHandlers.onDelete}
                 onInvite={modalHandlers.onInvite}
+                onLeave={(nsId, nsName) => modals.openLeaveNs(nsId, nsName)}
                 onViewAll={(nsId, nsName) => modals.openAllLinksView(nsId, nsName)}
                 onRename={(nsId, nsName, nsDesc) =>
                   modals.openRenameNs(nsId, nsName, nsDesc ?? null)
@@ -279,6 +282,12 @@ function ProfilePage() {
         namespaceId={modals.renameNsModal.namespaceId}
         namespaceName={modals.renameNsModal.namespaceName ?? undefined}
         namespaceDescription={modals.renameNsModal.namespaceDescription ?? undefined}
+      />
+      <LeaveNamespaceModal
+        isOpen={modals.leaveNsModal.open}
+        onClose={modals.closeLeaveNs}
+        namespaceId={modals.leaveNsModal.namespaceId}
+        namespaceName={modals.leaveNsModal.namespaceName ?? ""}
       />
 
       <div className="profile-page-bottom">
