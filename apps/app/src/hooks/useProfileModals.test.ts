@@ -12,7 +12,7 @@ const FAKE_LINK = {
   url: "https://example.com",
   slug: "abc",
   clicks: 0,
-} as any;  
+} as any;
 
 describe("useProfileModals", () => {
   it("all modals start closed", () => {
@@ -26,6 +26,7 @@ describe("useProfileModals", () => {
     expect(result.current.deleteNsModal.open).toBe(false);
     expect(result.current.renameNsModal.open).toBe(false);
     expect(result.current.allLinksView.active).toBe(false);
+    expect(result.current.leaveNsModal.open).toBe(false);
   });
 
   // --- Add Link ---
@@ -158,5 +159,19 @@ describe("useProfileModals", () => {
     act(() => result.current.closeAllLinksView());
     expect(result.current.allLinksView.active).toBe(false);
     expect(result.current.allLinksView.namespaceId).toBeNull();
+  });
+
+  // --- Leave Namespace ---
+  it("openLeaveNs / closeLeaveNs", () => {
+    const { result } = renderHook(() => useProfileModals());
+    act(() => result.current.openLeaveNs(FAKE_NS_ID, "Leaving NS"));
+    expect(result.current.leaveNsModal).toEqual({
+      open: true,
+      namespaceId: FAKE_NS_ID,
+      namespaceName: "Leaving NS",
+    });
+    act(() => result.current.closeLeaveNs());
+    expect(result.current.leaveNsModal.open).toBe(false);
+    expect(result.current.leaveNsModal.namespaceId).toBeNull();
   });
 });

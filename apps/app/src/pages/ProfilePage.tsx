@@ -213,7 +213,7 @@ function ProfilePage() {
                 onEdit={modalHandlers.onEdit}
                 onDelete={modalHandlers.onDelete}
                 onInvite={modalHandlers.onInvite}
-                onLeave={(nsId, nsName) => modals.openLeaveNs(nsId, nsName)}
+                onLeave={modalHandlers.onLeave}
                 onViewAll={(nsId, nsName) => modals.openAllLinksView(nsId, nsName)}
                 onRename={(nsId, nsName, nsDesc) =>
                   modals.openRenameNs(nsId, nsName, nsDesc ?? null)

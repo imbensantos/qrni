@@ -24,8 +24,11 @@ function LeaveNamespaceModal({
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const members = useQuery(api.collaboration.listMembers, namespaceId ? { namespaceId } : "skip");
-  const currentUser = useQuery(api.users.currentUser);
+  const members = useQuery(
+    api.collaboration.listMembers,
+    isOpen && namespaceId ? { namespaceId } : "skip",
+  );
+  const currentUser = useQuery(api.users.currentUser, isOpen ? undefined : "skip");
   const removeMember = useMutation(api.collaboration.removeMember);
 
   if (!namespaceId) return null;
