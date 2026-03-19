@@ -32,6 +32,7 @@ function InviteMemberModal({
   const [roleOpen, setRoleOpen] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState<{
     membershipId: Id<"namespace_members">;
     memberName: string;
@@ -51,6 +52,7 @@ function InviteMemberModal({
       setRoleOpen(false);
       setError("");
       setIsSubmitting(false);
+      setIsRemoving(false);
       setConfirmRemove(null);
     }
   }, [isOpen]);
@@ -78,13 +80,16 @@ function InviteMemberModal({
   }
 
   async function handleRemoveMember(membershipId: Id<"namespace_members">) {
-    if (!namespaceId) return;
+    if (!namespaceId || isRemoving) return;
+    setIsRemoving(true);
     try {
       await removeMember({ namespaceId, membershipId });
       setConfirmRemove(null);
     } catch (err) {
       setError((err as Error).message || "Failed to remove member");
       setConfirmRemove(null);
+    } finally {
+      setIsRemoving(false);
     }
   }
 
@@ -308,6 +313,7 @@ function InviteMemberModal({
                   type="button"
                   className="imm-confirm-cancel"
                   onClick={() => setConfirmRemove(null)}
+                  disabled={isRemoving}
                 >
                   Cancel
                 </button>
@@ -315,8 +321,9 @@ function InviteMemberModal({
                   type="button"
                   className="imm-confirm-remove-btn"
                   onClick={() => handleRemoveMember(confirmRemove.membershipId)}
+                  disabled={isRemoving}
                 >
-                  Remove
+                  {isRemoving ? "Removing..." : "Remove"}
                 </button>
               </div>
             </div>

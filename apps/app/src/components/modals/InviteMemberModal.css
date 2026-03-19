@@ -394,15 +394,15 @@
 .imm-confirm-remove {
   margin-top: 12px;
   padding: 12px 16px;
-  background: #fff5f0;
-  border-radius: 10px;
-  border: 1px solid #e8c4b0;
+  background: var(--color-error-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
 }
 
 .imm-confirm-remove p {
   margin: 0 0 10px;
   font-size: 0.875rem;
-  color: #5c5a57;
+  color: var(--text-secondary);
 }
 
 .imm-confirm-actions {
@@ -413,28 +413,37 @@
 
 .imm-confirm-cancel {
   padding: 6px 14px;
-  border: 1px solid #e0dfdc;
-  border-radius: 8px;
-  background: white;
-  color: #5c5a57;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text-secondary);
   font-size: 0.8125rem;
   font-family: inherit;
   cursor: pointer;
 }
 
+.imm-confirm-cancel:hover {
+  background: var(--border-subtle);
+}
+
 .imm-confirm-remove-btn {
   padding: 6px 14px;
   border: none;
-  border-radius: 8px;
-  background: #d4453a;
-  color: white;
+  border-radius: var(--radius-sm);
+  background: var(--color-error);
+  color: var(--bg-card);
   font-size: 0.8125rem;
   font-family: inherit;
   cursor: pointer;
 }
 
 .imm-confirm-remove-btn:hover {
-  background: #c03830;
+  opacity: 0.9;
+}
+
+.imm-confirm-remove-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Empty state */
