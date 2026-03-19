@@ -355,16 +355,6 @@ export const createNamespacedLink = action({
 
 // ============ QUERIES ============
 
-export const getLink = query({
-  args: { shortCode: v.string() },
-  handler: async (ctx, args) => {
-    return await ctx.db
-      .query("links")
-      .withIndex("by_short_code", (q) => q.eq("shortCode", args.shortCode))
-      .first();
-  },
-});
-
 export const listMyLinks = query({
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
