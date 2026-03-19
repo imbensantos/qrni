@@ -7,6 +7,7 @@ import ControlsPanel from "../components/ControlsPanel";
 import PreviewPanel from "../components/PreviewPanel";
 import BulkPanel from "../components/BulkPanel";
 import BulkPreview from "../components/BulkPreview";
+import AdSlot from "../components/AdSlot";
 
 interface ShortLinkResult {
   shortCode: string;
@@ -110,6 +111,7 @@ function QRGeneratorPage() {
           />
         )}
       </div>
+      <AdSlot slot="MOBILE_INFEED_SLOT_ID" format="rectangle" className="ad-slot--mobile-infeed" />
       {mode === "single" ? (
         <PreviewPanel
           url={url}

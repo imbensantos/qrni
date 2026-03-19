@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import AdSlot from "../components/AdSlot";
 import "./PrivacyPage.css";
 
 function PrivacyPage() {
@@ -224,6 +225,13 @@ function PrivacyPage() {
           Questions or concerns? Reach us at <a href="mailto:privacy@qrni.to">privacy@qrni.to</a>.
         </p>
       </div>
+
+      <AdSlot
+        slot="PRIVACY_SLOT_ID"
+        format="horizontal"
+        className="ad-slot--static-page"
+        style={{ maxWidth: 728, margin: "24px auto" }}
+      />
 
       <footer className="panel-footer privacy-page-footer">
         <p className="copyright-footer">
