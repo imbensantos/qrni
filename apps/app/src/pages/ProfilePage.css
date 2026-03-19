@@ -5,12 +5,25 @@
   background: var(--bg-page);
   display: flex;
   flex-direction: column;
+  /*
+   * AdSense injects height:auto !important on ancestor elements of ad slots,
+   * which breaks margin-top:auto on .profile-page-bottom.
+   * min-height + max-height together are not overridden by AdSense — they act
+   * as a fixed height that forces the flex column to have distributable space.
+   * overflow-y:auto allows the page to scroll when content is taller than the
+   * viewport minus the 65px header.
+   */
+  min-height: calc(100vh - 65px);
+  min-height: calc(100dvh - 65px);
+  max-height: calc(100vh - 65px);
+  max-height: calc(100dvh - 65px);
+  overflow-y: auto;
 }
 
-.profile-page-footer {
+.profile-page-bottom {
   margin-top: auto;
-  padding-bottom: 20px;
   text-align: center;
+  padding-bottom: 20px;
 }
 
 .profile-page-footer .copyright-footer {
@@ -1207,5 +1220,13 @@
 
   .pp-create-namespace-btn {
     font-size: 13px;
+  }
+
+  /* On mobile, .app has height:auto so the fixed-height trick is not needed.
+     Remove max-height so the page flows naturally and scrolls via the document. */
+  .profile-page {
+    min-height: 0;
+    max-height: none;
+    overflow-y: visible;
   }
 }

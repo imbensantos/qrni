@@ -281,30 +281,32 @@ function ProfilePage() {
         namespaceDescription={modals.renameNsModal.namespaceDescription ?? undefined}
       />
 
-      <footer className="panel-footer profile-page-footer">
+      <div className="profile-page-bottom">
         <AdSlot
           slot="PROFILE_FOOTER_SLOT_ID"
           format="horizontal"
           className="ad-slot--profile-footer"
         />
-        <p className="copyright-footer">
-          &copy; {new Date().getFullYear()} QRni &middot;{" "}
-          <Link to="/privacy" className="footer-link">
-            Privacy
-          </Link>
-        </p>
-        <span className="powered-by">
-          Powered by
-          <a
-            href="https://imbensantos.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Visit imBento website"
-          >
-            <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
-          </a>
-        </span>
-      </footer>
+        <footer className="panel-footer profile-page-footer">
+          <p className="copyright-footer">
+            &copy; {new Date().getFullYear()} QRni &middot;{" "}
+            <Link to="/privacy" className="footer-link">
+              Privacy
+            </Link>
+          </p>
+          <span className="powered-by">
+            Powered by
+            <a
+              href="https://imbensantos.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Visit imBento website"
+            >
+              <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
+            </a>
+          </span>
+        </footer>
+      </div>
     </main>
   );
 }
