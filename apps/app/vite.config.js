@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => {
             res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
             res.setHeader(
               "Content-Security-Policy",
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' ws: wss: https://*.convex.cloud wss://*.convex.cloud; img-src 'self' https: data: blob:; frame-ancestors 'none'; object-src 'none'",
+              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://www.googletagservices.com https://adservice.google.com; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' ws: wss: https://*.convex.cloud wss://*.convex.cloud https://pagead2.googlesyndication.com; img-src 'self' https: data: blob:; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; frame-ancestors 'none'; object-src 'none'",
             );
             next();
           });
