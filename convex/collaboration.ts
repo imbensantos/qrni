@@ -177,6 +177,9 @@ export const acceptInvite = mutation({
       joinedAt: Date.now(),
     });
 
+    // Mark invite as consumed so it no longer appears as pending
+    await ctx.db.patch(invite._id, { revoked: true });
+
     await logAudit(ctx, {
       userId: user._id,
       action: "member.join",
@@ -307,8 +310,10 @@ export const listInvites = query({
       .withIndex("by_namespace", (q) => q.eq("namespace", args.namespaceId))
       .take(50);
 
-    // Filter out expired invites — callers only need active/pending ones
-    return invites.filter((invite) => invite.expiresAt === undefined || invite.expiresAt > now);
+    // Filter out revoked and expired invites — callers only need active/pending ones
+    return invites.filter(
+      (invite) => !invite.revoked && (invite.expiresAt === undefined || invite.expiresAt > now),
+    );
   },
 });
 
