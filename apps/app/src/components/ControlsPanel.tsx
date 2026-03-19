@@ -16,6 +16,7 @@ import LogoUploader from "./LogoUploader";
 import DotStyleSelector from "./DotStyleSelector";
 import SizeSlider from "./SizeSlider";
 import NamespaceDropdown from "./NamespaceDropdown";
+import AdSlot from "./AdSlot";
 import "./ControlsPanel.css";
 
 interface ShortLinkResult {
@@ -359,6 +360,8 @@ function ControlsPanel({
       >
         {shortLinkLoading ? "Generating..." : "Generate QR"}
       </button>
+
+      <AdSlot slot="SIDEBAR_SLOT_ID" format="rectangle" className="ad-slot--sidebar" />
 
       <div className="panel-spacer" />
 
