@@ -25,6 +25,10 @@ export default defineConfig(({ mode }) => {
             res.setHeader("X-Frame-Options", "DENY");
             res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
             res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+            res.setHeader(
+              "Content-Security-Policy",
+              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' ws: wss: https://*.convex.cloud wss://*.convex.cloud; img-src 'self' https: data: blob:; frame-ancestors 'none'; object-src 'none'",
+            );
             next();
           });
         },
