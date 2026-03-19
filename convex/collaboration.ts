@@ -246,6 +246,12 @@ export const removeMember = mutation({
 
     const isSelfRemoval = membership.user === user._id;
 
+    // Owners must transfer ownership before leaving — they can't self-remove
+    if (isSelfRemoval && namespace.owner === user._id) {
+      throw new Error(ERR.ALREADY_OWNER);
+    }
+
+    // Only owners can remove other members
     if (!isSelfRemoval) {
       await checkPermission(ctx, args.namespaceId, user._id, "owner");
     }
