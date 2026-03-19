@@ -237,8 +237,6 @@ export const removeMember = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
-    await checkPermission(ctx, args.namespaceId, user._id, "owner");
-
     const namespace = await ctx.db.get(args.namespaceId);
     if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
 
@@ -246,11 +244,17 @@ export const removeMember = mutation({
     if (!membership) throw new Error(ERR.MEMBERSHIP_NOT_FOUND);
     if (membership.namespace !== args.namespaceId) throw new Error(ERR.MEMBERSHIP_NOT_IN_NAMESPACE);
 
+    const isSelfRemoval = membership.user === user._id;
+
+    if (!isSelfRemoval) {
+      await checkPermission(ctx, args.namespaceId, user._id, "owner");
+    }
+
     await ctx.db.delete(args.membershipId);
 
     await logAudit(ctx, {
       userId: user._id,
-      action: "member.remove",
+      action: isSelfRemoval ? "member.leave" : "member.remove",
       resourceType: "member",
       resourceId: String(args.membershipId),
       metadata: { namespace: String(args.namespaceId) },
