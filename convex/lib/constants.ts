@@ -40,6 +40,11 @@ export const DUPLICATE_WINDOW_MS = 5_000;
 /** Maximum retries for generating a unique short code */
 export const MAX_SHORT_CODE_ATTEMPTS = 5;
 
+// ============ RETENTION ============
+
+/** Audit log retention period in milliseconds (90 days) */
+export const AUDIT_LOG_RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
+
 // ============ ERROR MESSAGES ============
 
 export const ERR = {
