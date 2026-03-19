@@ -61,9 +61,19 @@
   --accent-success-bg: #e8f5e9;
 }
 
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: "Outfit", sans-serif;
-  min-height: 100vh;
   background: var(--bg-page);
 }
 

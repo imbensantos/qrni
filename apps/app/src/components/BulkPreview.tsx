@@ -4,6 +4,7 @@ import { useWebHaptics } from "web-haptics/react";
 import { generateZip, generatePdf, type ExportFormat } from "../utils/bulk-export";
 import { isValidUrl, sanitizeLabel, deduplicateLabels, type BulkEntry } from "../utils/bulk-utils";
 import Doodles from "./Doodles";
+import AdSlot from "./AdSlot";
 import "./BulkPreview.css";
 
 interface BulkPreviewProps {
@@ -141,26 +142,31 @@ function BulkPreview({
           <p className="bulk-empty-hint">
             Format: each row needs a <strong>label</strong> and a <strong>url</strong>
           </p>
-          <footer className="panel-footer panel-footer-mobile">
-            <p className="copyright-footer">
-              &copy; {new Date().getFullYear()} QRni &middot;{" "}
-              <Link to="/privacy" className="footer-link">
-                Privacy
-              </Link>
-            </p>
-            <span className="powered-by">
-              Powered by
-              <a
-                href="https://imbensantos.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Visit imBento website"
-              >
-                <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
-              </a>
-            </span>
-          </footer>
         </div>
+        <AdSlot
+          slot="PREVIEW_PANEL_SLOT_ID"
+          format="horizontal"
+          className="ad-slot--bulk-preview"
+        />
+        <footer className="panel-footer panel-footer-mobile">
+          <p className="copyright-footer">
+            &copy; {new Date().getFullYear()} QRni &middot;{" "}
+            <Link to="/privacy" className="footer-link">
+              Privacy
+            </Link>
+          </p>
+          <span className="powered-by">
+            Powered by
+            <a
+              href="https://imbensantos.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Visit imBento website"
+            >
+              <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
+            </a>
+          </span>
+        </footer>
       </section>
     );
   }
@@ -319,6 +325,8 @@ function BulkPreview({
             </button>
           </div>
         )}
+
+        <AdSlot slot="PREVIEW_PANEL_SLOT_ID" format="horizontal" className="ad-slot--preview" />
       </div>
     </section>
   );

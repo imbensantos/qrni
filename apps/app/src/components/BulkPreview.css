@@ -251,6 +251,14 @@
   box-shadow: var(--shadow-button-secondary-hover);
 }
 
+/* Ad slot — compact banner to avoid scrolling */
+.ad-slot--bulk-preview {
+  max-height: 90px;
+  overflow: hidden;
+  margin-top: auto;
+  padding: 8px 16px;
+}
+
 /* Mobile */
 @media (max-width: 768px) {
   .bulk-preview-content {

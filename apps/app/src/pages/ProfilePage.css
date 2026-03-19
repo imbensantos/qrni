@@ -10,23 +10,20 @@
 .profile-page-footer {
   margin-top: auto;
   padding-bottom: 20px;
+  text-align: center;
+}
+
+.profile-page-footer .copyright-footer {
+  margin-top: 16px;
 }
 
 .pp-body {
   display: flex;
-  justify-content: center;
-  gap: 24px;
-  margin: 0 auto;
-  padding: 32px 40px;
-  max-width: 1200px;
-}
-
-.pp-body-content {
-  max-width: 800px;
-  width: 100%;
-  display: flex;
   flex-direction: column;
   gap: 28px;
+  margin: 0 auto;
+  padding: 32px 40px;
+  max-width: 800px;
 }
 
 /* ─── Auth / Loading states ──────────────────────────────────────────────────── */
@@ -1059,19 +1056,19 @@
 /* ─── Ad Slots ───────────────────────────────────────────────────────────────── */
 
 .ad-slot--pillar {
-  position: sticky;
+  position: fixed;
   top: 80px;
   width: 160px;
   height: 600px;
-  flex-shrink: 0;
+  z-index: 10;
 }
 
 .ad-slot--pillar-left {
-  order: -1;
+  left: 16px;
 }
 
 .ad-slot--pillar-right {
-  order: 1;
+  right: 16px;
 }
 
 .ad-slot--profile-infeed {
@@ -1090,9 +1087,6 @@
 @media (max-width: 768px) {
   .pp-body {
     padding: 20px 16px;
-  }
-
-  .pp-body-content {
     gap: 20px;
   }
 

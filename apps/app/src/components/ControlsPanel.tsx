@@ -361,11 +361,10 @@ function ControlsPanel({
         {shortLinkLoading ? "Generating..." : "Generate QR"}
       </button>
 
-      <AdSlot slot="SIDEBAR_SLOT_ID" format="rectangle" className="ad-slot--sidebar" />
-
       <div className="panel-spacer" />
 
       <footer className="panel-footer panel-footer-desktop">
+        <AdSlot slot="SIDEBAR_SLOT_ID" format="rectangle" className="ad-slot--sidebar" />
         <p className="copyright-footer">
           &copy; {new Date().getFullYear()} QRni &middot;{" "}
           <Link to="/privacy" className="footer-link">

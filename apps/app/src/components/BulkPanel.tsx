@@ -5,6 +5,7 @@ import { parseFile, type BulkEntry } from "../utils/bulk-utils";
 import ColorPicker from "./ColorPicker";
 import LogoUploader from "./LogoUploader";
 import DotStyleSelector from "./DotStyleSelector";
+import AdSlot from "./AdSlot";
 import "./BulkPanel.css";
 
 const FORMATS = ["png", "svg", "webp"] as const;
@@ -263,6 +264,7 @@ function BulkPanel({
       <div className="panel-spacer" />
 
       <footer className="panel-footer panel-footer-desktop">
+        <AdSlot slot="SIDEBAR_SLOT_ID" format="horizontal" className="ad-slot--sidebar-compact" />
         <p className="copyright-footer">
           &copy; {new Date().getFullYear()} QRni &middot;{" "}
           <Link to="/privacy" className="footer-link">

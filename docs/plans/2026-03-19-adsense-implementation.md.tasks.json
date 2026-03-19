@@ -1,0 +1,51 @@
+{
+  "planPath": "docs/plans/2026-03-19-adsense-implementation.md",
+  "tasks": [
+    { "id": 0, "subject": "Task 0: Add AdSense script to index.html", "status": "pending" },
+    { "id": 1, "subject": "Task 1: Update CSP headers for AdSense", "status": "pending" },
+    {
+      "id": 2,
+      "subject": "Task 2: Create AdSlot component with tests",
+      "status": "pending",
+      "blockedBy": [0, 1]
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Add ad to preview panel",
+      "status": "pending",
+      "blockedBy": [2]
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Add ad to controls sidebar",
+      "status": "pending",
+      "blockedBy": [2]
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Add ads to Profile page (in-feed + pillars)",
+      "status": "pending",
+      "blockedBy": [2]
+    },
+    { "id": 6, "subject": "Task 6: Add ad to Privacy page", "status": "pending", "blockedBy": [2] },
+    {
+      "id": 7,
+      "subject": "Task 7: Add mobile-only in-feed ad to QR Generator",
+      "status": "pending",
+      "blockedBy": [2]
+    },
+    {
+      "id": 8,
+      "subject": "Task 8: Update Privacy Policy for AdSense disclosure",
+      "status": "pending",
+      "blockedBy": [2]
+    },
+    {
+      "id": 9,
+      "subject": "Task 9: Integration tests for AdSlot",
+      "status": "pending",
+      "blockedBy": [3, 4, 5, 6, 7, 8]
+    }
+  ],
+  "lastUpdated": "2026-03-19T00:00:00Z"
+}

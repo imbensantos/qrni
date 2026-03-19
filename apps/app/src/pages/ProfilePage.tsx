@@ -110,7 +110,7 @@ function ProfilePage() {
           onInvite={modalHandlers.onInvite}
         />
       ) : (
-        <div className="pp-body">
+        <>
           <AdSlot
             slot="PROFILE_PILLAR_LEFT_SLOT_ID"
             format="vertical"
@@ -123,7 +123,7 @@ function ProfilePage() {
             responsive={false}
             className="ad-slot--pillar ad-slot--pillar-right"
           />
-          <div className="pp-body-content">
+          <div className="pp-body">
             {/* Profile Hero */}
             <div className="pp-hero">
               <div className="pp-hero-left">
@@ -232,7 +232,7 @@ function ProfilePage() {
               Create new namespace
             </button>
           </div>
-        </div>
+        </>
       )}
 
       {/* Modals */}
@@ -282,6 +282,11 @@ function ProfilePage() {
       />
 
       <footer className="panel-footer profile-page-footer">
+        <AdSlot
+          slot="PROFILE_FOOTER_SLOT_ID"
+          format="horizontal"
+          className="ad-slot--profile-footer"
+        />
         <p className="copyright-footer">
           &copy; {new Date().getFullYear()} QRni &middot;{" "}
           <Link to="/privacy" className="footer-link">
