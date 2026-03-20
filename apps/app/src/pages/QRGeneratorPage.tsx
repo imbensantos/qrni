@@ -1,136 +1,104 @@
-import { useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { isValidUrl, type BulkEntry } from "../utils/bulk-utils";
-import { type ExportFormat } from "../utils/bulk-export";
-import type { ShortLinkResult } from "../types";
+import { isValidUrl } from "../utils/bulk-utils";
+import { useQROptions } from "../hooks/useQROptions";
 import ControlsPanel from "../components/ControlsPanel";
 import PreviewPanel from "../components/PreviewPanel";
 import BulkPanel from "../components/BulkPanel";
 import BulkPreview from "../components/BulkPreview";
 import AdSlot from "../components/AdSlot";
 
-type QRMode = "single" | "bulk";
-
 function QRGeneratorPage() {
-  const [mode, setMode] = useState<QRMode>("single");
-  const [url, setUrl] = useState("");
-  const [fgColor, setFgColor] = useState("#1A1918");
-  const [bgColor, setBgColor] = useState("#FFFFFF");
-  const [logo, setLogo] = useState<string | null>(null);
-  const [dotStyle, setDotStyle] = useState("square");
-  const [size, setSize] = useState(512);
-  const [format, setFormat] = useState<ExportFormat>("png");
-  const [bulkEntries, setBulkEntries] = useState<BulkEntry[]>([]);
-  const [shortenLink, setShortenLink] = useState(() => {
-    try {
-      return localStorage.getItem("qrni-shorten-link") === "true";
-    } catch {
-      return false;
-    }
-  });
-  const [shortLinkResult, setShortLinkResult] = useState<ShortLinkResult | null>(null);
-  const [qrGenerated, setQrGenerated] = useState(false);
+  const qr = useQROptions();
   const { trigger } = useWebHaptics();
-
-  const urlIsValid = isValidUrl(url);
+  const urlIsValid = isValidUrl(qr.url);
 
   return (
     <main className="body" id="main-content">
       <div className="sidebar-panel">
-        <div className={`mode-toggle ${mode}`} role="group" aria-label="Generation mode">
+        <div className={`mode-toggle ${qr.mode}`} role="group" aria-label="Generation mode">
           <button
-            className={`mode-btn ${mode === "single" ? "active" : ""}`}
-            aria-pressed={mode === "single"}
+            className={`mode-btn ${qr.mode === "single" ? "active" : ""}`}
+            aria-pressed={qr.mode === "single"}
             onClick={() => {
-              setMode("single");
+              qr.setMode("single");
               trigger("nudge");
             }}
           >
             Single
           </button>
           <button
-            className={`mode-btn ${mode === "bulk" ? "active" : ""}`}
-            aria-pressed={mode === "bulk"}
+            className={`mode-btn ${qr.mode === "bulk" ? "active" : ""}`}
+            aria-pressed={qr.mode === "bulk"}
             onClick={() => {
-              setMode("bulk");
+              qr.setMode("bulk");
               trigger("nudge");
             }}
           >
             Bulk
           </button>
         </div>
-        {mode === "single" ? (
+        {qr.mode === "single" ? (
           <ControlsPanel
-            url={url}
-            onUrlChange={(v) => {
-              setUrl(v);
-              setQrGenerated(false);
-            }}
-            fgColor={fgColor}
-            onFgColorChange={setFgColor}
-            bgColor={bgColor}
-            onBgColorChange={setBgColor}
-            logo={logo}
-            onLogoChange={setLogo}
-            dotStyle={dotStyle}
-            onDotStyleChange={setDotStyle}
-            size={size}
-            onSizeChange={setSize}
-            shortenLink={shortenLink}
-            onShortenLinkChange={(v) => {
-              setShortenLink(v);
-              try {
-                localStorage.setItem("qrni-shorten-link", String(v));
-              } catch {
-                /* private browsing */
-              }
-            }}
-            onShortLinkCreated={setShortLinkResult}
-            onGenerate={() => setQrGenerated(true)}
+            url={qr.url}
+            onUrlChange={qr.onUrlChange}
+            fgColor={qr.fgColor}
+            onFgColorChange={qr.setFgColor}
+            bgColor={qr.bgColor}
+            onBgColorChange={qr.setBgColor}
+            logo={qr.logo}
+            onLogoChange={qr.setLogo}
+            dotStyle={qr.dotStyle}
+            onDotStyleChange={qr.setDotStyle}
+            size={qr.size}
+            onSizeChange={qr.setSize}
+            shortenLink={qr.shortenLink}
+            onShortenLinkChange={qr.onShortenLinkChange}
+            onShortLinkCreated={qr.setShortLinkResult}
+            onGenerate={() => qr.setQrGenerated(true)}
           />
         ) : (
           <BulkPanel
-            fgColor={fgColor}
-            onFgColorChange={setFgColor}
-            bgColor={bgColor}
-            onBgColorChange={setBgColor}
-            logo={logo}
-            onLogoChange={setLogo}
-            dotStyle={dotStyle}
-            onDotStyleChange={setDotStyle}
-            size={size}
-            onSizeChange={setSize}
-            format={format}
-            onFormatChange={setFormat}
-            onEntriesParsed={setBulkEntries}
+            fgColor={qr.fgColor}
+            onFgColorChange={qr.setFgColor}
+            bgColor={qr.bgColor}
+            onBgColorChange={qr.setBgColor}
+            logo={qr.logo}
+            onLogoChange={qr.setLogo}
+            dotStyle={qr.dotStyle}
+            onDotStyleChange={qr.setDotStyle}
+            size={qr.size}
+            onSizeChange={qr.setSize}
+            format={qr.format}
+            onFormatChange={qr.setFormat}
+            onEntriesParsed={qr.setBulkEntries}
           />
         )}
       </div>
       <AdSlot slot="MOBILE_INFEED_SLOT_ID" format="rectangle" className="ad-slot--mobile-infeed" />
-      {mode === "single" ? (
+      {qr.mode === "single" ? (
         <PreviewPanel
-          url={url}
-          isValidUrl={urlIsValid && qrGenerated}
-          fgColor={fgColor}
-          bgColor={bgColor}
-          logo={logo}
-          dotStyle={dotStyle}
-          size={size}
-          format={format}
-          onFormatChange={setFormat}
-          shortenLink={shortenLink}
-          shortLinkResult={shortLinkResult}
+          url={qr.url}
+          isValidUrl={urlIsValid && qr.qrGenerated}
+          fgColor={qr.fgColor}
+          bgColor={qr.bgColor}
+          logo={qr.logo}
+          dotStyle={qr.dotStyle}
+          size={qr.size}
+          format={qr.format}
+          onFormatChange={qr.setFormat}
+          shortenLink={qr.shortenLink}
+          shortLinkResult={qr.shortLinkResult}
         />
       ) : (
         <BulkPreview
-          entries={bulkEntries}
-          onEntriesChange={setBulkEntries}
-          fgColor={fgColor}
-          bgColor={bgColor}
-          logo={logo}
-          dotStyle={dotStyle}
-          size={size}
-          format={format}
+          entries={qr.bulkEntries}
+          onEntriesChange={qr.setBulkEntries}
+          fgColor={qr.fgColor}
+          bgColor={qr.bgColor}
+          logo={qr.logo}
+          dotStyle={qr.dotStyle}
+          size={qr.size}
+          format={qr.format}
         />
       )}
     </main>

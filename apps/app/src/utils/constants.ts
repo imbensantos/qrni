@@ -19,7 +19,9 @@ export const DOWNLOAD_FILENAME_SINGLE = "qrni-code";
 export const DOWNLOAD_FILENAME_BULK_ZIP = "qrni-bulk.zip";
 export const DOWNLOAD_FILENAME_BULK_PDF = "qrni-bulk.pdf";
 
-import { MAX_CUSTOM_LINKS_PER_USER } from "../../../../convex/lib/constants";
+import { ERR, MAX_CUSTOM_LINKS_PER_USER } from "../../../../convex/lib/constants";
+
+export { ERR };
 
 /** Maximum custom (non-auto, non-namespaced) short links per user */
 export const MAX_CUSTOM_LINKS = MAX_CUSTOM_LINKS_PER_USER;

@@ -1,15 +1,12 @@
-import { useRef, useState, useCallback, useEffect, useMemo } from "react";
+import { useCallback } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { useAction, useQuery, usePaginatedQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { api } from "../../../../convex/_generated/api";
-import type { Id } from "../../../../convex/_generated/dataModel";
 import { useAuth } from "../hooks/useAuth";
+import { useShortLink } from "../hooks/useShortLink";
 import { hasCachedUser } from "../utils/cached-user";
-import { getSessionId } from "../utils/session-id";
-import { cleanConvexError } from "../utils/errors";
 import { MAX_CUSTOM_LINKS } from "../utils/constants";
 import { isValidUrl } from "../utils/bulk-utils";
+import type { ShortLinkResult } from "../types";
 import ColorPicker from "./ColorPicker";
 import LogoUploader from "./LogoUploader";
 import DotStyleSelector from "./DotStyleSelector";
@@ -17,16 +14,6 @@ import SizeSlider from "./SizeSlider";
 import NamespaceDropdown from "./NamespaceDropdown";
 import AppFooter from "./AppFooter";
 import "./ControlsPanel.css";
-
-interface ShortLinkResult {
-  shortCode: string;
-  linkId: Id<"links">;
-}
-
-interface Namespace {
-  _id: Id<"namespaces">;
-  slug: string;
-}
 
 interface ControlsPanelProps {
   url: string;
@@ -70,114 +57,20 @@ function ControlsPanel({
   const showAuthFeatures = authLoading ? hasCachedUser() : isAuthenticated;
   const { signIn } = useAuthActions();
 
-  const [customSlug, setCustomSlug] = useState("");
-  const [selectedNamespace, setSelectedNamespace] = useState<Namespace | null>(null);
-  const [shortLinkLoading, setShortLinkLoading] = useState(false);
-  const [shortLinkError, setShortLinkError] = useState<string | null>(null);
-  const [pendingNsId, setPendingNsId] = useState<Id<"namespaces"> | null>(null);
-
-  // Race condition guard: ignore stale results after unmount
-  const mountedRef = useRef(true);
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
-
-  const createAnonymousLink = useAction(api.links.createAnonymousLink);
-  const createAutoSlugLink = useAction(api.links.createAutoSlugLink);
-  const createCustomSlugLink = useAction(api.links.createCustomSlugLink);
-  const createNamespacedLink = useAction(api.links.createNamespacedLink);
-
-  const { results: myLinks } = usePaginatedQuery(
-    api.links.listMyLinks,
-    {},
-    { initialNumItems: 500 },
-  );
-  const myNamespaces = useQuery(api.namespaces.listMine);
-
-  const flatCustomCount = myLinks.filter((l) => !l.namespace && l.owner && !l.autoSlug).length;
-
-  const ownedNamespaces = myNamespaces?.owned ?? [];
-
-  // Issue #7: memoize allNamespaces to avoid recomputing every render
-  const allNamespaces: Namespace[] = useMemo(
-    () => [
-      ...ownedNamespaces,
-      ...(myNamespaces?.collaborated ?? []).filter(
-        (ns): ns is NonNullable<typeof ns> => ns !== null,
-      ),
-    ],
-    [ownedNamespaces, myNamespaces?.collaborated],
-  );
-
-  useEffect(() => {
-    if (pendingNsId) {
-      const ns = allNamespaces.find((n) => n._id === pendingNsId);
-      if (ns) {
-        setSelectedNamespace(ns);
-        setPendingNsId(null);
-      }
-    }
-  }, [pendingNsId, allNamespaces]);
-
-  const createShortLink = useCallback(
-    async (targetUrl: string) => {
-      const valid = isValidUrl(targetUrl);
-      if (!valid) return;
-      setShortLinkLoading(true);
-      setShortLinkError(null);
-      try {
-        let res: ShortLinkResult;
-        if (!isAuthenticated) {
-          res = await createAnonymousLink({
-            destinationUrl: targetUrl,
-            sessionId: getSessionId(),
-          });
-        } else if (selectedNamespace) {
-          res = await createNamespacedLink({
-            destinationUrl: targetUrl,
-            namespaceId: selectedNamespace._id,
-            slug: customSlug.trim() || undefined,
-          });
-        } else if (customSlug.trim()) {
-          res = await createCustomSlugLink({
-            destinationUrl: targetUrl,
-            customSlug: customSlug.trim(),
-          });
-        } else {
-          res = await createAutoSlugLink({
-            destinationUrl: targetUrl,
-          });
-        }
-        // Guard against stale results after unmount
-        if (!mountedRef.current) return;
-        onShortLinkCreated?.(res);
-        trigger("success");
-      } catch (err) {
-        if (!mountedRef.current) return;
-        const clean = cleanConvexError((err as Error).message || "Failed to create short link");
-        setShortLinkError(clean || "Failed to create short link");
-        trigger("error");
-      } finally {
-        if (mountedRef.current) {
-          setShortLinkLoading(false);
-        }
-      }
-    },
-    [
-      isAuthenticated,
-      selectedNamespace,
-      customSlug,
-      createAnonymousLink,
-      createAutoSlugLink,
-      createNamespacedLink,
-      createCustomSlugLink,
-      onShortLinkCreated,
-      trigger,
-    ],
-  );
+  const {
+    customSlug,
+    setCustomSlug,
+    selectedNamespace,
+    setSelectedNamespace,
+    shortLinkLoading,
+    shortLinkError,
+    setShortLinkError,
+    setPendingNsId,
+    flatCustomCount,
+    ownedNamespaces,
+    allNamespaces,
+    createShortLink,
+  } = useShortLink(onShortLinkCreated);
 
   const handleGenerate = useCallback(async () => {
     onGenerate?.();

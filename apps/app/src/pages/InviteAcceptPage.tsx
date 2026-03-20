@@ -4,7 +4,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../../../convex/_generated/api";
 import { useParams } from "@tanstack/react-router";
 import "./InviteAcceptPage.css";
-import { INVITE_RETURN_KEY } from "../utils/constants";
+import { ERR, INVITE_RETURN_KEY } from "../utils/constants";
 import {
   IconCheck,
   IconXCircle,
@@ -37,9 +37,9 @@ function InviteAcceptPage() {
       setAcceptedInvite(null);
       const message = (err as Error).message || "Failed to accept invite";
       setStatus("error");
-      if (message.includes("already own")) {
+      if (message.includes(ERR.ALREADY_OWNER)) {
         setError("You already own this namespace.");
-      } else if (message.includes("already a member")) {
+      } else if (message.includes(ERR.ALREADY_MEMBER)) {
         setError("You're already a member of this namespace.");
       } else {
         setError(message);
