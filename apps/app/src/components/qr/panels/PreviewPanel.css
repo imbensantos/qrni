@@ -1,6 +1,10 @@
 .preview-panel {
   flex: 1;
-  position: relative;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: calc(100vh - 65px);
+  height: calc(100dvh - 65px);
   background: var(--bg-preview);
   overflow: hidden;
 }

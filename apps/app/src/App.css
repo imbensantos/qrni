@@ -107,13 +107,6 @@
 
 .sidebar-panel {
   width: 380px;
-  /* min + max together act as a fixed height that AdSense can't override
-     (it injects height:auto !important, but doesn't touch min/max-height) */
-  min-height: calc(100vh - 65px);
-  min-height: calc(100dvh - 65px);
-  max-height: calc(100vh - 65px);
-  max-height: calc(100dvh - 65px);
-  overflow-y: auto;
   background: var(--bg-card);
   padding: 28px;
   display: flex;
@@ -125,11 +118,9 @@
 .body {
   display: flex;
   flex: 1;
-  min-height: calc(100vh - 65px);
-  min-height: calc(100dvh - 65px);
   max-height: calc(100vh - 65px);
   max-height: calc(100dvh - 65px);
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 @media (max-width: 768px) {
