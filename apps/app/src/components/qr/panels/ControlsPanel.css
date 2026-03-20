@@ -671,6 +671,10 @@
 
 /* Create Short Link Button */
 .create-shortlink-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   width: 100%;
   height: 40px;
   border: 1.5px solid var(--accent-secondary);
