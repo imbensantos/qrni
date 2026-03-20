@@ -442,6 +442,16 @@
   }
 }
 
+/* Ad slot — desktop: absolute-positioned over the preview panel */
+.ad-slot--preview {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 468px;
+  z-index: 1;
+}
+
 /* Short Link Card */
 .short-link-card {
   display: flex;
@@ -492,13 +502,4 @@
 .sl-copy-btn:focus-visible {
   outline: 2px solid var(--accent-secondary);
   outline-offset: 2px;
-}
-
-.ad-slot--preview {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 468px;
-  z-index: 1;
 }
