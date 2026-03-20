@@ -251,7 +251,7 @@ function BulkPreview({
               <div
                 className="bulk-progress-fill"
                 style={{
-                  width: `${(progress.current / progress.total) * 100}%`,
+                  width: `${progress.total > 0 ? (progress.current / progress.total) * 100 : 0}%`,
                 }}
               />
             </div>
