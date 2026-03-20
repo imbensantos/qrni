@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { useQuery, usePaginatedQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { getAppOrigin } from "../../utils/url-utils";
 import { api } from "../../../../../convex/_generated/api";
 import { IconPlus, IconPencil, IconTrash } from "../Icons";
@@ -37,11 +37,7 @@ function AllNamespaceLinksView({
   // TODO: This fetches all links client-side then slices for pagination.
   // Should be replaced with server-side pagination (offset/cursor-based query)
   // to avoid fetching the full dataset on every render.
-  const { results: nsLinks } = usePaginatedQuery(
-    api.links.listNamespaceLinks,
-    { namespaceId },
-    { initialNumItems: 500 },
-  );
+  const nsLinks = useQuery(api.links.listNamespaceLinks, { namespaceId }) ?? [];
   const members = useQuery(api.collaboration.listMembers, { namespaceId });
   const currentUser = useQuery(api.users.currentUser);
 

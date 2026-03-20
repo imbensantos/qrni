@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { useQuery, usePaginatedQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { getAppOrigin } from "../../utils/url-utils";
 import { api } from "../../../../../convex/_generated/api";
 import {
@@ -62,13 +62,10 @@ function NamespaceSection({
   const [kebabOpen, setKebabOpen] = useState(false);
   const kebabRef = useRef(null);
 
-  const { results: nsLinks } = usePaginatedQuery(
-    api.links.listNamespaceLinks,
-    {
+  const nsLinks =
+    useQuery(api.links.listNamespaceLinks, {
       namespaceId: namespace._id,
-    },
-    { initialNumItems: 500 },
-  );
+    }) ?? [];
   const members = useQuery(api.collaboration.listMembers, {
     namespaceId: namespace._id,
   });

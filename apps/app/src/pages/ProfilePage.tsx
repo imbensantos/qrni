@@ -1,4 +1,4 @@
-import { useQuery, usePaginatedQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { Link } from "@tanstack/react-router";
 import { api } from "../../../../convex/_generated/api";
 import { Doc } from "../../../../convex/_generated/dataModel";
@@ -53,11 +53,7 @@ function ProfileLoadingSkeleton() {
 function ProfilePage() {
   const user = useQuery(api.users.currentUser);
   const stats = useQuery(api.users.getUserStats);
-  const { results: myLinks } = usePaginatedQuery(
-    api.links.listMyLinks,
-    {},
-    { initialNumItems: 500 },
-  );
+  const myLinks = useQuery(api.links.listMyLinks) ?? [];
   const namespaces = useQuery(api.namespaces.listMine);
 
   const { trigger } = useWebHaptics();

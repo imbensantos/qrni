@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
-import { useAction, useQuery, usePaginatedQuery } from "convex/react";
+import { useAction, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import type { Id } from "../../../../convex/_generated/dataModel";
 import { useWebHaptics } from "web-haptics/react";
@@ -51,11 +51,7 @@ export function useShortLink(
   const createCustomSlugLink = useAction(api.links.createCustomSlugLink);
   const createNamespacedLink = useAction(api.links.createNamespacedLink);
 
-  const { results: myLinks } = usePaginatedQuery(
-    api.links.listMyLinks,
-    {},
-    { initialNumItems: 500 },
-  );
+  const myLinks = useQuery(api.links.listMyLinks) ?? [];
   const myNamespaces = useQuery(api.namespaces.listMine);
 
   const flatCustomCount = myLinks.filter((l) => !l.namespace && l.owner && !l.autoSlug).length;
