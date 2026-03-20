@@ -387,6 +387,16 @@
   }
 }
 
+/* Ad slot — desktop: absolute-positioned over the preview panel */
+.ad-slot--preview {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 468px;
+  z-index: 1;
+}
+
 /* Mobile */
 @media (max-width: 768px) {
   .preview-panel {
@@ -418,16 +428,6 @@
     max-width: 100%;
     padding: 8px 16px 16px;
   }
-}
-
-/* Ad slot — desktop: absolute-positioned over the preview panel */
-.ad-slot--preview {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 468px;
-  z-index: 1;
 }
 
 /* Short Link Card */
