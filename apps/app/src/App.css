@@ -142,6 +142,7 @@
   .sidebar-panel {
     width: 100%;
     height: auto;
+    min-height: 0;
     max-height: none;
     overflow-y: visible;
     padding-bottom: 0;
