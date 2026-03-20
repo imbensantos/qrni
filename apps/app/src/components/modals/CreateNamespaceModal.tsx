@@ -47,7 +47,10 @@ function CreateNamespaceModal({ isOpen, onClose }: CreateNamespaceModalProps) {
     setError("");
 
     try {
-      await createNamespace({ slug: sanitizedName });
+      await createNamespace({
+        slug: sanitizedName,
+        ...(description.trim() && { description: description.trim() }),
+      });
       onClose();
     } catch (err) {
       const msg = cleanConvexError((err as Error).message || "");
