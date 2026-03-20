@@ -4,6 +4,6 @@ export default defineConfig({
   test: {
     environment: "node",
     root: __dirname,
-    include: ["lib/**/*.test.ts"],
+    include: ["**/*.test.ts"],
   },
 });
