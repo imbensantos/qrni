@@ -14,10 +14,15 @@ const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
   beforeLoad: () => {
-    const returnPath = sessionStorage.getItem(INVITE_RETURN_KEY);
-    if (returnPath) {
-      sessionStorage.removeItem(INVITE_RETURN_KEY);
-      throw redirect({ to: returnPath });
+    try {
+      const returnPath = sessionStorage.getItem(INVITE_RETURN_KEY);
+      if (returnPath) {
+        sessionStorage.removeItem(INVITE_RETURN_KEY);
+        throw redirect({ to: returnPath });
+      }
+    } catch (e) {
+      if (e && typeof e === "object" && "to" in e) throw e;
+      // Silently ignore storage errors (private browsing, disabled storage)
     }
   },
   component: QRGeneratorPage,

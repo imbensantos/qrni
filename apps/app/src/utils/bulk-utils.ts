@@ -136,34 +136,9 @@ export function parseJSON(text: string): BulkEntry[] {
   }
 
   const entries = (data as Record<string, unknown>[]).slice(0, MAX_ENTRIES).map((item, i) => {
-    let label: string;
-    let url: string;
-    try {
-      label = String(item["label"] ?? item["name"] ?? "");
-    } catch {
-      label = "";
-    }
-    try {
-      url = String(item["url"] ?? item["link"] ?? "");
-    } catch {
-      url = "";
-    }
-    const valid = isValidUrl(url);
-    const error = !label.trim()
-      ? "Missing label"
-      : !url.trim()
-        ? "Missing URL"
-        : !valid
-          ? "Invalid URL (must start with http:// or https://)"
-          : null;
-    return {
-      index: i + 1,
-      label: label.trim(),
-      url: url.trim(),
-      filename: sanitizeLabel(label),
-      valid: !!label.trim() && valid,
-      error,
-    };
+    const label = String(item["label"] ?? item["name"] ?? "");
+    const url = String(item["url"] ?? item["link"] ?? "");
+    return buildEntry(i, label, url);
   });
 
   return deduplicateLabels(entries);
