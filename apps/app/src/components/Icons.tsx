@@ -319,10 +319,11 @@ export function IconGlobe({ size = 16 }: IconProps) {
   );
 }
 
-export function IconMail({ size = 16 }: IconProps) {
+export function IconMail({ size = 16, className }: IconProps & { className?: string }) {
   return (
     <svg
       aria-hidden="true"
+      className={className}
       width={size}
       height={size}
       viewBox="0 0 24 24"

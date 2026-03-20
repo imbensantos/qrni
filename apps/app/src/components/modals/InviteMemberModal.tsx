@@ -129,7 +129,7 @@ function InviteMemberModal({
         <form className="imm-invite-form" onSubmit={handleSendInvite}>
           <div className="imm-input-row">
             <div className="imm-email-field">
-              <IconMail size={16} />
+              <IconMail size={16} className="imm-mail-icon" />
               <input
                 className="imm-email-input"
                 type="email"
