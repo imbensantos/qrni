@@ -148,6 +148,7 @@
   .body {
     flex-direction: column;
     flex: none;
+    max-height: none;
     overflow: visible;
   }
 
