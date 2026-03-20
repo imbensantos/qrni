@@ -3,7 +3,7 @@ import { useWebHaptics } from "web-haptics/react";
 import { useQuery } from "convex/react";
 import { getAppOrigin } from "../../utils/url-utils";
 import { api } from "../../../../../convex/_generated/api";
-import { IconPlus, IconPencil, IconTrash } from "../Icons";
+import { IconPlus, IconPencil, IconTrash } from "../common/Icons";
 import { formatDateShort } from "../../utils/ui-utils";
 import CopyButton from "./CopyButton";
 import { Id, Doc } from "../../../../../convex/_generated/dataModel";

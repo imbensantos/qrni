@@ -1,9 +1,9 @@
 import { createRouter, createRoute, createRootRoute, redirect } from "@tanstack/react-router";
 import App from "./App";
-import QRGeneratorPage from "./pages/QRGeneratorPage";
-import ProfilePage from "./pages/ProfilePage";
-import PrivacyPage from "./pages/PrivacyPage";
-import InviteAcceptPage from "./pages/InviteAcceptPage";
+import QRGeneratorPage from "./pages/qr/QRGeneratorPage";
+import ProfilePage from "./pages/profile/ProfilePage";
+import PrivacyPage from "./pages/privacy/PrivacyPage";
+import InviteAcceptPage from "./pages/invite/InviteAcceptPage";
 import { INVITE_RETURN_KEY } from "./utils/constants";
 
 const rootRoute = createRootRoute({

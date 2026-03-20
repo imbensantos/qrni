@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { IconCopy, IconCheck } from "../Icons";
+import { IconCopy, IconCheck } from "../common/Icons";
 
 interface CopyButtonProps {
   text: string;

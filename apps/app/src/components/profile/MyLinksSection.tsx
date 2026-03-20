@@ -2,7 +2,14 @@ import { useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { MAX_CUSTOM_LINKS } from "../../utils/constants";
 import { getAppOrigin, getAppHost } from "../../utils/url-utils";
-import { IconLink, IconPlus, IconClick, IconPencil, IconTrash, IconChevronDown } from "../Icons";
+import {
+  IconLink,
+  IconPlus,
+  IconClick,
+  IconPencil,
+  IconTrash,
+  IconChevronDown,
+} from "../common/Icons";
 import CopyButton from "./CopyButton";
 import { Doc } from "../../../../../convex/_generated/dataModel";
 

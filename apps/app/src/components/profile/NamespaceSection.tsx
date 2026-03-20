@@ -13,7 +13,7 @@ import {
   IconUserPlus,
   IconEllipsis,
   IconArrowRight,
-} from "../Icons";
+} from "../common/Icons";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { getColorFromHash, NAMESPACE_COLORS, NAMESPACE_BG_COLORS } from "../../utils/ui-utils";
 import { formatDateShort } from "../../utils/ui-utils";

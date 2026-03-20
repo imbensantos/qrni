@@ -6,8 +6,8 @@ import { Outlet, Link } from "@tanstack/react-router";
 import { api } from "../../../convex/_generated/api";
 import { useAuth } from "./hooks/useAuth";
 import { getCachedUser, cacheUser, clearCachedUser } from "./utils/cached-user";
-import ProfileDropdown from "./components/ProfileDropdown";
-import ErrorBoundary from "./components/ErrorBoundary";
+import ProfileDropdown from "./components/layout/ProfileDropdown";
+import ErrorBoundary from "./components/common/ErrorBoundary";
 import "./App.css";
 
 function App() {
