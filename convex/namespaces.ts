@@ -5,59 +5,12 @@ import { isValidSlug } from "./lib/shortCode";
 import { logAudit } from "./lib/auditLog";
 import { checkPermission } from "./lib/permissions";
 import { sanitizeText } from "./lib/validation";
-import { MAX_NAMESPACES_PER_USER, MAX_DESCRIPTION_LENGTH, ERR } from "./lib/constants";
-
-const RESERVED_SLUGS = [
-  // App routes
-  "admin",
-  "app",
-  "www",
-  "help",
-  "support",
-  "about",
-  "blog",
-  "settings",
-  "dashboard",
-  "profile",
-  "pricing",
-  "docs",
-  "account",
-  "billing",
-  "status",
-  "api-docs",
-  "register",
-  "unsubscribe",
-  "notifications",
-  "analytics",
-  "embed",
-  "link",
-  "links",
-  "redirect",
-  "404",
-  "500",
-  // Legal
-  "terms",
-  "privacy",
-  "tos",
-  "terms-and-conditions",
-  // Brand
-  "qrni",
-  // Auth routes (used by Convex auth HTTP handlers)
-  "api",
-  "login",
-  "signup",
-  "signin",
-  "signout",
-  "logout",
-  "verify",
-  "reset-password",
-  "forgot-password",
-  "invite",
-  "auth",
-  "oauth",
-  "callback",
-  ".well-known",
-];
+import {
+  MAX_NAMESPACES_PER_USER,
+  MAX_DESCRIPTION_LENGTH,
+  ERR,
+  RESERVED_SLUGS,
+} from "./lib/constants";
 
 export const create = mutation({
   args: { slug: v.string(), description: v.optional(v.string()) },
@@ -74,7 +27,7 @@ export const create = mutation({
       throw new Error(ERR.INVALID_NAMESPACE_SLUG);
     }
 
-    if (RESERVED_SLUGS.includes(slug)) {
+    if (RESERVED_SLUGS.has(slug)) {
       throw new Error(ERR.NAMESPACE_RESERVED);
     }
 
@@ -165,7 +118,7 @@ export const update = mutation({
         throw new Error(ERR.INVALID_NAMESPACE_SLUG);
       }
 
-      if (RESERVED_SLUGS.includes(slug)) {
+      if (RESERVED_SLUGS.has(slug)) {
         throw new Error(ERR.NAMESPACE_RESERVED);
       }
 

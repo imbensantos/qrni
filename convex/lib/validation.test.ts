@@ -30,8 +30,12 @@ describe("sanitizeText", () => {
     );
   });
 
-  it("preserves quotes and ampersands", () => {
-    expect(sanitizeText('He said "hello" & goodbye')).toBe('He said "hello" & goodbye');
+  it("preserves quotes but escapes ampersands", () => {
+    expect(sanitizeText('He said "hello" & goodbye')).toBe('He said "hello" &amp; goodbye');
+  });
+
+  it("escapes ampersands", () => {
+    expect(sanitizeText("Tom & Jerry")).toBe("Tom &amp; Jerry");
   });
 });
 

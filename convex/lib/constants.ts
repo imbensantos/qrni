@@ -102,3 +102,57 @@ export const ERR = {
   NAME_TOO_LONG: `Name must be ${MAX_USER_NAME_LENGTH} characters or fewer`,
   AVATAR_MUST_BE_HTTPS: "Avatar URL must start with https://",
 } as const;
+
+// ============ RESERVED SLUGS ============
+
+export const RESERVED_SLUGS = new Set([
+  // App routes
+  "admin",
+  "app",
+  "www",
+  "help",
+  "support",
+  "about",
+  "blog",
+  "settings",
+  "dashboard",
+  "profile",
+  "pricing",
+  "docs",
+  "account",
+  "billing",
+  "status",
+  "api-docs",
+  "register",
+  "unsubscribe",
+  "notifications",
+  "analytics",
+  "embed",
+  "link",
+  "links",
+  "redirect",
+  "404",
+  "500",
+  // Legal
+  "terms",
+  "privacy",
+  "tos",
+  "terms-and-conditions",
+  // Brand
+  "qrni",
+  // Auth routes
+  "api",
+  "login",
+  "signup",
+  "signin",
+  "signout",
+  "logout",
+  "verify",
+  "reset-password",
+  "forgot-password",
+  "invite",
+  "auth",
+  "oauth",
+  "callback",
+  ".well-known",
+]);

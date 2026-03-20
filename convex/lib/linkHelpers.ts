@@ -128,116 +128,52 @@ export async function generateUniqueNamespaceSlug(
   throw new Error(ERR.SHORT_CODE_EXHAUSTED);
 }
 
-/**
- * Checks and updates the rate limit for anonymous link creation (by IP).
- * Also cleans up expired rate limit records for the given IP.
- */
+async function checkRateLimit(
+  ctx: MutationCtx,
+  key: string,
+  limit: number,
+  errorMessage: string,
+  cleanup: boolean = false,
+): Promise<void> {
+  const windowStart = Date.now() - RATE_LIMIT_WINDOW_MS;
+
+  const rateLimit = await ctx.db
+    .query("rate_limits")
+    .withIndex("by_ip", (q) => q.eq("ip", key))
+    .first();
+
+  if (rateLimit) {
+    if (rateLimit.windowStart > windowStart && rateLimit.count >= limit) {
+      throw new Error(errorMessage);
+    }
+    if (rateLimit.windowStart <= windowStart) {
+      await ctx.db.patch(rateLimit._id, { windowStart: Date.now(), count: 1 });
+    } else {
+      await ctx.db.patch(rateLimit._id, { count: rateLimit.count + 1 });
+    }
+  } else {
+    await ctx.db.insert("rate_limits", { ip: key, windowStart: Date.now(), count: 1 });
+  }
+
+  if (cleanup) {
+    const expiredRecords = await ctx.db
+      .query("rate_limits")
+      .filter((q) => q.lt(q.field("windowStart"), windowStart))
+      .take(10);
+    for (const record of expiredRecords) {
+      await ctx.db.delete(record._id);
+    }
+  }
+}
+
 export async function checkAnonymousRateLimit(ctx: MutationCtx, ip: string): Promise<void> {
-  const windowStart = Date.now() - RATE_LIMIT_WINDOW_MS;
-
-  const rateLimit = await ctx.db
-    .query("rate_limits")
-    .withIndex("by_ip", (q) => q.eq("ip", ip))
-    .first();
-
-  if (rateLimit) {
-    if (rateLimit.windowStart > windowStart && rateLimit.count >= ANONYMOUS_RATE_LIMIT) {
-      throw new Error(ERR.ANONYMOUS_RATE_LIMITED);
-    }
-    if (rateLimit.windowStart <= windowStart) {
-      // Window expired — reset
-      await ctx.db.patch(rateLimit._id, {
-        windowStart: Date.now(),
-        count: 1,
-      });
-    } else {
-      await ctx.db.patch(rateLimit._id, { count: rateLimit.count + 1 });
-    }
-  } else {
-    await ctx.db.insert("rate_limits", {
-      ip,
-      windowStart: Date.now(),
-      count: 1,
-    });
-  }
-
-  // Issue #8: Clean up expired rate limit records for other IPs
-  // We do a small batch cleanup each time to avoid unbounded growth.
-  // Only delete records whose window has fully expired.
-  const expiredRecords = await ctx.db
-    .query("rate_limits")
-    .filter((q) => q.lt(q.field("windowStart"), windowStart))
-    .take(10);
-  for (const record of expiredRecords) {
-    await ctx.db.delete(record._id);
-  }
+  await checkRateLimit(ctx, ip, ANONYMOUS_RATE_LIMIT, ERR.ANONYMOUS_RATE_LIMITED, true);
 }
 
-/**
- * Checks and updates the rate limit for invite acceptance (by user ID).
- * Uses a stricter limit (10/hour) to prevent brute-force token guessing.
- */
 export async function checkInviteRateLimit(ctx: MutationCtx, userId: Id<"users">): Promise<void> {
-  const windowStart = Date.now() - RATE_LIMIT_WINDOW_MS;
-  const key = `invite:${userId}`;
-
-  const rateLimit = await ctx.db
-    .query("rate_limits")
-    .withIndex("by_ip", (q) => q.eq("ip", key))
-    .first();
-
-  if (rateLimit) {
-    if (rateLimit.windowStart > windowStart && rateLimit.count >= INVITE_RATE_LIMIT) {
-      throw new Error(ERR.INVITE_RATE_LIMITED);
-    }
-    if (rateLimit.windowStart <= windowStart) {
-      await ctx.db.patch(rateLimit._id, {
-        windowStart: Date.now(),
-        count: 1,
-      });
-    } else {
-      await ctx.db.patch(rateLimit._id, { count: rateLimit.count + 1 });
-    }
-  } else {
-    await ctx.db.insert("rate_limits", {
-      ip: key,
-      windowStart: Date.now(),
-      count: 1,
-    });
-  }
+  await checkRateLimit(ctx, `invite:${userId}`, INVITE_RATE_LIMIT, ERR.INVITE_RATE_LIMITED);
 }
 
-/**
- * Checks and updates the rate limit for authenticated link creation (by user ID).
- * Uses the rate_limits table with a "user:" prefixed key to distinguish from IP-based limits.
- * Also cleans up expired rate limit records.
- */
 export async function checkAuthRateLimit(ctx: MutationCtx, userId: Id<"users">): Promise<void> {
-  const windowStart = Date.now() - RATE_LIMIT_WINDOW_MS;
-  const key = `user:${userId}`;
-
-  const rateLimit = await ctx.db
-    .query("rate_limits")
-    .withIndex("by_ip", (q) => q.eq("ip", key))
-    .first();
-
-  if (rateLimit) {
-    if (rateLimit.windowStart > windowStart && rateLimit.count >= AUTH_RATE_LIMIT) {
-      throw new Error(ERR.AUTH_RATE_LIMITED);
-    }
-    if (rateLimit.windowStart <= windowStart) {
-      await ctx.db.patch(rateLimit._id, {
-        windowStart: Date.now(),
-        count: 1,
-      });
-    } else {
-      await ctx.db.patch(rateLimit._id, { count: rateLimit.count + 1 });
-    }
-  } else {
-    await ctx.db.insert("rate_limits", {
-      ip: key,
-      windowStart: Date.now(),
-      count: 1,
-    });
-  }
+  await checkRateLimit(ctx, `user:${userId}`, AUTH_RATE_LIMIT, ERR.AUTH_RATE_LIMITED, true);
 }
