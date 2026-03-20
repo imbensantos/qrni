@@ -208,13 +208,12 @@ function BulkPanel({
         bgColor={bgColor}
         onBgColorChange={onBgColorChange}
         labelId="bulk-colors"
-        showIcon={false}
       />
 
       <hr className="divider" />
 
       {/* Logo — shared component */}
-      <LogoUploader logo={logo} onLogoChange={onLogoChange} labelId="bulk-logo" showIcon={false} />
+      <LogoUploader logo={logo} onLogoChange={onLogoChange} labelId="bulk-logo" />
 
       <hr className="divider" />
 
@@ -223,7 +222,6 @@ function BulkPanel({
         dotStyle={dotStyle}
         onDotStyleChange={onDotStyleChange}
         labelId="bulk-dotstyle"
-        showIcon={false}
       />
 
       <hr className="divider" />
