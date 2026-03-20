@@ -15,14 +15,20 @@ function InviteAcceptPage() {
   const acceptInvite = useMutation(api.collaboration.acceptInvite);
   const [status, setStatus] = useState<"idle" | "accepting" | "accepted" | "error">("idle");
   const [error, setError] = useState("");
+  const [acceptedInvite, setAcceptedInvite] = useState<{
+    namespaceName: string;
+    role: string;
+  } | null>(null);
 
   async function handleAccept() {
     setStatus("accepting");
     setError("");
+    setAcceptedInvite(invite ? { namespaceName: invite.namespaceName, role: invite.role } : null);
     try {
       await acceptInvite({ token });
       setStatus("accepted");
     } catch (err) {
+      setAcceptedInvite(null);
       const message = (err as Error).message || "Failed to accept invite";
       setStatus("error");
       if (message.includes("already own")) {
@@ -40,6 +46,48 @@ function InviteAcceptPage() {
     sessionStorage.setItem(INVITE_RETURN_KEY, `/invite/${token}`);
     await signOut();
     void signIn("google");
+  }
+
+  // Accepted state — check before reactive query nulls out
+  if (status === "accepted" && acceptedInvite) {
+    return (
+      <div className="invite-page">
+        <div className="invite-card">
+          <div className="invite-icon-circle">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#3D8A5A"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+          <h1 className="invite-title">You're in!</h1>
+          <p className="invite-subtitle">
+            You've joined <strong>{acceptedInvite.namespaceName}</strong> as {acceptedInvite.role}.
+          </p>
+          <a href="/" className="invite-cta">
+            Go to QRni
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Accepting in-progress — don't react to query changes mid-flight
+  if (status === "accepting") {
+    return (
+      <div className="invite-page">
+        <div className="invite-card">
+          <p className="invite-loading">Accepting invitation...</p>
+        </div>
+      </div>
+    );
   }
 
   // Loading state
@@ -77,37 +125,6 @@ function InviteAcceptPage() {
           <h1 className="invite-title">Invite not found</h1>
           <p className="invite-subtitle">This invitation may have expired or been revoked.</p>
           <a href="/" className="invite-cta-secondary">
-            Go to QRni
-          </a>
-        </div>
-      </div>
-    );
-  }
-
-  // Accepted state
-  if (status === "accepted") {
-    return (
-      <div className="invite-page">
-        <div className="invite-card">
-          <div className="invite-icon-circle">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#3D8A5A"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          </div>
-          <h1 className="invite-title">You're in!</h1>
-          <p className="invite-subtitle">
-            You've joined <strong>{invite.namespaceName}</strong> as {invite.role}.
-          </p>
-          <a href="/" className="invite-cta">
             Go to QRni
           </a>
         </div>
