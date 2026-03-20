@@ -58,7 +58,11 @@ function DeleteNamespaceModal({
           inside it. Anyone using these links will get a 404 error. This action cannot be undone.
         </p>
 
-        {error && <div className="delete-modal-error">{error}</div>}
+        {error && (
+          <div className="delete-modal-error" role="alert">
+            {error}
+          </div>
+        )}
 
         <div className="delete-modal-actions">
           <button

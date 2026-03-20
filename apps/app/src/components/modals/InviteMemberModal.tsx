@@ -217,7 +217,11 @@ function InviteMemberModal({
           </div>
         </form>
 
-        {error && <p className="imm-error">{error}</p>}
+        {error && (
+          <p className="imm-error" role="alert">
+            {error}
+          </p>
+        )}
 
         <hr className="imm-divider" />
 

@@ -62,7 +62,11 @@ function DeleteLinkConfirmModal({ isOpen, onClose, link }: DeleteLinkConfirmModa
           <div className="delete-modal-preview-dest">{link.destinationUrl}</div>
         </div>
 
-        {error && <div className="delete-modal-error">{error}</div>}
+        {error && (
+          <div className="delete-modal-error" role="alert">
+            {error}
+          </div>
+        )}
 
         <div className="delete-modal-actions">
           <button

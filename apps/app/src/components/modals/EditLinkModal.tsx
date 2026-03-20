@@ -171,7 +171,11 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
             </div>
           )}
 
-          {error && <div className="edit-link-error">{error}</div>}
+          {error && (
+            <div className="edit-link-error" role="alert">
+              {error}
+            </div>
+          )}
 
           <div className="edit-link-actions">
             <button

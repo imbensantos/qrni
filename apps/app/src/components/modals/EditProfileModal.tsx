@@ -131,7 +131,11 @@ function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProps) {
                 autoFocus
               />
             </div>
-            {error && <p className="edit-profile-error">{error}</p>}
+            {error && (
+              <p className="edit-profile-error" role="alert">
+                {error}
+              </p>
+            )}
           </div>
 
           <div className="edit-profile-field">
