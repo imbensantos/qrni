@@ -6,11 +6,7 @@ import { api } from "../../../../convex/_generated/api";
 import type { Id } from "../../../../convex/_generated/dataModel";
 import { cleanConvexError } from "../utils/errors";
 import { MAX_NAMESPACES_PER_USER } from "../../../../convex/lib/constants";
-
-interface Namespace {
-  _id: Id<"namespaces">;
-  slug: string;
-}
+import type { Namespace } from "../types";
 
 interface NamespaceDropdownProps {
   allNamespaces: Namespace[];

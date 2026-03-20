@@ -2,17 +2,12 @@ import { useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { isValidUrl, type BulkEntry } from "../utils/bulk-utils";
 import { type ExportFormat } from "../utils/bulk-export";
-import type { Id } from "../../../../convex/_generated/dataModel";
+import type { ShortLinkResult } from "../types";
 import ControlsPanel from "../components/ControlsPanel";
 import PreviewPanel from "../components/PreviewPanel";
 import BulkPanel from "../components/BulkPanel";
 import BulkPreview from "../components/BulkPreview";
 import AdSlot from "../components/AdSlot";
-
-interface ShortLinkResult {
-  shortCode: string;
-  linkId: Id<"links">;
-}
 
 type QRMode = "single" | "bulk";
 

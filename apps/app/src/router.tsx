@@ -4,8 +4,7 @@ import QRGeneratorPage from "./pages/QRGeneratorPage";
 import ProfilePage from "./pages/ProfilePage";
 import PrivacyPage from "./pages/PrivacyPage";
 import InviteAcceptPage from "./pages/InviteAcceptPage";
-
-const INVITE_RETURN_KEY = "qrni_invite_return";
+import { INVITE_RETURN_KEY } from "./utils/constants";
 
 const rootRoute = createRootRoute({
   component: App,

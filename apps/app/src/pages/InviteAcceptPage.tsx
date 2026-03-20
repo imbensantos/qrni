@@ -4,8 +4,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../../../convex/_generated/api";
 import { useParams } from "@tanstack/react-router";
 import "./InviteAcceptPage.css";
-
-const INVITE_RETURN_KEY = "qrni_invite_return";
+import { INVITE_RETURN_KEY } from "../utils/constants";
 
 function InviteAcceptPage() {
   const { token } = useParams({ from: "/invite/$token" });
@@ -224,8 +223,8 @@ function InviteAcceptPage() {
             Sign in with Google to accept
           </button>
         ) : (
-          <button className="invite-cta" onClick={handleAccept} disabled={status === "accepting"}>
-            {status === "accepting" ? "Accepting..." : "Accept Invitation"}
+          <button className="invite-cta" onClick={handleAccept}>
+            Accept Invitation
           </button>
         )}
 

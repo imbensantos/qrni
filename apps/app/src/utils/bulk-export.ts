@@ -1,5 +1,8 @@
 import type { BulkEntry } from "./bulk-utils";
 import { DOWNLOAD_FILENAME_BULK_ZIP, DOWNLOAD_FILENAME_BULK_PDF } from "./constants";
+import type { ExportFormat } from "../types";
+
+export type { ExportFormat };
 
 export interface QrOptions {
   fgColor: string;
@@ -8,8 +11,6 @@ export interface QrOptions {
   logo?: string | null;
   size: number;
 }
-
-export type ExportFormat = "png" | "webp" | "svg";
 
 function createQRCode(QRCodeStyling: any, url: string, options: QrOptions): any {
   const { fgColor, bgColor, dotStyle, logo, size } = options;
