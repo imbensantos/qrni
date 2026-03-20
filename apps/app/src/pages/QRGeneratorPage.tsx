@@ -5,6 +5,7 @@ import ControlsPanel from "../components/ControlsPanel";
 import PreviewPanel from "../components/PreviewPanel";
 import BulkPanel from "../components/BulkPanel";
 import BulkPreview from "../components/BulkPreview";
+import AdSlot from "../components/AdSlot";
 
 function QRGeneratorPage() {
   const qr = useQROptions();
@@ -73,6 +74,7 @@ function QRGeneratorPage() {
           />
         )}
       </div>
+      <AdSlot slot="MOBILE_INFEED_SLOT_ID" format="rectangle" className="ad-slot--mobile-infeed" />
       {qr.mode === "single" ? (
         <PreviewPanel
           url={qr.url}
