@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { useClickOutside } from "../hooks/useClickOutside";
 import { useWebHaptics } from "web-haptics/react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
@@ -32,6 +33,9 @@ function NamespaceDropdown({
   const [creatingNs, setCreatingNs] = useState(false);
   const [newNsSlug, setNewNsSlug] = useState("");
   const [nsCreateError, setNsCreateError] = useState<string | null>(null);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  useClickOutside(dropdownRef, () => setNsDropdownOpen(false), nsDropdownOpen);
 
   const createNamespace = useMutation(api.namespaces.create);
 
@@ -93,7 +97,7 @@ function NamespaceDropdown({
           {ownedNamespacesCount} of {MAX_NAMESPACES_PER_USER} used
         </span>
       </div>
-      <div className="namespace-dropdown-wrapper">
+      <div className="namespace-dropdown-wrapper" ref={dropdownRef}>
         <button
           type="button"
           className="namespace-dropdown-trigger"
