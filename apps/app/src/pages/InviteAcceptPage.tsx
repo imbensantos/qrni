@@ -5,6 +5,13 @@ import { api } from "../../../../convex/_generated/api";
 import { useParams } from "@tanstack/react-router";
 import "./InviteAcceptPage.css";
 import { INVITE_RETURN_KEY } from "../utils/constants";
+import {
+  IconCheck,
+  IconXCircle,
+  IconWarning,
+  IconFolderOpen,
+  IconUserPlus,
+} from "../components/Icons";
 
 function InviteAcceptPage() {
   const { token } = useParams({ from: "/invite/$token" });
@@ -53,18 +60,7 @@ function InviteAcceptPage() {
       <div className="invite-page">
         <div className="invite-card">
           <div className="invite-icon-circle">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#3D8A5A"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
+            <IconCheck size={28} color="#3D8A5A" />
           </div>
           <h1 className="invite-title">You're in!</h1>
           <p className="invite-subtitle">
@@ -106,20 +102,7 @@ function InviteAcceptPage() {
       <div className="invite-page">
         <div className="invite-card">
           <div className="invite-icon-circle invite-icon-error">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#D08068"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <line x1="15" y1="9" x2="9" y2="15" />
-              <line x1="9" y1="9" x2="15" y2="15" />
-            </svg>
+            <IconXCircle size={28} color="#D08068" />
           </div>
           <h1 className="invite-title">Invite not found</h1>
           <p className="invite-subtitle">This invitation may have expired or been revoked.</p>
@@ -136,18 +119,7 @@ function InviteAcceptPage() {
     <>
       <p className="invite-subtitle">{invite.inviterName} invited you to collaborate on</p>
       <div className="invite-namespace-badge">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#D89575"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-        </svg>
+        <IconFolderOpen size={20} color="#D89575" />
         <span>{invite.namespaceName}</span>
       </div>
       <div className="invite-role-row">
@@ -165,20 +137,7 @@ function InviteAcceptPage() {
       <div className="invite-page">
         <div className="invite-card">
           <div className="invite-icon-circle invite-icon-warning">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#D4A64A"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-              <line x1="12" y1="9" x2="12" y2="13" />
-              <line x1="12" y1="17" x2="12.01" y2="17" />
-            </svg>
+            <IconWarning size={28} color="#D4A64A" />
           </div>
           <h1 className="invite-title">Wrong account</h1>
           <p className="invite-subtitle">
@@ -199,21 +158,7 @@ function InviteAcceptPage() {
     <div className="invite-page">
       <div className="invite-card">
         <div className="invite-icon-circle">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#3D8A5A"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <line x1="19" y1="8" x2="19" y2="14" />
-            <line x1="22" y1="11" x2="16" y2="11" />
-          </svg>
+          <IconUserPlus size={28} color="#3D8A5A" />
         </div>
         <h1 className="invite-title">You're invited!</h1>
         {inviteDetails}

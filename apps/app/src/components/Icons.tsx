@@ -25,7 +25,7 @@ export function IconCopy({ size = 12 }: IconProps) {
   );
 }
 
-export function IconCheck({ size = 12 }: IconProps) {
+export function IconCheck({ size = 12, color = "currentColor" }: IconProps & { color?: string }) {
   return (
     <svg
       aria-hidden="true"
@@ -33,7 +33,7 @@ export function IconCheck({ size = 12 }: IconProps) {
       height={size}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -155,7 +155,10 @@ export function IconLink({ size = 18 }: IconProps) {
   );
 }
 
-export function IconFolderOpen({ size = 18 }: IconProps) {
+export function IconFolderOpen({
+  size = 18,
+  color = "currentColor",
+}: IconProps & { color?: string }) {
   return (
     <svg
       aria-hidden="true"
@@ -163,7 +166,7 @@ export function IconFolderOpen({ size = 18 }: IconProps) {
       height={size}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -193,7 +196,10 @@ export function IconClick({ size = 12 }: IconProps) {
   );
 }
 
-export function IconUserPlus({ size = 13 }: IconProps) {
+export function IconUserPlus({
+  size = 13,
+  color = "currentColor",
+}: IconProps & { color?: string }) {
   return (
     <svg
       aria-hidden="true"
@@ -201,7 +207,7 @@ export function IconUserPlus({ size = 13 }: IconProps) {
       height={size}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -210,6 +216,46 @@ export function IconUserPlus({ size = 13 }: IconProps) {
       <circle cx="8.5" cy="7" r="4" />
       <line x1="20" y1="8" x2="20" y2="14" />
       <line x1="23" y1="11" x2="17" y2="11" />
+    </svg>
+  );
+}
+
+export function IconXCircle({ size = 28, color = "currentColor" }: IconProps & { color?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="15" y1="9" x2="9" y2="15" />
+      <line x1="9" y1="9" x2="15" y2="15" />
+    </svg>
+  );
+}
+
+export function IconWarning({ size = 28, color = "currentColor" }: IconProps & { color?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
     </svg>
   );
 }
