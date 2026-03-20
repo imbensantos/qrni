@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { useWebHaptics } from "web-haptics/react";
-import { useAction, useQuery } from "convex/react";
+import { useAction, useQuery, usePaginatedQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../../../convex/_generated/api";
 import type { Id } from "../../../../convex/_generated/dataModel";
@@ -91,7 +91,11 @@ function ControlsPanel({
   const createCustomSlugLink = useAction(api.links.createCustomSlugLink);
   const createNamespacedLink = useAction(api.links.createNamespacedLink);
 
-  const myLinks = useQuery(api.links.listMyLinks) ?? [];
+  const { results: myLinks } = usePaginatedQuery(
+    api.links.listMyLinks,
+    {},
+    { initialNumItems: 500 },
+  );
   const myNamespaces = useQuery(api.namespaces.listMine);
 
   const flatCustomCount = myLinks.filter((l) => !l.namespace && l.owner && !l.autoSlug).length;

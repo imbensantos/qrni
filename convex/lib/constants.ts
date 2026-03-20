@@ -79,6 +79,8 @@ export const ERR = {
   NAMESPACE_NOT_FOUND: "Namespace not found",
   NAMESPACE_LINK_CONFLICT: "This name conflicts with an existing short link",
   NAMESPACE_LIMIT: `You've reached the limit of ${MAX_NAMESPACES_PER_USER} namespaces.`,
+  NAMESPACE_TOO_LARGE_TO_RENAME:
+    "This namespace has too many links to rename. Please contact support.",
   DESCRIPTION_TOO_LONG: `Description must be ${MAX_DESCRIPTION_LENGTH} characters or fewer`,
 
   // Collaboration

@@ -63,15 +63,26 @@ export const getUserStats = query({
     const user = await ctx.db.get(userId);
     if (!user) return null;
 
-    // Use .collect() to count all links, not just the first 500.
-    // This ensures accurate stats for power users with many links.
-    const links = await ctx.db
+    // Paginate through links to count without loading all into memory
+    let totalLinks = 0;
+    let totalClicks = 0;
+    let paginationResult = await ctx.db
       .query("links")
       .withIndex("by_owner", (q) => q.eq("owner", userId))
-      .collect();
+      .paginate({ numItems: 200, cursor: null });
 
-    const totalLinks = links.length;
-    const totalClicks = links.reduce((sum, link) => sum + link.clickCount, 0);
+    totalLinks += paginationResult.page.length;
+    totalClicks += paginationResult.page.reduce((sum, link) => sum + link.clickCount, 0);
+
+    while (!paginationResult.isDone) {
+      paginationResult = await ctx.db
+        .query("links")
+        .withIndex("by_owner", (q) => q.eq("owner", userId))
+        .paginate({ numItems: 200, cursor: paginationResult.continueCursor });
+
+      totalLinks += paginationResult.page.length;
+      totalClicks += paginationResult.page.reduce((sum, link) => sum + link.clickCount, 0);
+    }
 
     const ownedNamespaces = await ctx.db
       .query("namespaces")

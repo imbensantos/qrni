@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { useQuery } from "convex/react";
+import { useQuery, usePaginatedQuery } from "convex/react";
 import { getAppOrigin } from "../../utils/url-utils";
 import { api } from "../../../../../convex/_generated/api";
 import {
@@ -62,9 +62,13 @@ function NamespaceSection({
   const [kebabOpen, setKebabOpen] = useState(false);
   const kebabRef = useRef(null);
 
-  const nsLinks = useQuery(api.links.listNamespaceLinks, {
-    namespaceId: namespace._id,
-  });
+  const { results: nsLinks } = usePaginatedQuery(
+    api.links.listNamespaceLinks,
+    {
+      namespaceId: namespace._id,
+    },
+    { initialNumItems: 500 },
+  );
   const members = useQuery(api.collaboration.listMembers, {
     namespaceId: namespace._id,
   });
@@ -75,8 +79,8 @@ function NamespaceSection({
   const iconBg = getColorFromHash(colorIndex, NAMESPACE_BG_COLORS);
   const canEdit = role === "owner" || role === "editor";
   const isOwner = role === "owner";
-  const previewLinks = nsLinks ? nsLinks.slice(0, 3) : [];
-  const totalLinks = nsLinks ? nsLinks.length : 0;
+  const previewLinks = nsLinks.slice(0, 3);
+  const totalLinks = nsLinks.length;
 
   function handleEditNamespace() {
     setKebabOpen(false);

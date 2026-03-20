@@ -143,6 +143,9 @@ export const update = mutation({
           .query("links")
           .withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId))
           .collect();
+        if (links.length > 5000) {
+          throw new Error(ERR.NAMESPACE_TOO_LARGE_TO_RENAME);
+        }
         for (const link of links) {
           if (link.namespaceSlug) {
             await ctx.db.patch(link._id, {

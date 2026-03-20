@@ -96,7 +96,7 @@ export default defineSchema({
     action: v.string(),
     resourceType: v.string(),
     resourceId: v.string(),
-    metadata: v.optional(v.any()),
+    metadata: v.optional(v.record(v.string(), v.any())),
     timestamp: v.number(),
   })
     .index("by_user_timestamp", ["userId", "timestamp"])

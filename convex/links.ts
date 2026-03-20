@@ -1,3 +1,4 @@
+import { paginationOptsValidator } from "convex/server";
 import { action, internalMutation, mutation, query } from "./_generated/server";
 import type { MutationCtx } from "./_generated/server";
 import { internal } from "./_generated/api";
@@ -353,18 +354,19 @@ export const createNamespacedLink = action({
 // ============ QUERIES ============
 
 export const listMyLinks = query({
-  handler: async (ctx) => {
+  args: { paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return [];
+    if (!userId) return { page: [], isDone: true, continueCursor: "" };
 
     const user = await ctx.db.get(userId);
-    if (!user) return [];
+    if (!user) return { page: [], isDone: true, continueCursor: "" };
 
     return await ctx.db
       .query("links")
       .withIndex("by_owner", (q) => q.eq("owner", user._id))
       .order("desc")
-      .take(500);
+      .paginate(args.paginationOpts);
   },
 });
 
@@ -514,24 +516,25 @@ export const updateLink = action({
 export const listNamespaceLinks = query({
   args: {
     namespaceId: v.id("namespaces"),
+    paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return [];
+    if (!userId) return { page: [], isDone: true, continueCursor: "" };
 
     const user = await ctx.db.get(userId);
-    if (!user) return [];
+    if (!user) return { page: [], isDone: true, continueCursor: "" };
 
     try {
       await checkPermission(ctx, args.namespaceId, user._id, "viewer");
     } catch {
-      return [];
+      return { page: [], isDone: true, continueCursor: "" };
     }
 
     return await ctx.db
       .query("links")
       .withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId))
       .order("desc")
-      .take(500);
+      .paginate(args.paginationOpts);
   },
 });
