@@ -12,6 +12,22 @@ export interface QrOptions {
   size: number;
 }
 
+async function waitForElement(
+  container: HTMLElement,
+  selector: string,
+  timeoutMs = 5000,
+): Promise<Element> {
+  const interval = 10;
+  let elapsed = 0;
+  while (elapsed < timeoutMs) {
+    const el = container.querySelector(selector);
+    if (el) return el;
+    await new Promise((r) => setTimeout(r, interval));
+    elapsed += interval;
+  }
+  throw new Error(`${selector} not rendered within ${timeoutMs}ms`);
+}
+
 function createQRCode(QRCodeStyling: any, url: string, options: QrOptions): any {
   const { fgColor, bgColor, dotStyle, logo, size } = options;
   return new QRCodeStyling({
@@ -32,19 +48,13 @@ async function renderToBlob(qr: any, format: ExportFormat): Promise<Blob> {
   const container = document.createElement("div");
   qr.append(container);
 
-  // Wait for rendering
-  await new Promise((r) => setTimeout(r, 100));
-
   if (format === "svg") {
-    const svgEl = container.querySelector("svg");
-    if (!svgEl) throw new Error("SVG not found");
+    const svgEl = await waitForElement(container, "svg");
     const svgData = new XMLSerializer().serializeToString(svgEl);
     return new Blob([svgData], { type: "image/svg+xml" });
   }
 
-  const canvas = container.querySelector("canvas");
-  if (!canvas) throw new Error("Canvas not found");
-
+  const canvas = (await waitForElement(container, "canvas")) as HTMLCanvasElement;
   return new Promise((resolve) => {
     canvas.toBlob((blob) => resolve(blob!), format === "webp" ? "image/webp" : "image/png");
   });
@@ -129,13 +139,9 @@ export async function generatePdf(
       });
       const container = document.createElement("div");
       qr.append(container);
-      await new Promise((r) => setTimeout(r, 100));
-
-      const canvas = container.querySelector("canvas");
-      if (canvas) {
-        const imgData = canvas.toDataURL("image/png");
-        pdf.addImage(imgData, "PNG", x, y, qrSize, qrSize);
-      }
+      const canvas = (await waitForElement(container, "canvas")) as HTMLCanvasElement;
+      const imgData = canvas.toDataURL("image/png");
+      pdf.addImage(imgData, "PNG", x, y, qrSize, qrSize);
 
       pdf.setFontSize(8);
       pdf.setTextColor(100);

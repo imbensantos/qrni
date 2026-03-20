@@ -46,9 +46,7 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
 
   // For namespaced links, extract the namespace prefix from shortCode (e.g. "ns/slug" → "ns")
   const namespacePart = link?.namespace ? link.shortCode.split("/")[0] : null;
-  const prefix = namespacePart
-    ? `${getAppHost()}/${namespacePart}/`
-    : `${getAppHost()}/`;
+  const prefix = namespacePart ? `${getAppHost()}/${namespacePart}/` : `${getAppHost()}/`;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
