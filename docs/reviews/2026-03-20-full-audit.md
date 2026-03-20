@@ -40,33 +40,33 @@ The codebase is well-structured with strong security foundations, consistent acc
 
 - [x] **I-BE1. DRY violation in rate limit functions** — `convex/lib/linkHelpers.ts:135-243` — Three nearly identical rate limit functions. Extract to single `checkRateLimit(ctx, key, limit)`. _(Foundational — DRY)_
 
-- [ ] **I-BE2. `getUserStats` loads all links with `.collect()`** — `convex/users.ts:68-71` — Unbounded memory for users with thousands of links. Only needs count + sum. _(Design Principles — KISS)_
+- [x] **I-BE2. `getUserStats` loads all links with `.collect()`** — `convex/users.ts:68-71` — Unbounded memory for users with thousands of links. Only needs count + sum. _(Design Principles — KISS)_
 
 - [x] **I-BE3. Namespace fetched twice in permission checks** — `convex/links.ts:271-273`, `convex/collaboration.ts:28-30`, `convex/namespaces.ts:144-146` — `checkPermission` fetches namespace internally, then caller fetches again. Return namespace from permission check. _(Foundational — DRY)_
 
 - [x] **I-BE4. `RESERVED_SLUGS` is array, not Set, and misplaced** — `convex/namespaces.ts:10-60` — Should be `Set` for O(1) lookup and live in `lib/constants.ts`. _(Clean Code — Formatting)_
 
-- [ ] **I-BE5. Hardcoded `.take(500)` with no pagination** — `convex/links.ts:370,538` — Users with >500 links silently lose visibility. _(Systems Thinking — SSOT)_
+- [x] **I-BE5. Hardcoded `.take(500)` with no pagination** — `convex/links.ts:370,538` — Users with >500 links silently lose visibility. _(Systems Thinking — SSOT)_
 
 - [x] **I-BE6. `sanitizeText` doesn't escape `&`** — `convex/lib/validation.ts:7-9` — Missing ampersand escape. Email template has its own `escapeHtml` that covers it, but general sanitizer has the gap. _(Systems Thinking — Defensive Programming)_
 
-- [ ] **I-BE7. `audit_log.metadata` uses `v.any()`** — `convex/schema.ts:99` — No type safety on metadata field. _(SOLID — ISP)_
+- [x] **I-BE7. `audit_log.metadata` uses `v.any()`** — `convex/schema.ts:99` — No type safety on metadata field. _(SOLID — ISP)_
 
-- [ ] **I-BE8. Namespace rename collects all links for sequential patch** — `convex/namespaces.ts:192-202` — Could exceed Convex mutation limits for large namespaces. _(Systems Thinking — Fail Fast)_
+- [x] **I-BE8. Namespace rename collects all links for sequential patch** — `convex/namespaces.ts:192-202` — Could exceed Convex mutation limits for large namespaces. _(Systems Thinking — Fail Fast)_
 
 ### Frontend
 
 - [x] **I-FE1. All SVG icons missing `aria-hidden="true"`** — `apps/app/src/components/Icons.tsx` (all 14 icons) — Decorative SVGs should have `aria-hidden` for consistency. These SVGs lack text content so screen readers typically skip them, but best practice and consistency with every other SVG in the codebase warrants adding it. _(Clean Code — Consistency)_
 
-- [ ] **I-FE2. Footer duplicated 6 times** — `BulkPanel.tsx:266`, `ControlsPanel.tsx:366`, `PreviewPanel.tsx:214`, `BulkPreview.tsx:151`, `ProfilePage.tsx:299`, `PrivacyPage.tsx:270` — Extract to `<AppFooter />`. _(Foundational — DRY)_
+- [x] **I-FE2. Footer duplicated 6 times** — `BulkPanel.tsx:266`, `ControlsPanel.tsx:366`, `PreviewPanel.tsx:214`, `BulkPreview.tsx:151`, `ProfilePage.tsx:299`, `PrivacyPage.tsx:270` — Extract to `<AppFooter />`. _(Foundational — DRY)_
 
 - [x] **I-FE3. Type definitions duplicated** — `Namespace` (2x), `ShortLinkResult` (3x), `ExportFormat` (3x) defined independently across files. _(Foundational — DRY/SSOT)_
 
 - [x] **I-FE4. `window.location.host` used instead of `getAppHost()`** — `CreateNamespaceModal.tsx:107`, `EditLinkModal.tsx:49`, `RenameNamespaceModal.tsx:126` — Violates SSOT and project rule against hardcoded domain. _(Systems Thinking — SSOT)_
 
-- [ ] **I-FE5. `ControlsPanel.tsx` — SRP violation** — 390 lines, 16 props, manages URL input + short link creation + namespace selection + QR controls + footer. _(SOLID — SRP)_
+- [x] **I-FE5. `ControlsPanel.tsx` — SRP violation** — 390 lines, 16 props, manages URL input + short link creation + namespace selection + QR controls + footer. _(SOLID — SRP)_
 
-- [ ] **I-FE6. `InviteMemberModal.tsx` — SRP violation** — 337 lines, handles invite form + member list + member removal + invite revocation. _(SOLID — SRP)_
+- [x] **I-FE6. `InviteMemberModal.tsx` — SRP violation** — 337 lines, handles invite form + member list + member removal + invite revocation. _(SOLID — SRP)_
 
 - [x] **I-FE7. Inline SVGs instead of Icons barrel** — `EditProfileModal.tsx:73-86`, `InviteMemberModal.tsx:111-125,148-161`, `InviteAcceptPage.tsx` (5 inline SVGs) — Should use shared Icons. _(Foundational — DRY)_
 
@@ -78,21 +78,21 @@ The codebase is well-structured with strong security foundations, consistent acc
 
 - [x] **I-FE11. `MAX_CUSTOM_LINKS` duplicates backend constant** — `apps/app/src/utils/constants.ts:23` vs `convex/lib/constants.ts:7` — Different names, independently maintained. Import from backend. _(Systems Thinking — SSOT)_
 
-- [ ] **I-FE12. `QRGeneratorPage` manages 10+ state variables** — `apps/app/src/pages/QRGeneratorPage.tsx:20-37` — Extract QR options into `useQROptions` hook. _(SOLID — SRP)_
+- [x] **I-FE12. `QRGeneratorPage` manages 10+ state variables** — `apps/app/src/pages/QRGeneratorPage.tsx:20-37` — Extract QR options into `useQROptions` hook. _(SOLID — SRP)_
 
 - [x] **I-FE13. `parseJSON` reimplements `buildEntry` validation** — `apps/app/src/utils/bulk-utils.ts:138-167` — Should delegate to `buildEntry` like `parseCSV` does. _(Foundational — DRY)_
 
 - [x] **I-FE14. Router `sessionStorage` access has no try/catch** — `apps/app/src/router.tsx:18-21` — Every other storage access is wrapped. Unvalidated `returnPath` used in redirect. _(Systems Thinking — Defensive Programming)_
 
-- [ ] **I-FE15. Error handling relies on string matching** — `apps/app/src/pages/InviteAcceptPage.tsx:34-39` — Matches backend errors by substring instead of using error codes/constants. _(Practical Engineering — Postel's Law)_
+- [x] **I-FE15. Error handling relies on string matching** — `apps/app/src/pages/InviteAcceptPage.tsx:34-39` — Matches backend errors by substring instead of using error codes/constants. _(Practical Engineering — Postel's Law)_
 
 ### Tests
 
-- [ ] **I-T1. `auditLog.test.ts` is placeholder** — Only tests module export, not behavior. _(Practical Engineering)_
+- [x] **I-T1. `auditLog.test.ts` is placeholder** — Only tests module export, not behavior. _(Practical Engineering)_
 
-- [ ] **I-T2. No E2E tests for authenticated flows** — Profile page, namespace management, invite acceptance entirely untested at E2E level. _(Practical Engineering)_
+- [x] **I-T2. No E2E tests for authenticated flows** — Profile page, namespace management, invite acceptance entirely untested at E2E level. _(Practical Engineering)_
 
-- [ ] **I-T3. `useDragScroll.test.ts` tests interface shape only** — Zero behavioral assertions for scrolling. _(Practical Engineering)_
+- [x] **I-T3. `useDragScroll.test.ts` tests interface shape only** — Zero behavioral assertions for scrolling. _(Practical Engineering)_
 
 - [x] **I-T4. Duplicated mock helpers across 3 test files** — `chainableQuery`/`createMockCtx` copy-pasted in `linkHelpers.test.ts`, `security.test.ts`. Extract to shared helpers. _(Foundational — DRY)_
 
