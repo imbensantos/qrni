@@ -54,7 +54,6 @@ function QRGeneratorPage() {
             shortenLink={qr.shortenLink}
             onShortenLinkChange={qr.onShortenLinkChange}
             onShortLinkCreated={qr.setShortLinkResult}
-            onGenerate={() => qr.setQrGenerated(true)}
           />
         ) : (
           <BulkPanel
@@ -78,7 +77,7 @@ function QRGeneratorPage() {
       {qr.mode === "single" ? (
         <PreviewPanel
           url={qr.url}
-          isValidUrl={urlIsValid && qr.qrGenerated}
+          isValidUrl={urlIsValid}
           fgColor={qr.fgColor}
           bgColor={qr.bgColor}
           logo={qr.logo}

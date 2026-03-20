@@ -23,8 +23,6 @@ export function useQROptions() {
     }
   });
   const [shortLinkResult, setShortLinkResult] = useState<ShortLinkResult | null>(null);
-  const [qrGenerated, setQrGenerated] = useState(false);
-
   const handleShortenLinkChange = (v: boolean) => {
     setShortenLink(v);
     try {
@@ -36,7 +34,6 @@ export function useQROptions() {
 
   const handleUrlChange = (v: string) => {
     setUrl(v);
-    setQrGenerated(false);
   };
 
   return {
@@ -62,7 +59,5 @@ export function useQROptions() {
     onShortenLinkChange: handleShortenLinkChange,
     shortLinkResult,
     setShortLinkResult,
-    qrGenerated,
-    setQrGenerated,
   };
 }

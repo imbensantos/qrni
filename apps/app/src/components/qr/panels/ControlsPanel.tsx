@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useAuth } from "../../../hooks/useAuth";
@@ -31,7 +30,6 @@ interface ControlsPanelProps {
   shortenLink: boolean;
   onShortenLinkChange: (value: boolean) => void;
   onShortLinkCreated: ((result: ShortLinkResult | null) => void) | undefined;
-  onGenerate: (() => void) | undefined;
 }
 
 function ControlsPanel({
@@ -50,7 +48,6 @@ function ControlsPanel({
   shortenLink,
   onShortenLinkChange,
   onShortLinkCreated,
-  onGenerate,
 }: ControlsPanelProps) {
   const { trigger } = useWebHaptics();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -71,12 +68,6 @@ function ControlsPanel({
     allNamespaces,
     createShortLink,
   } = useShortLink(onShortLinkCreated);
-
-  const handleGenerate = useCallback(async () => {
-    onGenerate?.();
-    if (shortenLink) await createShortLink(url);
-    else trigger("success");
-  }, [onGenerate, shortenLink, createShortLink, url, trigger]);
 
   const handleSignIn = async () => {
     try {
@@ -221,6 +212,28 @@ function ControlsPanel({
               </span>
             </div>
           )}
+
+          <button
+            className="create-shortlink-btn"
+            disabled={!isValidUrl(url) || shortLinkLoading}
+            onClick={() => createShortLink(url)}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
+            {shortLinkLoading ? "Creating..." : "Create Short Link"}
+          </button>
         </div>
       )}
 
@@ -248,14 +261,6 @@ function ControlsPanel({
 
       {/* Size */}
       <SizeSlider size={size} onSizeChange={onSizeChange} />
-      {/* Generate Button */}
-      <button
-        className="generate-btn"
-        disabled={!isValidUrl(url) || shortLinkLoading}
-        onClick={handleGenerate}
-      >
-        {shortLinkLoading ? "Generating..." : "Generate QR"}
-      </button>
 
       <div className="panel-spacer" />
 
