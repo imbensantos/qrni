@@ -3,43 +3,7 @@ import { sanitizeText, validateDestinationUrl } from "./validation";
 import { generateShortCode } from "./shortCode";
 import { checkInviteRateLimit } from "./linkHelpers";
 import { ERR, INVITE_RATE_LIMIT, RATE_LIMIT_WINDOW_MS } from "./constants";
-
-// ---------------------------------------------------------------------------
-// Mock helpers (same pattern as linkHelpers.test.ts)
-// ---------------------------------------------------------------------------
-
-function chainableQuery(result: unknown) {
-  const chain: Record<string, unknown> = {};
-  chain.withIndex = vi.fn().mockReturnValue(chain);
-  chain.order = vi.fn().mockReturnValue(chain);
-  chain.filter = vi.fn().mockReturnValue(chain);
-  chain.first = vi.fn().mockResolvedValue(result);
-  chain.take = vi.fn().mockResolvedValue([]);
-  return chain;
-}
-
-type MockCtx = {
-  db: {
-    query: ReturnType<typeof vi.fn>;
-    get: ReturnType<typeof vi.fn>;
-    insert: ReturnType<typeof vi.fn>;
-    patch: ReturnType<typeof vi.fn>;
-    delete: ReturnType<typeof vi.fn>;
-  };
-};
-
-function createMockCtx(overrides?: Partial<MockCtx["db"]>): MockCtx {
-  return {
-    db: {
-      query: vi.fn(),
-      get: vi.fn(),
-      insert: vi.fn().mockResolvedValue("new_id" as never),
-      patch: vi.fn().mockResolvedValue(undefined),
-      delete: vi.fn().mockResolvedValue(undefined),
-      ...overrides,
-    },
-  };
-}
+import { chainableQuery, createMockCtx } from "./testHelpers";
 
 const FAKE_USER_ID = "users:xyz789" as never;
 const FAKE_RATE_LIMIT_ID = "rate_limits:rl001" as never;
