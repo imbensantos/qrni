@@ -1,5 +1,4 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
-import { Link } from "@tanstack/react-router";
 import { useWebHaptics } from "web-haptics/react";
 import { useAction, useQuery, usePaginatedQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
@@ -16,7 +15,7 @@ import LogoUploader from "./LogoUploader";
 import DotStyleSelector from "./DotStyleSelector";
 import SizeSlider from "./SizeSlider";
 import NamespaceDropdown from "./NamespaceDropdown";
-import AdSlot from "./AdSlot";
+import AppFooter from "./AppFooter";
 import "./ControlsPanel.css";
 
 interface ShortLinkResult {
@@ -367,26 +366,10 @@ function ControlsPanel({
 
       <div className="panel-spacer" />
 
-      <footer className="panel-footer panel-footer-desktop">
-        <AdSlot slot="SIDEBAR_SLOT_ID" format="rectangle" className="ad-slot--sidebar" />
-        <p className="copyright-footer">
-          &copy; {new Date().getFullYear()} QRni &middot;{" "}
-          <Link to="/privacy" className="footer-link">
-            Privacy
-          </Link>
-        </p>
-        <span className="powered-by">
-          Powered by
-          <a
-            href="https://imbensantos.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Visit imBento website"
-          >
-            <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
-          </a>
-        </span>
-      </footer>
+      <AppFooter
+        className="panel-footer-desktop"
+        adSlot={{ slot: "SIDEBAR_SLOT_ID", format: "rectangle", className: "ad-slot--sidebar" }}
+      />
     </>
   );
 }

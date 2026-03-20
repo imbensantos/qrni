@@ -17,6 +17,7 @@ import MyLinksSection from "../components/profile/MyLinksSection";
 import AllNamespaceLinksView from "../components/profile/AllNamespaceLinksView";
 import NamespaceSection from "../components/profile/NamespaceSection";
 import AdSlot from "../components/AdSlot";
+import AppFooter from "../components/AppFooter";
 import { formatMemberSince } from "../utils/ui-utils";
 import { MAX_NAMESPACES_PER_USER } from "../../../../convex/lib/constants";
 import { useProfileModals } from "../hooks/useProfileModals";
@@ -300,25 +301,7 @@ function ProfilePage() {
           format="horizontal"
           className="ad-slot--profile-footer"
         />
-        <footer className="panel-footer profile-page-footer">
-          <p className="copyright-footer">
-            &copy; {new Date().getFullYear()} QRni &middot;{" "}
-            <Link to="/privacy" className="footer-link">
-              Privacy
-            </Link>
-          </p>
-          <span className="powered-by">
-            Powered by
-            <a
-              href="https://imbensantos.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Visit imBento website"
-            >
-              <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
-            </a>
-          </span>
-        </footer>
+        <AppFooter className="profile-page-footer" />
       </div>
     </main>
   );

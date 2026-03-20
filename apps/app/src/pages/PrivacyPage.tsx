@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import AdSlot from "../components/AdSlot";
+import AppFooter from "../components/AppFooter";
 import "./PrivacyPage.css";
 
 function PrivacyPage() {
@@ -267,22 +268,7 @@ function PrivacyPage() {
         style={{ maxWidth: 728, margin: "24px auto" }}
       />
 
-      <footer className="panel-footer privacy-page-footer">
-        <p className="copyright-footer">
-          &copy; {new Date().getFullYear()} QRni. All rights reserved.
-        </p>
-        <span className="powered-by">
-          Powered by
-          <a
-            href="https://imbensantos.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Visit imBento website"
-          >
-            <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
-          </a>
-        </span>
-      </footer>
+      <AppFooter className="privacy-page-footer" variant="privacy" />
     </main>
   );
 }

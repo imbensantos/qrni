@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { Link } from "@tanstack/react-router";
 import { useWebHaptics } from "web-haptics/react";
+import AppFooter from "./AppFooter";
 import { generateZip, generatePdf, type ExportFormat } from "../utils/bulk-export";
 import { isValidUrl, sanitizeLabel, deduplicateLabels, type BulkEntry } from "../utils/bulk-utils";
 import Doodles from "./Doodles";
@@ -148,25 +148,7 @@ function BulkPreview({
           format="horizontal"
           className="ad-slot--bulk-preview"
         />
-        <footer className="panel-footer panel-footer-mobile">
-          <p className="copyright-footer">
-            &copy; {new Date().getFullYear()} QRni &middot;{" "}
-            <Link to="/privacy" className="footer-link">
-              Privacy
-            </Link>
-          </p>
-          <span className="powered-by">
-            Powered by
-            <a
-              href="https://imbensantos.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Visit imBento website"
-            >
-              <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
-            </a>
-          </span>
-        </footer>
+        <AppFooter className="panel-footer-mobile" />
       </section>
     );
   }

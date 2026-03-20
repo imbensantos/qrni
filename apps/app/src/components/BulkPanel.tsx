@@ -1,11 +1,10 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import { Link } from "@tanstack/react-router";
 import { useWebHaptics } from "web-haptics/react";
 import { parseFile, type BulkEntry } from "../utils/bulk-utils";
 import ColorPicker from "./ColorPicker";
 import LogoUploader from "./LogoUploader";
 import DotStyleSelector from "./DotStyleSelector";
-import AdSlot from "./AdSlot";
+import AppFooter from "./AppFooter";
 import "./BulkPanel.css";
 
 const FORMATS = ["png", "svg", "webp"] as const;
@@ -263,26 +262,14 @@ function BulkPanel({
       </section>
       <div className="panel-spacer" />
 
-      <footer className="panel-footer panel-footer-desktop">
-        <AdSlot slot="SIDEBAR_SLOT_ID" format="horizontal" className="ad-slot--sidebar-compact" />
-        <p className="copyright-footer">
-          &copy; {new Date().getFullYear()} QRni &middot;{" "}
-          <Link to="/privacy" className="footer-link">
-            Privacy
-          </Link>
-        </p>
-        <span className="powered-by">
-          Powered by
-          <a
-            href="https://imbensantos.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Visit imBento website"
-          >
-            <img src="/imbento-logo-dark.svg" alt="imBento" className="imbento-logo" />
-          </a>
-        </span>
-      </footer>
+      <AppFooter
+        className="panel-footer-desktop"
+        adSlot={{
+          slot: "SIDEBAR_SLOT_ID",
+          format: "horizontal",
+          className: "ad-slot--sidebar-compact",
+        }}
+      />
     </>
   );
 }
