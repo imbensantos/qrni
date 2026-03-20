@@ -84,7 +84,13 @@ function PreviewPanel({
 
   const handleDownload = async () => {
     trigger("success");
-    qrCode.update({ width: size, height: size });
+    qrCode.update({
+      width: size,
+      height: size,
+      dotsOptions: { color: fgColor, type: dotStyle as any },
+      backgroundOptions: { color: bgColor === "transparent" ? "rgba(0,0,0,0)" : bgColor },
+      image: logo || undefined,
+    });
     await qrCode.download({ name: DOWNLOAD_FILENAME_SINGLE, extension: format });
     qrCode.update({ width: 200, height: 200 });
   };
