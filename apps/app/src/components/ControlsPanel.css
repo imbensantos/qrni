@@ -328,6 +328,12 @@
   flex: 1;
 }
 
+@media (max-width: 768px) {
+  .panel-spacer {
+    display: none;
+  }
+}
+
 .panel-footer {
   display: flex;
   flex-direction: column;
