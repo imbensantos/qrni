@@ -83,7 +83,7 @@ body {
 
 body {
   font-family: "Outfit", sans-serif;
-  background: var(--bg-page);
+  background: var(--bg-card);
 }
 
 /* Prevent mobile Safari auto-zoom on focus — !important overrides component CSS */

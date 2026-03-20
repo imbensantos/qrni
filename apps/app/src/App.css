@@ -107,7 +107,7 @@
 
 .sidebar-panel {
   width: 380px;
-  background: var(--bg-card);
+  background: var(--bg-page);
   padding: 28px;
   display: flex;
   flex-direction: column;
