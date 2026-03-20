@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useWebHaptics } from "web-haptics/react";
 
 interface ColorPickerProps {
@@ -20,6 +21,14 @@ function ColorPicker({
   showIcon = true,
 }: ColorPickerProps) {
   const { trigger } = useWebHaptics();
+  const lastBgColorRef = useRef(bgColor === "transparent" ? "#FFFFFF" : bgColor);
+
+  // Keep ref in sync when user picks a solid color
+  useEffect(() => {
+    if (bgColor !== "transparent") {
+      lastBgColorRef.current = bgColor;
+    }
+  }, [bgColor]);
 
   return (
     <section className="control-section" role="group" aria-labelledby={`${labelId}-label`}>
@@ -70,24 +79,50 @@ function ColorPicker({
         </div>
         <div className="color-group">
           <span className="color-sublabel">Background</span>
-          <label className="color-picker">
-            <input
-              type="color"
-              aria-label="Background color"
-              value={bgColor}
-              onClick={() => trigger("nudge")}
-              onInput={(e) => {
-                onBgColorChange((e.target as HTMLInputElement).value);
-                trigger(30);
+          <div className="color-bg-row">
+            <button
+              type="button"
+              className={`transparent-swatch${bgColor === "transparent" ? " active" : ""}`}
+              aria-label="Transparent background"
+              aria-pressed={bgColor === "transparent"}
+              onClick={() => {
+                trigger("nudge");
+                if (bgColor === "transparent") {
+                  onBgColorChange(lastBgColorRef.current);
+                } else {
+                  onBgColorChange("transparent");
+                }
               }}
-              onChange={(e) => {
-                onBgColorChange(e.target.value);
-                trigger("success");
-              }}
-            />
-            <span className="color-swatch" style={{ background: bgColor }} aria-hidden="true" />
-            <span className="color-value">{bgColor.toUpperCase()}</span>
-          </label>
+            >
+              <span className="transparent-swatch-inner" aria-hidden="true" />
+            </button>
+            <label
+              className={`color-picker${bgColor === "transparent" ? " color-picker-muted" : ""}`}
+            >
+              <input
+                type="color"
+                aria-label="Background color"
+                value={bgColor === "transparent" ? "#ffffff" : bgColor}
+                onClick={() => trigger("nudge")}
+                onInput={(e) => {
+                  onBgColorChange((e.target as HTMLInputElement).value);
+                  trigger(30);
+                }}
+                onChange={(e) => {
+                  onBgColorChange(e.target.value);
+                  trigger("success");
+                }}
+              />
+              <span
+                className="color-swatch"
+                style={{ background: bgColor === "transparent" ? "#ffffff" : bgColor }}
+                aria-hidden="true"
+              />
+              <span className="color-value">
+                {bgColor === "transparent" ? "TRANSPARENT" : bgColor.toUpperCase()}
+              </span>
+            </label>
+          </div>
         </div>
       </div>
     </section>

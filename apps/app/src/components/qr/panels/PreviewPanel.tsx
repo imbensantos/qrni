@@ -77,7 +77,7 @@ function PreviewPanel({
       data: isValidUrl ? url : "",
 
       dotsOptions: { color: fgColor, type: dotStyle as any },
-      backgroundOptions: { color: bgColor },
+      backgroundOptions: { color: bgColor === "transparent" ? "rgba(0,0,0,0)" : bgColor },
       image: logo || undefined,
     });
   }, [url, isValidUrl, fgColor, bgColor, logo, dotStyle, qrCode]);
@@ -93,7 +93,7 @@ function PreviewPanel({
     <section className="preview-panel" aria-label="QR code preview">
       <Doodles />
       <div className="preview-content">
-        <div className="qr-card">
+        <div className={`qr-card${bgColor === "transparent" ? " qr-card-transparent" : ""}`}>
           <div
             className="qr-code"
             ref={qrContainerRef}

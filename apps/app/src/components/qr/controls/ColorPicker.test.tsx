@@ -54,4 +54,46 @@ describe("ColorPicker", () => {
     fireEvent.change(bgInput, { target: { value: "#00ff00" } });
     expect(props.onBgColorChange).toHaveBeenCalledWith("#00ff00");
   });
+
+  describe("transparent swatch", () => {
+    it("renders the transparent swatch button", () => {
+      renderPicker();
+      expect(screen.getByRole("button", { name: "Transparent background" })).toBeInTheDocument();
+    });
+
+    it("calls onBgColorChange with 'transparent' when swatch is clicked", () => {
+      const props = renderPicker();
+      const swatch = screen.getByRole("button", { name: "Transparent background" });
+      fireEvent.click(swatch);
+      expect(props.onBgColorChange).toHaveBeenCalledWith("transparent");
+    });
+
+    it("marks the transparent swatch as pressed when bgColor is transparent", () => {
+      renderPicker({ bgColor: "transparent" });
+      const swatch = screen.getByRole("button", { name: "Transparent background" });
+      expect(swatch).toHaveAttribute("aria-pressed", "true");
+    });
+
+    it("marks the transparent swatch as not pressed when bgColor is a hex color", () => {
+      renderPicker({ bgColor: "#ffffff" });
+      const swatch = screen.getByRole("button", { name: "Transparent background" });
+      expect(swatch).toHaveAttribute("aria-pressed", "false");
+    });
+
+    it("shows TRANSPARENT label when bgColor is transparent", () => {
+      renderPicker({ bgColor: "transparent" });
+      expect(screen.getByText("TRANSPARENT")).toBeInTheDocument();
+    });
+
+    it("does not show TRANSPARENT label when bgColor is a hex color", () => {
+      renderPicker({ bgColor: "#ffffff" });
+      expect(screen.queryByText("TRANSPARENT")).not.toBeInTheDocument();
+    });
+
+    it("falls back to #ffffff for the color input when bgColor is transparent", () => {
+      renderPicker({ bgColor: "transparent" });
+      const bgInput = screen.getByLabelText("Background color") as HTMLInputElement;
+      expect(bgInput.value).toBe("#ffffff");
+    });
+  });
 });

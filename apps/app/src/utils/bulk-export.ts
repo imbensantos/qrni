@@ -36,7 +36,7 @@ function createQRCode(QRCodeStyling: any, url: string, options: QrOptions): any 
     type: "canvas",
     data: url,
     dotsOptions: { color: fgColor, type: dotStyle },
-    backgroundOptions: { color: bgColor },
+    backgroundOptions: { color: bgColor === "transparent" ? "rgba(0,0,0,0)" : bgColor },
     cornersSquareOptions: { type: "extra-rounded" },
     imageOptions: { crossOrigin: "anonymous", margin: 6, imageSize: 0.35 },
     image: logo || undefined,
