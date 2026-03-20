@@ -136,6 +136,7 @@
   .app {
     height: auto;
     min-height: 100vh;
+    overflow: visible;
   }
 
   .sidebar-panel {
