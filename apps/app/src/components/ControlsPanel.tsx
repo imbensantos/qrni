@@ -12,6 +12,7 @@ import LogoUploader from "./LogoUploader";
 import DotStyleSelector from "./DotStyleSelector";
 import SizeSlider from "./SizeSlider";
 import NamespaceDropdown from "./NamespaceDropdown";
+import AdSlot from "./AdSlot";
 import AppFooter from "./AppFooter";
 import "./ControlsPanel.css";
 
@@ -256,6 +257,8 @@ function ControlsPanel({
       >
         {shortLinkLoading ? "Generating..." : "Generate QR"}
       </button>
+
+      <AdSlot slot="MOBILE_INFEED_SLOT_ID" format="rectangle" className="ad-slot--mobile-infeed" />
 
       <div className="panel-spacer" />
 

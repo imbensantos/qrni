@@ -211,9 +211,9 @@ function PreviewPanel({
           </button>
         </div>
 
+        <AdSlot slot="PREVIEW_PANEL_SLOT_ID" format="horizontal" className="ad-slot--preview" />
         <AppFooter className="panel-footer-mobile" />
       </div>
-      <AdSlot slot="PREVIEW_PANEL_SLOT_ID" format="horizontal" className="ad-slot--preview" />
     </section>
   );
 }
