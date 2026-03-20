@@ -26,6 +26,9 @@ export const AUTH_RATE_LIMIT = 100;
 /** Invite acceptance rate limit per user per window */
 export const INVITE_RATE_LIMIT = 10;
 
+/** Invite creation rate limit per user per window */
+export const INVITE_CREATION_RATE_LIMIT = 20;
+
 /** Rate limit window duration in milliseconds (1 hour) */
 export const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 
@@ -93,6 +96,8 @@ export const ERR = {
   TARGET_MUST_BE_MEMBER: "Target user must be a member of this namespace",
 
   INVITE_RATE_LIMITED: "Too many invite attempts. Please wait a bit and try again.",
+  INVITE_CREATION_RATE_LIMITED:
+    "You're creating invites too fast. Please wait a bit and try again.",
 
   // Generic security messages (avoid leaking entity existence)
   LINK_NOT_FOUND_OR_DENIED: "Link not found or access denied",

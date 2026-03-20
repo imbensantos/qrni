@@ -8,6 +8,7 @@ import {
   ANONYMOUS_RATE_LIMIT,
   AUTH_RATE_LIMIT,
   INVITE_RATE_LIMIT,
+  INVITE_CREATION_RATE_LIMIT,
   RATE_LIMIT_WINDOW_MS,
 } from "./constants";
 
@@ -172,6 +173,18 @@ export async function checkAnonymousRateLimit(ctx: MutationCtx, ip: string): Pro
 
 export async function checkInviteRateLimit(ctx: MutationCtx, userId: Id<"users">): Promise<void> {
   await checkRateLimit(ctx, `invite:${userId}`, INVITE_RATE_LIMIT, ERR.INVITE_RATE_LIMITED);
+}
+
+export async function checkInviteCreationRateLimit(
+  ctx: MutationCtx,
+  userId: Id<"users">,
+): Promise<void> {
+  await checkRateLimit(
+    ctx,
+    `invite-create:${userId}`,
+    INVITE_CREATION_RATE_LIMIT,
+    ERR.INVITE_CREATION_RATE_LIMITED,
+  );
 }
 
 export async function checkAuthRateLimit(ctx: MutationCtx, userId: Id<"users">): Promise<void> {

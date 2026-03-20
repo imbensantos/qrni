@@ -6,7 +6,7 @@ import { generateShortCode } from "./lib/shortCode";
 import { logAudit } from "./lib/auditLog";
 import { checkPermission } from "./lib/permissions";
 import { isValidEmail } from "./lib/validation";
-import { checkInviteRateLimit } from "./lib/linkHelpers";
+import { checkInviteRateLimit, checkInviteCreationRateLimit } from "./lib/linkHelpers";
 import { INVITE_TTL_MS, ERR } from "./lib/constants";
 
 const roleValidator = v.union(v.literal("editor"), v.literal("viewer"));
@@ -25,10 +25,9 @@ export const createEmailInvite = mutation({
     if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
     // Only owners can invite members
-    await checkPermission(ctx, args.namespaceId, user._id, "owner");
+    const { namespace } = await checkPermission(ctx, args.namespaceId, user._id, "owner");
 
-    const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
+    await checkInviteCreationRateLimit(ctx, user._id);
 
     const normalizedEmail = args.email.toLowerCase().trim();
     if (!isValidEmail(normalizedEmail)) {
@@ -88,10 +87,9 @@ export const createInviteLink = mutation({
     if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
     // Only owners can invite members
-    await checkPermission(ctx, args.namespaceId, user._id, "owner");
+    const { namespace } = await checkPermission(ctx, args.namespaceId, user._id, "owner");
 
-    const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
+    await checkInviteCreationRateLimit(ctx, user._id);
 
     // Use 32 chars (~190 bits of entropy) to make brute-force infeasible
     const token = generateShortCode(32);
@@ -205,9 +203,6 @@ export const revokeInvite = mutation({
     if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
     await checkPermission(ctx, args.namespaceId, user._id, "owner");
-
-    const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
 
     const invite = await ctx.db.get(args.inviteId);
     if (!invite) throw new Error(ERR.INVITE_NOT_FOUND);
