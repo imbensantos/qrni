@@ -136,8 +136,18 @@ export function parseJSON(text: string): BulkEntry[] {
   }
 
   const entries = (data as Record<string, unknown>[]).slice(0, MAX_ENTRIES).map((item, i) => {
-    const label = String(item["label"] ?? item["name"] ?? "");
-    const url = String(item["url"] ?? item["link"] ?? "");
+    let label: string;
+    let url: string;
+    try {
+      label = String(item["label"] ?? item["name"] ?? "");
+    } catch {
+      label = "";
+    }
+    try {
+      url = String(item["url"] ?? item["link"] ?? "");
+    } catch {
+      url = "";
+    }
     return buildEntry(i, label, url);
   });
 
