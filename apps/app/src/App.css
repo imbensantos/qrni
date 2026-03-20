@@ -214,4 +214,33 @@
     background: var(--bg-card);
     padding-bottom: 20px;
   }
+
+  /* Collapse the entire infeed slot when AdSense marks the ad as unfilled.
+     AdSense sets data-ad-status="unfilled" on the <ins> when no ad loads.
+     :has() lets us walk up from the <ins> to the wrapper and strip all spacing. */
+  .ad-slot--mobile-infeed:has(.adsbygoogle[data-ad-status="unfilled"]) {
+    padding: 0 !important;
+    background: transparent;
+  }
+
+  /* Hide the "Ad" label when no ad is present */
+  .ad-slot--mobile-infeed:has(.adsbygoogle[data-ad-status="unfilled"]) .ad-slot-label {
+    display: none;
+  }
+
+  /* Collapse the <ins> itself — AdSense may leave it as display:block with
+     an injected height, so we force both height and overflow to zero. */
+  .ad-slot--mobile-infeed .adsbygoogle[data-ad-status="unfilled"] {
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Fallback for browsers without :has() support: cap the <ins> at 0 height
+     when it carries no children (AdSense leaves it empty on failure). */
+  .ad-slot--mobile-infeed .adsbygoogle:empty {
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
 }

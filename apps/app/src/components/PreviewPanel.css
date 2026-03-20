@@ -418,6 +418,28 @@
     max-width: 100%;
     padding: 8px 16px 16px;
   }
+
+  /* Collapse the preview ad slot when AdSense marks it unfilled */
+  .ad-slot--preview:has(.adsbygoogle[data-ad-status="unfilled"]) {
+    padding: 0 !important;
+  }
+
+  .ad-slot--preview:has(.adsbygoogle[data-ad-status="unfilled"]) .ad-slot-label {
+    display: none;
+  }
+
+  .ad-slot--preview .adsbygoogle[data-ad-status="unfilled"] {
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Fallback for browsers without :has(): collapse empty <ins> elements */
+  .ad-slot--preview .adsbygoogle:empty {
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
 }
 
 /* Short Link Card */
