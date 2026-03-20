@@ -107,7 +107,7 @@
 
 .sidebar-panel {
   width: 380px;
-  background: var(--bg-card);
+  background: #ffffff;
   padding: 28px;
   display: flex;
   flex-direction: column;
@@ -121,6 +121,7 @@
   max-height: calc(100vh - 65px);
   max-height: calc(100dvh - 65px);
   overflow-y: auto;
+  background: linear-gradient(to right, #ffffff 380px, transparent 380px);
 }
 
 @media (max-width: 768px) {
