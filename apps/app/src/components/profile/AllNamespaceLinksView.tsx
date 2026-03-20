@@ -39,6 +39,7 @@ function AllNamespaceLinksView({
   // to avoid fetching the full dataset on every render.
   const nsLinks = useQuery(api.links.listNamespaceLinks, { namespaceId });
   const members = useQuery(api.collaboration.listMembers, { namespaceId });
+  const currentUser = useQuery(api.users.currentUser);
 
   const totalLinks = nsLinks ? nsLinks.length : 0;
   const totalPages = Math.max(1, Math.ceil(totalLinks / LINKS_PER_PAGE));
@@ -47,8 +48,8 @@ function AllNamespaceLinksView({
     : [];
   const memberCount = members ? members.length : 0;
 
-  // listMembers does not include isCurrentUser; default to "viewer" for display
-  const role = (members?.[0]?.role as string | undefined) ?? "viewer";
+  const currentMember = members?.find((m) => m.user?._id === currentUser?._id);
+  const role = currentMember?.role ?? "viewer";
   const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
 
   return (

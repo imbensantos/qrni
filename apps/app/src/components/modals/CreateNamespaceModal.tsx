@@ -3,6 +3,7 @@ import { useWebHaptics } from "web-haptics/react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { cleanConvexError } from "../../utils/errors";
+import { getAppHost } from "../../utils/url-utils";
 import ModalBackdrop from "./ModalBackdrop";
 import { IconFolderOpen, IconClose, IconGlobe } from "../Icons";
 import "./CreateNamespaceModal.css";
@@ -104,7 +105,7 @@ function CreateNamespaceModal({ isOpen, onClose }: CreateNamespaceModalProps) {
         <div className="cnm-url-preview">
           <IconGlobe size={16} />
           <span>
-            <span style={{ opacity: 0.5 }}>{window.location.host}/</span>
+            <span style={{ opacity: 0.5 }}>{getAppHost()}/</span>
             {sanitizedName || "[namespace]"}
             <span style={{ opacity: 0.5 }}>/your-slug</span>
           </span>

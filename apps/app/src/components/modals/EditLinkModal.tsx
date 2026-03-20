@@ -3,6 +3,7 @@ import { useWebHaptics } from "web-haptics/react";
 import { useAction } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { cleanConvexError } from "../../utils/errors";
+import { getAppHost } from "../../utils/url-utils";
 import ModalBackdrop from "./ModalBackdrop";
 import { IconPencil, IconLink, IconClose } from "../Icons";
 import { formatDate } from "../../utils/ui-utils";
@@ -46,8 +47,8 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
   // For namespaced links, extract the namespace prefix from shortCode (e.g. "ns/slug" → "ns")
   const namespacePart = link?.namespace ? link.shortCode.split("/")[0] : null;
   const prefix = namespacePart
-    ? `${window.location.host}/${namespacePart}/`
-    : `${window.location.host}/`;
+    ? `${getAppHost()}/${namespacePart}/`
+    : `${getAppHost()}/`;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
