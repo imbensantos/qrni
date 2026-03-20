@@ -94,10 +94,7 @@ export const update = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
-    await checkPermission(ctx, args.namespaceId, user._id, "owner");
-
-    const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
+    const { namespace } = await checkPermission(ctx, args.namespaceId, user._id, "owner");
 
     const updates: Record<string, unknown> = {};
 
@@ -210,10 +207,7 @@ export const remove = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
-    await checkPermission(ctx, args.namespaceId, user._id, "owner");
-
-    const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
+    const { namespace } = await checkPermission(ctx, args.namespaceId, user._id, "owner");
 
     // Cascade delete: links, members, invites.
     // Uses .collect() to ensure ALL related records are deleted, not just the

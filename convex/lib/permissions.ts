@@ -1,5 +1,5 @@
 import { QueryCtx } from "../_generated/server";
-import { Id } from "../_generated/dataModel";
+import { Id, Doc } from "../_generated/dataModel";
 import { ERR } from "./constants";
 
 export type Role = "owner" | "editor" | "viewer";
@@ -15,12 +15,12 @@ export async function checkPermission(
   namespaceId: Id<"namespaces">,
   userId: Id<"users">,
   requiredRole: Role,
-): Promise<{ role: Role; isOwner: boolean }> {
+): Promise<{ role: Role; isOwner: boolean; namespace: Doc<"namespaces"> }> {
   const namespace = await ctx.db.get(namespaceId);
   if (!namespace) throw new Error(ERR.NOT_AUTHORIZED);
 
   if (namespace.owner === userId) {
-    return { role: "owner", isOwner: true };
+    return { role: "owner", isOwner: true, namespace };
   }
 
   const membership = await ctx.db
@@ -35,5 +35,5 @@ export async function checkPermission(
     throw new Error(ERR.NOT_AUTHORIZED);
   }
 
-  return { role: userRole, isOwner: false };
+  return { role: userRole, isOwner: false, namespace };
 }

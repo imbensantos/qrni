@@ -268,10 +268,7 @@ export const createNamespacedLinkInternal = internalMutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error(ERR.USER_NOT_FOUND);
 
-    await checkPermission(ctx, args.namespaceId, user._id, "editor");
-
-    const namespace = await ctx.db.get(args.namespaceId);
-    if (!namespace) throw new Error(ERR.NAMESPACE_NOT_FOUND);
+    const { namespace } = await checkPermission(ctx, args.namespaceId, user._id, "editor");
 
     validateDestinationUrl(args.destinationUrl);
 

@@ -49,7 +49,11 @@ describe("checkPermission", () => {
     });
 
     const result = await checkPermission(ctx as never, NAMESPACE_ID, OWNER_ID, "viewer");
-    expect(result).toEqual({ role: "owner", isOwner: true });
+    expect(result).toEqual({
+      role: "owner",
+      isOwner: true,
+      namespace: { _id: NAMESPACE_ID, owner: OWNER_ID },
+    });
   });
 
   it("grants owner access for any required role", async () => {
@@ -71,7 +75,11 @@ describe("checkPermission", () => {
     });
 
     const result = await checkPermission(ctx as never, NAMESPACE_ID, EDITOR_ID, "viewer");
-    expect(result).toEqual({ role: "editor", isOwner: false });
+    expect(result).toEqual({
+      role: "editor",
+      isOwner: false,
+      namespace: { _id: NAMESPACE_ID, owner: OWNER_ID },
+    });
   });
 
   it("allows editor to perform editor-level actions", async () => {
@@ -81,7 +89,11 @@ describe("checkPermission", () => {
     });
 
     const result = await checkPermission(ctx as never, NAMESPACE_ID, EDITOR_ID, "editor");
-    expect(result).toEqual({ role: "editor", isOwner: false });
+    expect(result).toEqual({
+      role: "editor",
+      isOwner: false,
+      namespace: { _id: NAMESPACE_ID, owner: OWNER_ID },
+    });
   });
 
   it("rejects editor for owner-level actions with generic error", async () => {
@@ -102,7 +114,11 @@ describe("checkPermission", () => {
     });
 
     const result = await checkPermission(ctx as never, NAMESPACE_ID, VIEWER_ID, "viewer");
-    expect(result).toEqual({ role: "viewer", isOwner: false });
+    expect(result).toEqual({
+      role: "viewer",
+      isOwner: false,
+      namespace: { _id: NAMESPACE_ID, owner: OWNER_ID },
+    });
   });
 
   it("rejects viewer for editor-level actions with generic error", async () => {
