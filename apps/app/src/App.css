@@ -144,6 +144,7 @@
     height: auto;
     max-height: none;
     overflow-y: visible;
+    padding-bottom: 0;
   }
 
   .body {
