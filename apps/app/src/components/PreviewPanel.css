@@ -391,14 +391,32 @@
 @media (max-width: 768px) {
   .preview-panel {
     min-height: auto;
+    /* Establish a flex column so .ad-slot--preview can flow below .preview-content */
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
   }
 
   .preview-content {
     padding: 24px 16px;
+    /* Let content size to its children instead of filling the panel height */
+    height: auto;
+    flex: none;
   }
 
   .doodles {
     display: none;
+  }
+
+  .ad-slot--preview {
+    /* Take the ad out of absolute positioning so it flows below preview-content */
+    position: static;
+    transform: none;
+    left: auto;
+    bottom: auto;
+    width: 100%;
+    max-width: 100%;
+    padding: 8px 16px 16px;
   }
 }
 

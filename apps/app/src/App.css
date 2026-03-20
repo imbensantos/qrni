@@ -208,5 +208,9 @@
 @media (max-width: 768px) {
   .ad-slot--mobile-infeed {
     display: block;
+    /* Remove top padding so the ad visually connects to the sidebar panel above it */
+    padding-top: 0;
+    background: var(--bg-card);
+    padding-bottom: 20px;
   }
 }
