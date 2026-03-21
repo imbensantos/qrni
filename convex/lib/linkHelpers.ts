@@ -129,7 +129,7 @@ export async function generateUniqueNamespaceSlug(
   throw new Error(ERR.SHORT_CODE_EXHAUSTED);
 }
 
-async function checkRateLimit(
+export async function checkRateLimit(
   ctx: MutationCtx,
   key: string,
   limit: number,

@@ -15,6 +15,12 @@ export const MAX_DESCRIPTION_LENGTH = 500;
 /** Maximum name length for user profiles */
 export const MAX_USER_NAME_LENGTH = 100;
 
+/** Maximum contact form message length */
+export const MAX_CONTACT_MESSAGE_LENGTH = 5000;
+
+/** Maximum contact form name length */
+export const MAX_CONTACT_NAME_LENGTH = 200;
+
 // ============ RATE LIMITING ============
 
 /** Anonymous link creation rate limit per IP per window */
@@ -28,6 +34,9 @@ export const INVITE_RATE_LIMIT = 10;
 
 /** Invite creation rate limit per user per window */
 export const INVITE_CREATION_RATE_LIMIT = 20;
+
+/** Contact form submission rate limit per IP per window */
+export const CONTACT_RATE_LIMIT = 5;
 
 /** Rate limit window duration in milliseconds (1 hour) */
 export const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
@@ -108,6 +117,14 @@ export const ERR = {
   // User
   NAME_TOO_LONG: `Name must be ${MAX_USER_NAME_LENGTH} characters or fewer`,
   AVATAR_MUST_BE_HTTPS: "Avatar URL must start with https://",
+
+  // Contact form
+  CONTACT_NAME_REQUIRED: "Name is required",
+  CONTACT_EMAIL_INVALID: "Invalid email address",
+  CONTACT_MESSAGE_REQUIRED: "Message is required",
+  CONTACT_MESSAGE_TOO_LONG: `Message must be ${MAX_CONTACT_MESSAGE_LENGTH} characters or fewer`,
+  CONTACT_NAME_TOO_LONG: `Name must be ${MAX_CONTACT_NAME_LENGTH} characters or fewer`,
+  CONTACT_RATE_LIMITED: "You've sent too many messages. Please wait a bit and try again.",
 } as const;
 
 // ============ RESERVED SLUGS ============

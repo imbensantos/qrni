@@ -107,4 +107,12 @@ export default defineSchema({
     .index("by_user_timestamp", ["userId", "timestamp"])
     .index("by_resource", ["resourceType", "resourceId"])
     .index("by_action_timestamp", ["action", "timestamp"]),
+
+  contactSubmissions: defineTable({
+    name: v.string(),
+    email: v.string(),
+    message: v.string(),
+    createdAt: v.number(),
+    isRead: v.boolean(),
+  }).index("by_created_at", ["createdAt"]),
 });
