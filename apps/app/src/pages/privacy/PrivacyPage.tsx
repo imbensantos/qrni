@@ -5,14 +5,14 @@ import "./PrivacyPage.css";
 
 function PrivacyPage() {
   return (
-    <main id="main-content" className="privacy-page">
-      <div className="privacy-body">
-        <Link to="/" className="privacy-back-link">
+    <main id="main-content" className="static-page">
+      <div className="static-page-body">
+        <Link to="/" className="static-page-back-link">
           &larr; Back to home
         </Link>
 
-        <h2 className="privacy-title">Privacy Policy</h2>
-        <p className="privacy-effective-date">Effective date: March 18, 2026</p>
+        <h2 className="static-page-title">Privacy Policy</h2>
+        <p className="static-page-subtitle">Effective date: March 18, 2026</p>
 
         <p>
           QRni ("we", "us", "our") provides a free QR code generator and URL shortener. This policy
@@ -268,7 +268,7 @@ function PrivacyPage() {
         style={{ maxWidth: 728, margin: "24px auto" }}
       />
 
-      <AppFooter className="privacy-page-footer" variant="privacy" />
+      <AppFooter className="static-page-footer" variant="privacy" />
     </main>
   );
 }
