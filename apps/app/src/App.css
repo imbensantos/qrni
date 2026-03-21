@@ -122,6 +122,14 @@
 .body {
   display: flex;
   flex: 1;
+  /*
+   * Explicit height (not just max-height) is required so that flex children
+   * using min-height:100% or align-self:stretch have a concrete resolved height
+   * to work against. Without this, percentage heights on children resolve to
+   * auto (content height) which breaks sidebar full-height stretching and
+   * bulk-preview align-self:stretch. max-height is kept as a safety cap.
+   */
+  height: calc(100vh - 65px);
   max-height: calc(100vh - 65px);
   overflow-y: auto;
   background: linear-gradient(to right, #ffffff 380px, transparent 380px);
@@ -147,6 +155,8 @@
   .body {
     flex-direction: column;
     flex: none;
+    /* Reset the desktop fixed height so mobile flows naturally to content size */
+    height: auto;
     max-height: none;
     overflow: visible;
   }
