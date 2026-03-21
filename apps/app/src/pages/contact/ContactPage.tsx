@@ -33,81 +33,125 @@ function ContactPage() {
   }
 
   return (
-    <main id="main-content" className="static-page contact-page">
-      <div className="static-page-body">
-        <Link to="/" className="static-page-back-link">
+    <main id="main-content" className="contact-page static-page">
+      <div className="contact-page__inner">
+        <Link to="/" className="contact-page__back-link">
           &larr; Back to home
         </Link>
 
-        <h2 className="static-page-title">Get in Touch</h2>
-        <p className="static-page-subtitle">
-          Got a question, found a bug, or just want to say hi? We'd love to hear from you.
-        </p>
-
-        {status === "sent" ? (
-          <div className="contact-success">
-            <p>Thanks for reaching out! We'll get back to you soon.</p>
-            <button
-              type="button"
-              className="contact-send-another"
-              onClick={() => setStatus("idle")}
-            >
-              Send another message
-            </button>
-          </div>
-        ) : (
-          <form className="contact-form" onSubmit={handleSubmit}>
-            <label className="contact-label">
-              Name
-              <input
-                type="text"
-                className="contact-input"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                maxLength={200}
-                placeholder="Your name"
-              />
-            </label>
-
-            <label className="contact-label">
-              Email
-              <input
-                type="email"
-                className="contact-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="you@example.com"
-              />
-            </label>
-
-            <label className="contact-label">
-              Message
-              <textarea
-                className="contact-textarea"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                required
-                maxLength={5000}
-                rows={6}
-                placeholder="What's on your mind?"
-              />
-            </label>
-
-            {status === "error" && <p className="contact-error">{errorMsg}</p>}
-
-            <button type="submit" className="contact-submit" disabled={status === "sending"}>
-              {status === "sending" ? "Sending..." : "Send Message"}
-            </button>
-          </form>
-        )}
-
-        <div className="contact-direct">
-          <h3>Prefer email?</h3>
-          <p>
-            You can also reach us directly at <a href="mailto:contact@qrni.to">contact@qrni.to</a>.
+        {/* Hero */}
+        <section className="contact-hero">
+          <h1 className="contact-hero__title">Get in Touch</h1>
+          <p className="contact-hero__subtitle">
+            Got a question, found a bug, or just want to say hi? We'd love to hear from you.
           </p>
+          <div className="contact-hero__doodle-bar" aria-hidden="true">
+            <span className="contact-hero__doodle-tilde">~</span>
+            <span className="contact-hero__doodle-line" />
+            <span className="contact-hero__doodle-tilde">~</span>
+          </div>
+        </section>
+
+        {/* Content row */}
+        <div className="contact-content">
+          {/* Form card */}
+          <div className="contact-form-card">
+            <h2 className="contact-form-card__title">Send us a message</h2>
+
+            {status === "sent" ? (
+              <div className="contact-success">
+                <div className="contact-success__icon" aria-hidden="true">
+                  &#10003;
+                </div>
+                <h3 className="contact-success__heading">Message sent!</h3>
+                <p className="contact-success__text">
+                  Thanks for reaching out! We'll get back to you soon.
+                </p>
+                <button
+                  type="button"
+                  className="contact-send-another"
+                  onClick={() => setStatus("idle")}
+                >
+                  Send another message
+                </button>
+              </div>
+            ) : (
+              <form className="contact-form" onSubmit={handleSubmit}>
+                <label className="contact-label">
+                  <span className="contact-label__text">Name</span>
+                  <input
+                    type="text"
+                    className="contact-input"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    maxLength={200}
+                    placeholder="Your name"
+                  />
+                </label>
+
+                <label className="contact-label">
+                  <span className="contact-label__text">Email</span>
+                  <input
+                    type="email"
+                    className="contact-input"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="you@example.com"
+                  />
+                </label>
+
+                <label className="contact-label">
+                  <span className="contact-label__text">Message</span>
+                  <textarea
+                    className="contact-textarea"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    required
+                    maxLength={5000}
+                    rows={6}
+                    placeholder="What's on your mind?"
+                  />
+                </label>
+
+                {status === "error" && <p className="contact-error">{errorMsg}</p>}
+
+                <button type="submit" className="contact-submit" disabled={status === "sending"}>
+                  <span aria-hidden="true">&#9993;</span>
+                  {status === "sending" ? "Sending..." : "Send Message"}
+                </button>
+              </form>
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <aside className="contact-sidebar">
+            <div className="contact-sidebar__email-card">
+              <div className="contact-sidebar__icon-badge" aria-hidden="true">
+                &#9993;
+              </div>
+              <h2 className="contact-sidebar__email-title">Prefer email?</h2>
+              <p className="contact-sidebar__email-text">
+                You can also reach us directly at{" "}
+                <a href="mailto:contact@qrni.to" className="contact-sidebar__email-link">
+                  contact@qrni.to
+                </a>
+                .
+              </p>
+            </div>
+
+            <div className="contact-sidebar__note-card">
+              <div className="contact-sidebar__note-icon" aria-hidden="true">
+                &#128075;
+              </div>
+              <h2 className="contact-sidebar__note-title">We actually read these!</h2>
+              <p className="contact-sidebar__note-text">
+                Every message lands in our inbox. Bug reports, feature ideas, or just a friendly
+                hello — we appreciate them all.
+              </p>
+            </div>
+          </aside>
         </div>
       </div>
 

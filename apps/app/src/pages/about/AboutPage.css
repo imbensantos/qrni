@@ -1,73 +1,299 @@
 @import "../shared/StaticPage.css";
 
-/* About-specific: maker card */
-.about-maker-card {
-  display: flex;
-  gap: 20px;
-  margin-top: 16px;
-  padding: 20px;
-  background: var(--bg-surface);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
+/* ─── Page shell ─────────────────────────────────────────────────────────── */
+
+.about-page__inner {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 64px 64px;
 }
 
-.about-maker-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.about-maker-info {
-  min-width: 0;
-}
-
-.about-maker-name {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 2px;
-}
-
-.about-maker-role {
-  font-size: 13px;
-  color: var(--text-tertiary);
-  margin-bottom: 8px;
-}
-
-.about-maker-bio {
+.about-page__back-link {
+  display: inline-block;
+  margin-bottom: 32px;
+  font-family: "Inter", sans-serif;
   font-size: 14px;
-  line-height: 1.6;
-  color: var(--text-secondary);
-  margin-bottom: 12px;
-}
-
-.about-maker-links {
-  display: flex;
-  gap: 16px;
-}
-
-.about-maker-links a {
-  font-size: 13px;
   font-weight: 500;
-  color: var(--accent-primary);
+  color: #d89575;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.about-page__back-link:hover {
+  opacity: 0.75;
   text-decoration: none;
 }
 
-.about-maker-links a:hover {
-  text-decoration: underline;
-  text-underline-offset: 2px;
+/* ─── Hero ───────────────────────────────────────────────────────────────── */
+
+.about-hero {
+  text-align: center;
+  padding: 48px 64px;
 }
 
+.about-hero__title {
+  font-family: "Outfit", sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: #2d2a26;
+  margin-bottom: 12px;
+}
+
+.about-hero__subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  color: #6b6560;
+  margin-bottom: 24px;
+}
+
+.about-hero__doodle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.about-hero__doodle-tilde {
+  font-family: "Outfit", sans-serif;
+  font-size: 24px;
+  color: #f0d4c4;
+  line-height: 1;
+}
+
+.about-hero__doodle-line {
+  display: block;
+  width: 120px;
+  height: 2px;
+  background: #f0d4c4;
+  border-radius: 2px;
+}
+
+/* ─── Content cards ──────────────────────────────────────────────────────── */
+
+.about-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  padding: 0 64px;
+}
+
+.about-card {
+  background: #ffffff;
+  border: 1px solid #edeae6;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 20px #2d2a260a;
+}
+
+.about-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+.about-card__icon--sage {
+  background: #e8f2ec;
+  color: #3d8a5a;
+}
+
+.about-card__icon--terracotta {
+  background: #f0d4c4;
+  color: #d89575;
+}
+
+.about-card__title {
+  font-family: "Outfit", sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #2d2a26;
+  margin-bottom: 12px;
+}
+
+.about-card__body {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  color: #6b6560;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ─── Meet the maker ─────────────────────────────────────────────────────── */
+
+.about-maker {
+  padding: 32px 64px;
+  text-align: center;
+}
+
+.about-maker__heading {
+  font-family: "Outfit", sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d2a26;
+  margin-bottom: 24px;
+}
+
+.about-maker__card {
+  display: flex;
+  background: #ffffff;
+  border: 1px solid #edeae6;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px #2d2a260a;
+  max-width: 680px;
+  margin: 0 auto;
+  overflow: hidden;
+  text-align: left;
+}
+
+.about-maker__card-left {
+  width: 220px;
+  flex-shrink: 0;
+  background: linear-gradient(to bottom, #f0d4c4, #e8f2ec);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  gap: 16px;
+}
+
+.about-maker__avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 12px #2d2a2620;
+}
+
+.about-maker__quote {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-style: italic;
+  color: #6b6560;
+  text-align: center;
+  margin: 0;
+}
+
+.about-maker__card-right {
+  flex: 1;
+  padding: 32px;
+  min-width: 0;
+}
+
+.about-maker__name {
+  font-family: "Outfit", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #2d2a26;
+  margin-bottom: 6px;
+}
+
+.about-maker__role {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: #6b6560;
+  margin-bottom: 16px;
+}
+
+.about-maker__role-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3d8a5a;
+  flex-shrink: 0;
+}
+
+.about-maker__bio {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  color: #6b6560;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.about-maker__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.about-maker__link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #f5f4f1;
+  border-radius: 999px;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #3d8a5a;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.about-maker__link-chip:hover {
+  background: #e8f2ec;
+  text-decoration: none;
+}
+
+/* ─── Mobile ─────────────────────────────────────────────────────────────── */
+
 @media (max-width: 768px) {
-  .about-maker-card {
+  .about-page__inner {
+    padding: 20px 20px 48px;
+  }
+
+  .about-hero {
+    padding: 20px;
+  }
+
+  .about-hero__title {
+    font-size: 32px;
+  }
+
+  .about-hero__subtitle {
+    font-size: 16px;
+  }
+
+  .about-cards {
+    grid-template-columns: 1fr;
+    padding: 0 20px;
+  }
+
+  .about-maker {
+    padding: 32px 20px;
+  }
+
+  .about-maker__card {
     flex-direction: column;
-    align-items: center;
     text-align: center;
   }
 
-  .about-maker-links {
+  .about-maker__card-left {
+    width: 100%;
+    padding: 32px 20px 48px;
+    flex-direction: column;
+  }
+
+  .about-maker__card-right {
+    padding: 24px 20px 32px;
+  }
+
+  .about-maker__role {
+    justify-content: center;
+  }
+
+  .about-maker__links {
     justify-content: center;
   }
 }
