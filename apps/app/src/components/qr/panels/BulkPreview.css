@@ -1,10 +1,15 @@
 .bulk-preview {
+  /*
+   * AdSense injects height:auto !important and min-height:0 !important on
+   * ancestor elements of ad slots. Using position:sticky + align-self:stretch
+   * lets the panel fill the .body cross-axis height (capped by max-height on
+   * .body) without relying on height/min-height. The panel stays in view as
+   * the sidebar scrolls because sticky keeps it pinned to top:0.
+   */
   flex: 1;
   position: sticky;
   top: 0;
-  align-self: flex-start;
-  height: calc(100vh - 65px);
-  height: calc(100dvh - 65px);
+  max-height: calc(100vh - 65px);
   background: var(--bg-page);
   overflow: hidden;
   display: flex;
@@ -29,6 +34,10 @@
   font-weight: 500;
   color: var(--text-tertiary);
   text-align: center;
+}
+
+.bulk-empty-footer {
+  margin-top: auto;
 }
 
 .bulk-empty-hint {

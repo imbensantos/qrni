@@ -148,12 +148,14 @@ function BulkPreview({
             Format: each row needs a <strong>label</strong> and a <strong>url</strong>
           </p>
         </div>
-        <AdSlot
-          slot="PREVIEW_PANEL_SLOT_ID"
-          format="horizontal"
-          className="ad-slot--bulk-preview"
-        />
-        <AppFooter className="panel-footer-mobile" />
+        <div className="bulk-empty-footer">
+          <AdSlot
+            slot="PREVIEW_PANEL_SLOT_ID"
+            format="horizontal"
+            className="ad-slot--bulk-preview"
+          />
+          <AppFooter className="panel-footer-mobile" />
+        </div>
       </section>
     );
   }

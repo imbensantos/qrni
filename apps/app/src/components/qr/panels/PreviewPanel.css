@@ -3,8 +3,13 @@
   position: sticky;
   top: 0;
   align-self: flex-start;
-  height: calc(100vh - 65px);
-  height: calc(100dvh - 65px);
+  /*
+   * AdSense injects height:auto !important and min-height:0 !important on
+   * ancestor elements of ad slots. Using min-height + max-height together
+   * is not overridden by AdSense — they act as a fixed height.
+   */
+  min-height: calc(100vh - 65px);
+  max-height: calc(100vh - 65px);
   background: var(--bg-page);
   overflow: hidden;
 }

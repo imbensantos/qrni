@@ -113,13 +113,13 @@
   flex-direction: column;
   gap: 20px;
   box-shadow: var(--shadow-sidebar);
+  flex-shrink: 0;
 }
 
 .body {
   display: flex;
   flex: 1;
   max-height: calc(100vh - 65px);
-  max-height: calc(100dvh - 65px);
   overflow-y: auto;
   background: linear-gradient(to right, #ffffff 380px, transparent 380px);
 }
