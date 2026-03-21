@@ -4,6 +4,8 @@ import QRGeneratorPage from "./pages/qr/QRGeneratorPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import PrivacyPage from "./pages/privacy/PrivacyPage";
 import InviteAcceptPage from "./pages/invite/InviteAcceptPage";
+import AboutPage from "./pages/about/AboutPage";
+import ContactPage from "./pages/contact/ContactPage";
 import { INVITE_RETURN_KEY } from "./utils/constants";
 
 const rootRoute = createRootRoute({
@@ -46,11 +48,25 @@ const inviteRoute = createRoute({
   component: InviteAcceptPage,
 });
 
+const aboutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/about",
+  component: AboutPage,
+});
+
+const contactRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/contact",
+  component: ContactPage,
+});
+
 export const routeTree = rootRoute.addChildren([
   indexRoute,
   profileRoute,
   privacyRoute,
   inviteRoute,
+  aboutRoute,
+  contactRoute,
 ]);
 export const router = createRouter({ routeTree });
 

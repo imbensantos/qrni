@@ -162,6 +162,7 @@ export const RESERVED_SLUGS = new Set([
   "privacy",
   "tos",
   "terms-and-conditions",
+  "contact",
   // Brand
   "qrni",
   // Auth routes

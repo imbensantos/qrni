@@ -19,6 +19,14 @@ function AppFooter({ className = "", adSlot, variant = "default" }: AppFooterPro
           <>
             {" "}
             &middot;{" "}
+            <Link to="/about" className="footer-link">
+              About
+            </Link>{" "}
+            &middot;{" "}
+            <Link to="/contact" className="footer-link">
+              Contact
+            </Link>{" "}
+            &middot;{" "}
             <Link to="/privacy" className="footer-link">
               Privacy
             </Link>
