@@ -6,12 +6,14 @@ import { checkUrlSafety } from "./safeBrowsing";
 import { ERR } from "./lib/constants";
 import { buildBotHtml } from "./lib/ogScraper";
 
+// Facebook/Meta bots are excluded — they follow 302 redirects natively and
+// flag cross-domain OG tags as phishing. Their UA often includes "Twitterbot"
+// so we must check for Facebook FIRST before matching other bots.
+const FACEBOOK_UA_PATTERNS = ["facebookexternalhit", "facebot", "meta-externalagent"];
+
 const BOT_USER_AGENTS = [
   "Slackbot",
   "Twitterbot",
-  "facebookexternalhit",
-  "Facebot",
-  "meta-externalagent",
   "LinkedInBot",
   "Discordbot",
   "WhatsApp",
@@ -25,7 +27,10 @@ const BOT_USER_AGENTS = [
 
 function isBot(userAgent: string | null): boolean {
   if (!userAgent) return false;
-  return BOT_USER_AGENTS.some((bot) => userAgent.toLowerCase().includes(bot.toLowerCase()));
+  const ua = userAgent.toLowerCase();
+  // Let Facebook/Meta bots through — they follow redirects to the destination
+  if (FACEBOOK_UA_PATTERNS.some((fb) => ua.includes(fb))) return false;
+  return BOT_USER_AGENTS.some((bot) => ua.includes(bot.toLowerCase()));
 }
 
 const http = httpRouter();
