@@ -12,7 +12,7 @@ function AppFooter({ className = "", adSlot, variant = "default" }: AppFooterPro
     <footer className={`panel-footer ${className}`}>
       {adSlot && <AdSlot slot={adSlot.slot} format={adSlot.format} className={adSlot.className} />}
       <p className="copyright-footer">
-        &copy; {new Date().getFullYear()} QRni
+        &copy; QRni {new Date().getFullYear()}
         {variant === "privacy" ? (
           ". All rights reserved."
         ) : (

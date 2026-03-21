@@ -65,7 +65,10 @@ function AboutPage() {
                 alt="Ben Santos"
                 className="about-maker__avatar"
               />
-              <p className="about-maker__quote">"a little bit corny"</p>
+              <p className="about-maker__quote">
+                "QRni as in 'corny', <br />
+                as in 'this is a QR'."
+              </p>
             </div>
             <div className="about-maker__card-right">
               <h3 className="about-maker__name">Ben Santos</h3>
@@ -75,7 +78,7 @@ function AboutPage() {
               </p>
               <p className="about-maker__bio">
                 A passionate web developer who builds tools that are useful, accessible, and a
-                little bit corny. QRni is a labor of love — built with React, Convex, and too many
+                little bit playful. QRni is a labor of love — built with React, Convex, and too many
                 late nights.
               </p>
               <div className="about-maker__links">
