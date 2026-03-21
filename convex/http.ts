@@ -10,6 +10,8 @@ const BOT_USER_AGENTS = [
   "Slackbot",
   "Twitterbot",
   "facebookexternalhit",
+  "Facebot",
+  "meta-externalagent",
   "LinkedInBot",
   "Discordbot",
   "WhatsApp",
