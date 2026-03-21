@@ -122,16 +122,14 @@ function PrivacyPage() {
             <h3 className="privacy-section__sub">Click counts</h3>
             <p className="privacy-section__body">
               Each time someone visits a short link, we increment an aggregate{" "}
-              <strong>click counter</strong> for that link. We do not record the visitor's IP
-              address, browser, referrer, or any other identifying information about the person
-              clicking the link.
+              <strong>click counter</strong> for that link. We do not collect any personal
+              information about visitors who click your links.
             </p>
 
             <h3 className="privacy-section__sub">QR codes</h3>
             <p className="privacy-section__body">
-              QR code image data is <strong>not sent to our servers</strong>. QR codes are generated
-              entirely in your browser. When you download one, the file goes straight to your
-              device.
+              QR code image data is <strong>not sent to our servers</strong>. When you download a QR
+              code, the file goes straight to your device.
             </p>
 
             <h3 className="privacy-section__sub">Audit logs</h3>
@@ -139,7 +137,9 @@ function PrivacyPage() {
               For signed-in users, we maintain internal audit logs of actions such as creating,
               editing, or deleting links and namespaces. These logs help us investigate abuse and
               provide account security.{" "}
-              <strong>Audit logs are retained for 90 days and then automatically deleted.</strong>
+              <strong>
+                Audit logs are retained for a limited period and then automatically deleted.
+              </strong>
             </p>
 
             <h3 className="privacy-section__sub">Namespace collaboration</h3>
@@ -178,7 +178,7 @@ function PrivacyPage() {
                 Check destination URLs against the Google Safe Browsing API for malware and phishing
                 threats
               </li>
-              <li>Prevent abuse and enforce rate limits using IP addresses and user IDs</li>
+              <li>Prevent abuse and enforce rate limits</li>
               <li>Display contextual ads via Google AdSense</li>
             </ul>
             <p className="privacy-section__body privacy-section__body--note">
@@ -240,7 +240,7 @@ function PrivacyPage() {
                     <td>Standard font requests (IP address to Google's CDN)</td>
                   </tr>
                   <tr>
-                    <td>Convex</td>
+                    <td>Cloud infrastructure provider</td>
                     <td>Backend &amp; database</td>
                     <td>All stored data described in this policy</td>
                   </tr>
@@ -287,7 +287,7 @@ function PrivacyPage() {
                   data: "Standard font requests (IP address to Google's CDN)",
                 },
                 {
-                  provider: "Convex",
+                  provider: "Cloud infrastructure provider",
                   purpose: "Backend & database",
                   data: "All stored data described in this policy",
                 },
@@ -349,7 +349,8 @@ function PrivacyPage() {
                 long as the link exists. You may contact us to request removal.
               </li>
               <li>
-                <strong>Audit logs</strong> — retained for 90 days and then automatically deleted.
+                <strong>Audit logs</strong> — retained for a limited period and then automatically
+                deleted.
               </li>
               <li>
                 <strong>Rate-limit records</strong> — automatically expire after a short period.
@@ -413,7 +414,7 @@ function PrivacyPage() {
             <SectionHeading number={7} title="Data Security" />
             <p className="privacy-section__body">
               We take reasonable measures to protect your data. All data in transit is encrypted via
-              HTTPS. Our backend (Convex) provides encryption at rest. Authentication is handled
+              HTTPS. Our infrastructure provides encryption at rest. Authentication is handled
               through Google OAuth — we never store passwords.
             </p>
             <p className="privacy-section__body">
