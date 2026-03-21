@@ -1,12 +1,252 @@
 @import "../shared/StaticPage.css";
 
-/* Privacy-specific styles */
-.static-page-body code {
-  background: var(--bg-surface);
-  padding: 1px 6px;
-  border-radius: var(--radius-xs);
-  font-size: 13px;
+/* ─── Page shell ─────────────────────────────────────────────────────────── */
+
+.privacy-page__inner {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 64px 64px;
 }
+
+.privacy-page__back-link {
+  display: inline-block;
+  margin-bottom: 32px;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #d89575;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.privacy-page__back-link:hover {
+  opacity: 0.75;
+  text-decoration: none;
+}
+
+/* ─── Hero ───────────────────────────────────────────────────────────────── */
+
+.privacy-hero {
+  text-align: center;
+  padding: 48px 64px;
+}
+
+.privacy-hero__title {
+  font-family: "Outfit", sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: #2d2a26;
+  margin-bottom: 12px;
+}
+
+.privacy-hero__subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  color: #6b6560;
+  margin-bottom: 24px;
+}
+
+.privacy-hero__doodle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.privacy-hero__doodle-tilde {
+  font-family: "Outfit", sans-serif;
+  font-size: 24px;
+  color: #f0d4c4;
+  line-height: 1;
+}
+
+.privacy-hero__doodle-line {
+  display: block;
+  width: 120px;
+  height: 2px;
+  background: #f0d4c4;
+  border-radius: 2px;
+}
+
+/* ─── TOC card ───────────────────────────────────────────────────────────── */
+
+.privacy-toc {
+  background: #ffffff;
+  border: 1px solid #edeae6;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 20px #2d2a260a;
+  margin-bottom: 32px;
+}
+
+.privacy-toc__header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.privacy-toc__icon-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #e8f2ec;
+  color: #3d8a5a;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.privacy-toc__title {
+  font-family: "Outfit", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d2a26;
+  margin: 0;
+}
+
+.privacy-toc__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 32px;
+}
+
+.privacy-toc__item {
+  margin: 0;
+}
+
+.privacy-toc__link {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #d89575;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.privacy-toc__link:hover {
+  opacity: 0.75;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ─── Main content card ──────────────────────────────────────────────────── */
+
+.privacy-content {
+  background: #ffffff;
+  border: 1px solid #edeae6;
+  border-radius: 16px;
+  padding: 48px;
+  box-shadow: 0 4px 20px #2d2a260a;
+  margin-bottom: 32px;
+}
+
+.privacy-content__intro {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  color: #6b6560;
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+
+/* ─── Section ────────────────────────────────────────────────────────────── */
+
+.privacy-section {
+  margin: 0;
+}
+
+.privacy-section__heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.privacy-section__badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Outfit", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.privacy-section__badge--terracotta {
+  background: #f0d4c4;
+  color: #d89575;
+}
+
+.privacy-section__badge--sage {
+  background: #e8f2ec;
+  color: #3d8a5a;
+}
+
+.privacy-section__title {
+  font-family: "Outfit", sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #2d2a26;
+  margin: 0;
+}
+
+.privacy-section__sub {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2d2a26;
+  margin-top: 20px;
+  margin-bottom: 6px;
+}
+
+.privacy-section__body {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  color: #6b6560;
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+
+.privacy-section__list {
+  list-style: disc;
+  padding-left: 20px;
+  margin: 0 0 8px;
+}
+
+.privacy-section__list li {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  color: #6b6560;
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+
+.privacy-section__link {
+  color: #d89575;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.privacy-section__link:hover {
+  opacity: 0.75;
+}
+
+.privacy-divider {
+  border: none;
+  border-top: 1px solid #edeae6;
+  margin: 40px 0;
+}
+
+/* ─── Third-party table ──────────────────────────────────────────────────── */
 
 .privacy-table-wrap {
   overflow-x: auto;
@@ -16,28 +256,180 @@
 .privacy-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  overflow: hidden;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+}
+
+.privacy-table thead tr {
+  background: #f5f4f1;
 }
 
 .privacy-table th {
   text-align: left;
-  padding: 10px 14px;
+  padding: 12px 16px;
   font-weight: 600;
-  color: var(--text-tertiary);
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border-subtle);
+  color: #2d2a26;
+  border-bottom: 1px solid #edeae6;
 }
 
 .privacy-table td {
-  padding: 10px 14px;
-  color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 12px 16px;
+  color: #6b6560;
+  border-bottom: 1px solid #edeae6;
+  vertical-align: top;
 }
 
 .privacy-table tr:last-child td {
   border-bottom: none;
+}
+
+.privacy-table a {
+  color: #d89575;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Mobile stacked cards — hidden on desktop */
+.privacy-service-cards {
+  display: none;
+}
+
+/* ─── Contact CTA ────────────────────────────────────────────────────────── */
+
+.privacy-cta {
+  background: linear-gradient(to bottom, #f0d4c4, #e8f2ec);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 600px;
+  margin: 0 auto 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.privacy-cta__icon {
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.privacy-cta__title {
+  font-family: "Outfit", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d2a26;
+  margin: 0;
+}
+
+.privacy-cta__text {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  color: #2d2a26;
+  margin: 0;
+  max-width: 380px;
+}
+
+.privacy-cta__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  padding: 12px 28px;
+  background: #d89575;
+  color: #ffffff;
+  font-family: "Outfit", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.privacy-cta__button:hover {
+  opacity: 0.85;
+  text-decoration: none;
+}
+
+/* ─── Mobile ─────────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .privacy-page__inner {
+    padding: 20px 20px 48px;
+  }
+
+  .privacy-hero {
+    padding: 20px;
+  }
+
+  .privacy-hero__title {
+    font-size: 32px;
+  }
+
+  .privacy-hero__subtitle {
+    font-size: 16px;
+  }
+
+  .privacy-toc__list {
+    grid-template-columns: 1fr;
+  }
+
+  .privacy-content {
+    padding: 24px;
+  }
+
+  .privacy-section__badge {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+
+  .privacy-section__title {
+    font-size: 18px;
+  }
+
+  /* Hide table, show stacked cards */
+  .privacy-table-wrap {
+    display: none;
+  }
+
+  .privacy-service-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 16px;
+  }
+
+  .privacy-service-card {
+    background: #f5f4f1;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .privacy-service-card__provider {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #2d2a26;
+  }
+
+  .privacy-service-card__purpose {
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #d89575;
+  }
+
+  .privacy-service-card__data {
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    color: #6b6560;
+    line-height: 1.5;
+  }
 }
