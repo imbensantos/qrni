@@ -88,12 +88,10 @@
 }
 
 .privacy-toc__icon-badge {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
   background: #e8f2ec;
-  color: #3d8a5a;
-  font-size: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -149,7 +147,7 @@
 
 .privacy-content__intro {
   font-family: "Inter", sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   color: #6b6560;
   line-height: 1.7;
   margin-bottom: 40px;
@@ -200,9 +198,9 @@
 }
 
 .privacy-section__sub {
-  font-family: "Inter", sans-serif;
-  font-size: 15px;
-  font-weight: 700;
+  font-family: "Outfit", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
   color: #2d2a26;
   margin-top: 20px;
   margin-bottom: 6px;
@@ -255,25 +253,33 @@
 
 .privacy-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  border: 1px solid #edeae6;
+  overflow: hidden;
   font-family: "Inter", sans-serif;
   font-size: 14px;
 }
 
-.privacy-table thead tr {
+.privacy-table thead th {
   background: #f5f4f1;
-}
-
-.privacy-table th {
-  text-align: left;
-  padding: 12px 16px;
+  padding: 14px 20px;
+  font-family: "Outfit", sans-serif;
+  font-size: 13px;
   font-weight: 600;
-  color: #2d2a26;
+  color: #6b6560;
+  text-align: left;
   border-bottom: 1px solid #edeae6;
 }
 
+.privacy-table tbody tr:nth-child(even) {
+  background: #f5f4f1;
+}
+
 .privacy-table td {
-  padding: 12px 16px;
+  padding: 14px 20px;
+  font-size: 14px;
   color: #6b6560;
   border-bottom: 1px solid #edeae6;
   vertical-align: top;
