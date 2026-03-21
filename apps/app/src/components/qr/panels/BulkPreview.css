@@ -1,14 +1,16 @@
 .bulk-preview {
   /*
-   * AdSense injects height:auto !important and min-height:0 !important on
-   * ancestor elements of ad slots. Using position:sticky + align-self:stretch
-   * lets the panel fill the .body cross-axis height (capped by max-height on
-   * .body) without relying on height/min-height. The panel stays in view as
-   * the sidebar scrolls because sticky keeps it pinned to top:0.
+   * The AdSlot is nested inside a position:relative child (.bulk-empty or
+   * .bulk-preview-content), so AdSense's ancestor walk stops there and does
+   * NOT inject height:auto or min-height:0 inline styles on .bulk-preview.
+   * This lets min-height + max-height work correctly (same pattern as
+   * .preview-panel) to fill the full viewport height on desktop.
    */
   flex: 1;
   position: sticky;
   top: 0;
+  align-self: flex-start;
+  min-height: calc(100vh - 65px);
   max-height: calc(100vh - 65px);
   background: var(--bg-page);
   overflow: hidden;
@@ -34,10 +36,6 @@
   font-weight: 500;
   color: var(--text-tertiary);
   text-align: center;
-}
-
-.bulk-empty-footer {
-  margin-top: auto;
 }
 
 .bulk-empty-hint {
@@ -263,20 +261,27 @@
   box-shadow: var(--shadow-button-secondary-hover);
 }
 
-/* Ad slot — compact banner to avoid scrolling */
+/* Ad slot — absolutely positioned inside the containing block (.bulk-empty or
+   .bulk-preview-content) so AdSense cannot walk up to .bulk-preview */
 .ad-slot--bulk-preview {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 468px;
   max-height: 90px;
   overflow: hidden;
-  margin-top: auto;
-  padding: 8px 16px;
+  z-index: 1;
 }
 
 /* Mobile */
 @media (max-width: 768px) {
   .bulk-preview {
     /* Reset all desktop positioning so the panel flows naturally in the
-       vertical mobile layout — no fixed max-height, no sticky. */
+       vertical mobile layout — no fixed heights, no sticky. */
     position: static;
+    align-self: auto;
+    min-height: 0;
     max-height: none;
     overflow: visible;
   }
@@ -296,5 +301,17 @@
 
   .bulk-export-bar .download-btn {
     width: 100%;
+  }
+
+  .ad-slot--bulk-preview {
+    /* Take the ad out of absolute positioning so it flows below content on mobile */
+    position: static;
+    transform: none;
+    left: auto;
+    bottom: auto;
+    width: 100%;
+    max-width: 100%;
+    max-height: none;
+    padding: 8px 16px 16px;
   }
 }

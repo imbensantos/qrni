@@ -147,15 +147,15 @@ function BulkPreview({
           <p className="bulk-empty-hint">
             Format: each row needs a <strong>label</strong> and a <strong>url</strong>
           </p>
-        </div>
-        <div className="bulk-empty-footer">
+          {/* Ad is absolutely positioned inside this positioned container so AdSense
+              does not walk up past .bulk-empty to inject inline styles on .bulk-preview */}
           <AdSlot
             slot="PREVIEW_PANEL_SLOT_ID"
             format="horizontal"
             className="ad-slot--bulk-preview"
           />
-          <AppFooter className="panel-footer-mobile" />
         </div>
+        <AppFooter className="panel-footer-mobile" />
       </section>
     );
   }
@@ -315,7 +315,13 @@ function BulkPreview({
           </div>
         )}
 
-        <AdSlot slot="PREVIEW_PANEL_SLOT_ID" format="horizontal" className="ad-slot--preview" />
+        {/* Ad is absolutely positioned inside this positioned container so AdSense
+            does not walk up past .bulk-preview-content to inject inline styles on .bulk-preview */}
+        <AdSlot
+          slot="PREVIEW_PANEL_SLOT_ID"
+          format="horizontal"
+          className="ad-slot--bulk-preview"
+        />
       </div>
     </section>
   );

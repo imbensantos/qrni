@@ -3,6 +3,9 @@
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  /* White left column background at the app level so it persists even if
+     AdSense overrides min-height on .sidebar-panel or .body */
+  background: linear-gradient(to right, #ffffff 380px, var(--bg-page) 380px);
 }
 
 .header {
@@ -140,6 +143,7 @@
     height: auto;
     min-height: 100vh;
     overflow: visible;
+    background: var(--bg-page);
   }
 
   .sidebar-panel {
