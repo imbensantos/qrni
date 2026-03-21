@@ -1,0 +1,73 @@
+@import "../shared/StaticPage.css";
+
+/* About-specific: maker card */
+.about-maker-card {
+  display: flex;
+  gap: 20px;
+  margin-top: 16px;
+  padding: 20px;
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.about-maker-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.about-maker-info {
+  min-width: 0;
+}
+
+.about-maker-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.about-maker-role {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+
+.about-maker-bio {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.about-maker-links {
+  display: flex;
+  gap: 16px;
+}
+
+.about-maker-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent-primary);
+  text-decoration: none;
+}
+
+.about-maker-links a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .about-maker-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .about-maker-links {
+    justify-content: center;
+  }
+}
