@@ -268,7 +268,7 @@ function PrivacyPage() {
         style={{ maxWidth: 728, margin: "24px auto" }}
       />
 
-      <AppFooter className="static-page-footer" variant="privacy" />
+      <AppFooter className="static-page-footer" />
     </main>
   );
 }
