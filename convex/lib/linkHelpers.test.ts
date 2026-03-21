@@ -16,7 +16,7 @@ import {
 // ---------------------------------------------------------------------------
 // Mock helpers
 // ---------------------------------------------------------------------------
-import { chainableQuery, createMockCtx } from "./testHelpers";
+import { chainableQuery, createMockCtx } from "./testHelpers.test-utils";
 
 const FAKE_LINK_ID = "links:abc123" as never;
 const FAKE_USER_ID = "users:xyz789" as never;

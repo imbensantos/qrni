@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { generateShortCode } from "./shortCode";
 import { checkInviteRateLimit } from "./linkHelpers";
 import { ERR, INVITE_RATE_LIMIT, RATE_LIMIT_WINDOW_MS } from "./constants";
-import { chainableQuery, createMockCtx } from "./testHelpers";
+import { chainableQuery, createMockCtx } from "./testHelpers.test-utils";
 
 const FAKE_USER_ID = "users:xyz789" as never;
 const FAKE_RATE_LIMIT_ID = "rate_limits:rl001" as never;

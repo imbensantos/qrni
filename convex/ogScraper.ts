@@ -1,6 +1,7 @@
 import { internalAction, action } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { v } from "convex/values";
+import type { OgData } from "./lib/ogScraper";
 import { parseOgTags } from "./lib/ogScraper";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
@@ -57,7 +58,7 @@ export const fetchAndCacheOgData = internalAction({
 /** Public action: authenticated users can refresh OG data for their links. */
 export const refreshOgData = action({
   args: { linkId: v.id("links") },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<OgData> => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Authentication required");
 

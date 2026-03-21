@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { logAudit } from "./auditLog";
-import { createMockCtx } from "./testHelpers";
+import { createMockCtx } from "./testHelpers.test-utils";
 
 describe("logAudit", () => {
   it("inserts an audit log entry with all required fields", async () => {
