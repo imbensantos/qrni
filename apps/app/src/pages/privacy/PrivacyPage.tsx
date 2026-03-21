@@ -101,17 +101,66 @@ function PrivacyPage() {
           <section id="section-1" className="privacy-section">
             <SectionHeading number={1} title="Information We Collect" />
 
-            <h3 className="privacy-section__sub">Information you provide</h3>
+            <h3 className="privacy-section__sub">Account information (optional)</h3>
             <p className="privacy-section__body">
-              When you sign in with Google, we receive your name, email address, and profile
-              picture. When you create short links, we store the original URL, your custom alias (if
-              any), and the namespace it belongs to.
+              If you sign in with Google, we receive your <strong>name</strong>,{" "}
+              <strong>email address</strong>, and <strong>profile picture</strong> from your Google
+              account. Signing in is entirely optional — you can create QR codes and short links
+              without an account.
             </p>
 
-            <h3 className="privacy-section__sub">Information collected automatically</h3>
+            <h3 className="privacy-section__sub">Links you create</h3>
             <p className="privacy-section__body">
-              When someone clicks a QRni short link, we log the click timestamp, referrer URL,
-              country (derived from IP), device type, and browser. We do not store raw IP addresses.
+              When you shorten a URL we store the <strong>destination URL</strong>, the generated{" "}
+              <strong>short code</strong>, a <strong>creation timestamp</strong>, and{" "}
+              <strong>Open Graph metadata</strong> (page title, description, and preview image)
+              fetched from the destination for link previews. If you are signed in, the link is
+              associated with your account. If you are not signed in, we store your{" "}
+              <strong>IP address</strong> alongside the link for rate-limiting and abuse prevention.
+            </p>
+
+            <h3 className="privacy-section__sub">Click counts</h3>
+            <p className="privacy-section__body">
+              Each time someone visits a short link, we increment an aggregate{" "}
+              <strong>click counter</strong> for that link. We do not record the visitor's IP
+              address, browser, referrer, or any other identifying information about the person
+              clicking the link.
+            </p>
+
+            <h3 className="privacy-section__sub">QR codes</h3>
+            <p className="privacy-section__body">
+              QR code image data is <strong>not sent to our servers</strong>. QR codes are generated
+              entirely in your browser. When you download one, the file goes straight to your
+              device.
+            </p>
+
+            <h3 className="privacy-section__sub">Audit logs</h3>
+            <p className="privacy-section__body">
+              For signed-in users, we maintain internal audit logs of actions such as creating,
+              editing, or deleting links and namespaces. These logs help us investigate abuse and
+              provide account security.{" "}
+              <strong>Audit logs are retained for 90 days and then automatically deleted.</strong>
+            </p>
+
+            <h3 className="privacy-section__sub">Namespace collaboration</h3>
+            <p className="privacy-section__body">
+              If you join a namespace as a collaborator, your{" "}
+              <strong>name and email address are visible</strong> to all other members of that
+              namespace.
+            </p>
+
+            <h3 className="privacy-section__sub">Contact form submissions</h3>
+            <p className="privacy-section__body">
+              When you submit a message through our contact form, we store your name, email address,
+              and message. This data is used solely to respond to your inquiry and is not shared
+              with third parties.
+            </p>
+
+            <h3 className="privacy-section__sub">Temporary session data</h3>
+            <p className="privacy-section__body">
+              We use temporary browser storage to cache basic display information (such as your name
+              and avatar) for faster page loads. This data is automatically cleared when you close
+              your browser tab and is not sent to our servers.
             </p>
           </section>
 
@@ -123,9 +172,13 @@ function PrivacyPage() {
             <p className="privacy-section__body">We use the information we collect to:</p>
             <ul className="privacy-section__list">
               <li>Generate QR codes and short links for your URLs</li>
-              <li>Provide click analytics (country, device, referrer, time)</li>
+              <li>Show aggregate click counts so you can see how your links perform</li>
               <li>Maintain your account and saved links</li>
-              <li>Prevent abuse and enforce rate limits</li>
+              <li>
+                Check destination URLs against the Google Safe Browsing API for malware and phishing
+                threats
+              </li>
+              <li>Prevent abuse and enforce rate limits using IP addresses and user IDs</li>
               <li>Display contextual ads via Google AdSense</li>
             </ul>
             <p className="privacy-section__body privacy-section__body--note">
@@ -182,6 +235,16 @@ function PrivacyPage() {
                     </td>
                   </tr>
                   <tr>
+                    <td>Google Fonts</td>
+                    <td>Typography</td>
+                    <td>Standard font requests (IP address to Google's CDN)</td>
+                  </tr>
+                  <tr>
+                    <td>Convex</td>
+                    <td>Backend &amp; database</td>
+                    <td>All stored data described in this policy</td>
+                  </tr>
+                  <tr>
                     <td>Vercel</td>
                     <td>Hosting &amp; analytics</td>
                     <td>
@@ -219,6 +282,16 @@ function PrivacyPage() {
                   data: "Cookies and browsing data (see Google's ad policies)",
                 },
                 {
+                  provider: "Google Fonts",
+                  purpose: "Typography",
+                  data: "Standard font requests (IP address to Google's CDN)",
+                },
+                {
+                  provider: "Convex",
+                  purpose: "Backend & database",
+                  data: "All stored data described in this policy",
+                },
+                {
                   provider: "Vercel",
                   purpose: "Hosting & analytics",
                   data: "Page views and web vitals (see Vercel's privacy)",
@@ -253,8 +326,9 @@ function PrivacyPage() {
               page.
             </p>
             <p className="privacy-section__body">
-              We use browser localStorage to save your QR code preferences (colors, format) so they
-              persist between sessions. This data never leaves your device.
+              We use browser localStorage to save your preferences (such as whether to automatically
+              create a short link) so they persist between sessions. This data never leaves your
+              device.
             </p>
           </section>
 
@@ -263,11 +337,31 @@ function PrivacyPage() {
           {/* Section 5 */}
           <section id="section-5" className="privacy-section">
             <SectionHeading number={5} title="Data Retention" />
-            <p className="privacy-section__body">
-              We retain your account data and links for as long as your account is active. Click
-              analytics data is retained for 90 days, after which it is aggregated and anonymized.
-              If you delete your account, all associated data is permanently removed within 30 days.
-            </p>
+            <ul className="privacy-section__list">
+              <li>
+                <strong>Links</strong> — kept until you delete them or request account deletion.
+              </li>
+              <li>
+                <strong>Account data</strong> — kept until you request deletion.
+              </li>
+              <li>
+                <strong>Anonymous IP addresses</strong> — stored alongside anonymous links for as
+                long as the link exists. You may contact us to request removal.
+              </li>
+              <li>
+                <strong>Audit logs</strong> — retained for 90 days and then automatically deleted.
+              </li>
+              <li>
+                <strong>Rate-limit records</strong> — automatically expire after a short period.
+              </li>
+              <li>
+                <strong>Contact form submissions</strong> — retained until we have responded to your
+                inquiry, then deleted.
+              </li>
+              <li>
+                <strong>Session data</strong> — cleared when you close your browser tab.
+              </li>
+            </ul>
           </section>
 
           <hr className="privacy-divider" />
@@ -275,13 +369,33 @@ function PrivacyPage() {
           {/* Section 6 */}
           <section id="section-6" className="privacy-section">
             <SectionHeading number={6} title="Your Rights & Choices" />
-            <p className="privacy-section__body">You have the right to:</p>
+            <p className="privacy-section__body">You can:</p>
             <ul className="privacy-section__list">
-              <li>Access the personal data we hold about you</li>
-              <li>Request correction of inaccurate data</li>
-              <li>Delete your account and all associated data</li>
-              <li>Export your links and analytics data</li>
-              <li>Opt out of personalized advertising</li>
+              <li>
+                <strong>Delete</strong> individual links and namespaces from the app.
+              </li>
+              <li>
+                <strong>Update</strong> your profile information (name and avatar).
+              </li>
+              <li>
+                <strong>Request account deletion</strong> by contacting us at the email below. We
+                will delete your account and all associated data.
+              </li>
+              <li>
+                <strong>Request a data export</strong> by contacting us at the email below.
+              </li>
+              <li>
+                <strong>Opt out</strong> of personalized advertising via{" "}
+                <a
+                  href="https://www.google.com/settings/ads"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="privacy-section__link"
+                >
+                  Google Ad Settings
+                </a>
+                .
+              </li>
             </ul>
             <p className="privacy-section__body">
               To exercise any of these rights, contact us at{" "}
