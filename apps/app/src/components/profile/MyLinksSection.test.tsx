@@ -4,6 +4,10 @@ import userEvent from "@testing-library/user-event";
 import MyLinksSection from "./MyLinksSection";
 import { Doc, Id } from "../../../../../convex/_generated/dataModel";
 
+vi.mock("convex/react", () => ({
+  useAction: () => vi.fn(),
+}));
+
 // Minimal factory to build a Doc<"links"> test fixture
 function makeLink(overrides: Partial<Doc<"links">> = {}): Doc<"links"> {
   return {

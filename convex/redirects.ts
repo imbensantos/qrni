@@ -48,3 +48,30 @@ export const incrementClickCount = internalMutation({
     }
   },
 });
+
+export const updateOgData = internalMutation({
+  args: {
+    linkId: v.id("links"),
+    ogTitle: v.string(),
+    ogDescription: v.string(),
+    ogImage: v.string(),
+    ogSiteName: v.string(),
+    ogFetchedAt: v.number(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.linkId, {
+      ogTitle: args.ogTitle,
+      ogDescription: args.ogDescription,
+      ogImage: args.ogImage,
+      ogSiteName: args.ogSiteName,
+      ogFetchedAt: args.ogFetchedAt,
+    });
+  },
+});
+
+export const getLinkById = internalQuery({
+  args: { linkId: v.id("links") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.linkId);
+  },
+});

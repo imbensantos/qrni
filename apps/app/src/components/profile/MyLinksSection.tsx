@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAction } from "convex/react";
 import { useWebHaptics } from "web-haptics/react";
 import { MAX_CUSTOM_LINKS } from "../../utils/constants";
 import { getAppOrigin, getAppHost } from "../../utils/url-utils";
@@ -9,11 +10,40 @@ import {
   IconPencil,
   IconTrash,
   IconChevronDown,
+  IconRefresh,
 } from "../common/Icons";
 import CopyButton from "./CopyButton";
-import { Doc } from "../../../../../convex/_generated/dataModel";
+import { api } from "../../../../../convex/_generated/api";
+import { Id, Doc } from "../../../../../convex/_generated/dataModel";
 
 type Link = Doc<"links">;
+
+function RefreshPreviewButton({ linkId }: { linkId: Id<"links"> }) {
+  const refreshOg = useAction(api.ogScraper.refreshOgData);
+  const [loading, setLoading] = useState(false);
+
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      await refreshOg({ linkId });
+    } catch {
+      // silently fail
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      className="pp-icon-btn"
+      onClick={handleRefresh}
+      disabled={loading}
+      title="Refresh link preview"
+    >
+      <IconRefresh size={14} className={loading ? "spin" : undefined} />
+    </button>
+  );
+}
 
 interface MyLinksSectionProps {
   links: Link[] | undefined;
@@ -103,6 +133,7 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete }: MyLinksSectionProps)
                           <IconClick size={12} />
                           <span className="pp-clicks-count">{link.clickCount}</span>
                         </span>
+                        <RefreshPreviewButton linkId={link._id} />
                         <button
                           className="pp-icon-btn"
                           onClick={() => {

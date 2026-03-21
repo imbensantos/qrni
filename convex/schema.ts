@@ -73,6 +73,11 @@ export default defineSchema({
     autoSlug: v.optional(v.boolean()),
     createdAt: v.number(),
     clickCount: v.number(),
+    ogTitle: v.optional(v.string()),
+    ogDescription: v.optional(v.string()),
+    ogImage: v.optional(v.string()),
+    ogSiteName: v.optional(v.string()),
+    ogFetchedAt: v.optional(v.number()),
   })
     .index("by_short_code", ["shortCode"])
     .index("by_namespace_slug", ["namespace", "namespaceSlug"])

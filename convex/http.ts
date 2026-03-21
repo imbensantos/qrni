@@ -4,6 +4,27 @@ import { internal } from "./_generated/api";
 import { auth } from "./auth";
 import { checkUrlSafety } from "./safeBrowsing";
 import { ERR } from "./lib/constants";
+import { buildBotHtml } from "./lib/ogScraper";
+
+const BOT_USER_AGENTS = [
+  "Slackbot",
+  "Twitterbot",
+  "facebookexternalhit",
+  "LinkedInBot",
+  "Discordbot",
+  "WhatsApp",
+  "Applebot",
+  "TelegramBot",
+  "Googlebot",
+  "bingbot",
+  "Pinterestbot",
+  "Embedly",
+];
+
+function isBot(userAgent: string | null): boolean {
+  if (!userAgent) return false;
+  return BOT_USER_AGENTS.some((bot) => userAgent.toLowerCase().includes(bot.toLowerCase()));
+}
 
 const http = httpRouter();
 
@@ -145,6 +166,49 @@ http.route({
       return new Response("Invalid redirect target", { status: 400 });
     }
 
+    // Bot detection: serve OG meta tags for link preview crawlers
+    const userAgent = request.headers.get("user-agent");
+    if (isBot(userAgent)) {
+      let ogTitle = link.ogTitle ?? "";
+      let ogDescription = link.ogDescription ?? "";
+      let ogImage = link.ogImage ?? "";
+      let ogSiteName = link.ogSiteName ?? "";
+
+      // Lazy fetch: if OG data hasn't been fetched yet, fetch it now
+      if (link.ogFetchedAt === undefined) {
+        try {
+          const result = await ctx.runAction(internal.ogScraper.fetchAndCacheOgData, {
+            linkId: link._id,
+            destinationUrl: link.destinationUrl,
+          });
+          ogTitle = result.ogTitle;
+          ogDescription = result.ogDescription;
+          ogImage = result.ogImage;
+          ogSiteName = result.ogSiteName;
+        } catch {
+          // If fetch fails, serve fallback HTML with URL as title
+        }
+      }
+
+      await ctx.runMutation(internal.redirects.incrementClickCount, {
+        linkId: link._id,
+      });
+
+      const html = buildBotHtml({
+        destinationUrl: link.destinationUrl,
+        ogTitle,
+        ogDescription,
+        ogImage,
+        ogSiteName,
+      });
+
+      return new Response(html, {
+        status: 200,
+        headers: { "Content-Type": "text/html; charset=utf-8" },
+      });
+    }
+
+    // Regular user: 302 redirect (existing behavior)
     await ctx.runMutation(internal.redirects.incrementClickCount, {
       linkId: link._id,
     });

@@ -1,14 +1,41 @@
 import { useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { useQuery } from "convex/react";
+import { useQuery, useAction } from "convex/react";
 import { getAppOrigin } from "../../utils/url-utils";
 import { api } from "../../../../../convex/_generated/api";
-import { IconPlus, IconPencil, IconTrash } from "../common/Icons";
+import { IconPlus, IconPencil, IconTrash, IconRefresh } from "../common/Icons";
 import { formatDateShort } from "../../utils/ui-utils";
 import CopyButton from "./CopyButton";
 import { Id, Doc } from "../../../../../convex/_generated/dataModel";
 
 type Link = Doc<"links">;
+
+function RefreshPreviewButton({ linkId }: { linkId: Id<"links"> }) {
+  const refreshOg = useAction(api.ogScraper.refreshOgData);
+  const [loading, setLoading] = useState(false);
+
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      await refreshOg({ linkId });
+    } catch {
+      // silently fail
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      className="pp-icon-btn"
+      onClick={handleRefresh}
+      disabled={loading}
+      title="Refresh link preview"
+    >
+      <IconRefresh size={14} className={loading ? "spin" : undefined} />
+    </button>
+  );
+}
 
 interface AllNamespaceLinksViewProps {
   namespaceId: Id<"namespaces">;
@@ -128,6 +155,7 @@ function AllNamespaceLinksView({
                     <td>{formatDateShort(link.createdAt)}</td>
                     <td>
                       <div className="pp-link-meta">
+                        <RefreshPreviewButton linkId={link._id} />
                         <button
                           className="pp-icon-btn"
                           onClick={() => {
