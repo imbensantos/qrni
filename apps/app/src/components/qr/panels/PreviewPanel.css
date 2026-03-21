@@ -424,7 +424,12 @@
 /* Mobile */
 @media (max-width: 768px) {
   .preview-panel {
-    min-height: auto;
+    /* Reset all desktop positioning so the panel flows naturally in the
+       vertical mobile layout — no fixed heights, no sticky, no overflow hidden. */
+    position: static;
+    align-self: auto;
+    min-height: 0;
+    max-height: none;
     /* Establish a flex column so .ad-slot--preview can flow below .preview-content */
     display: flex;
     flex-direction: column;

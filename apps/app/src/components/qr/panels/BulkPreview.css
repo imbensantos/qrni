@@ -273,7 +273,16 @@
 
 /* Mobile */
 @media (max-width: 768px) {
+  .bulk-preview {
+    /* Reset all desktop positioning so the panel flows naturally in the
+       vertical mobile layout — no fixed max-height, no sticky. */
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+
   .bulk-preview-content {
+    overflow: visible;
     padding: 16px;
   }
 

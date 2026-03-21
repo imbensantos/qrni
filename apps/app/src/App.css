@@ -114,6 +114,9 @@
   gap: 20px;
   box-shadow: var(--shadow-sidebar);
   flex-shrink: 0;
+  /* Ensure the sidebar always fills the full scroll-container height so its
+     white background reaches the bottom of the viewport in all modes. */
+  min-height: 100%;
 }
 
 .body {
@@ -137,6 +140,8 @@
     min-height: 0;
     max-height: none;
     overflow-y: visible;
+    /* Reset the desktop min-height:100% — on mobile the sidebar sizes to content */
+    min-height: 0;
   }
 
   .body {
