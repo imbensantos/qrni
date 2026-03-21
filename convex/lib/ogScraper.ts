@@ -132,6 +132,8 @@ export function buildBotHtml(opts: OgData & { destinationUrl: string }): string 
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="refresh" content="0;url=${escapeHtmlAttr(destinationUrl)}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="${escapeHtmlAttr(destinationUrl)}" />
   <meta property="og:title" content="${escapeHtmlAttr(title)}" />
   <meta property="og:site_name" content="${escapeHtmlAttr(siteName)}" />
 ${descriptionTag}${imageTag}</head>
