@@ -4,6 +4,7 @@ import { v } from "convex/values";
 import type { OgData } from "./lib/ogScraper";
 import { parseOgTags } from "./lib/ogScraper";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { ERR } from "./lib/constants";
 
 const OG_FETCH_TIMEOUT_MS = 5000;
 
@@ -60,13 +61,26 @@ export const refreshOgData = action({
   args: { linkId: v.id("links") },
   handler: async (ctx, args): Promise<OgData> => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Authentication required");
+    if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
 
     const link = await ctx.runQuery(internal.redirects.getLinkById, {
       linkId: args.linkId,
     });
-    if (!link || link.owner !== userId) {
-      throw new Error("Link not found or not owned by you");
+    if (!link) throw new Error(ERR.LINK_NOT_FOUND_OR_DENIED);
+
+    if (link.owner !== userId) {
+      if (link.namespace) {
+        const membership = await ctx.runQuery(internal.redirects.getNamespaceMembership, {
+          namespaceId: link.namespace,
+          userId,
+        });
+        const allowedRoles = ["owner", "editor"];
+        if (!membership || !allowedRoles.includes(membership.role)) {
+          throw new Error(ERR.LINK_NOT_FOUND_OR_DENIED);
+        }
+      } else {
+        throw new Error(ERR.LINK_NOT_FOUND_OR_DENIED);
+      }
     }
 
     return await ctx.runAction(internal.ogScraper.fetchAndCacheOgData, {

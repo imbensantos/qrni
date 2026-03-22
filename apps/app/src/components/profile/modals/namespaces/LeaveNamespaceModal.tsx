@@ -55,13 +55,15 @@ function LeaveNamespaceModal({
   }
 
   return (
-    <ModalBackdrop isOpen={isOpen} onClose={onClose}>
+    <ModalBackdrop isOpen={isOpen} onClose={onClose} titleId="leave-ns-title">
       <div className="delete-modal">
         <div className="delete-modal-icon" style={{ color: "#D97706" }}>
           <IconArrowRight size={28} />
         </div>
 
-        <h2 className="delete-modal-title">Leave namespace?</h2>
+        <h2 id="leave-ns-title" className="delete-modal-title">
+          Leave namespace?
+        </h2>
 
         <p className="delete-modal-warning">
           You will lose access to all links in <strong>{namespaceName}</strong>. You&apos;ll need a

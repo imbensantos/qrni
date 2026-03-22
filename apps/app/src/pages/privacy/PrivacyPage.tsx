@@ -3,6 +3,41 @@ import AdSlot from "../../components/ads/AdSlot";
 import AppFooter from "../../components/layout/AppFooter";
 import "./PrivacyPage.css";
 
+const THIRD_PARTY_SERVICES = [
+  {
+    provider: "Google OAuth",
+    purpose: "Sign-in authentication",
+    data: "Name, email, profile picture",
+  },
+  {
+    provider: "Google Safe Browsing",
+    purpose: "URL safety checks",
+    data: "Destination URLs you shorten",
+  },
+  {
+    provider: "Google AdSense",
+    purpose: "Ad serving",
+    data: "Cookies and browsing data",
+    link: { href: "https://policies.google.com/technologies/ads", text: "Google's ad policies" },
+  },
+  {
+    provider: "Google Fonts",
+    purpose: "Typography",
+    data: "Standard font requests (IP address to Google's CDN)",
+  },
+  {
+    provider: "Cloud infrastructure provider",
+    purpose: "Backend & database",
+    data: "All stored data described in this policy",
+  },
+  {
+    provider: "Vercel",
+    purpose: "Hosting & analytics",
+    data: "Page views and web vitals",
+    link: { href: "https://vercel.com/docs/analytics/privacy-policy", text: "Vercel's privacy" },
+  },
+];
+
 const SECTIONS = [
   { id: "section-1", label: "Information We Collect" },
   { id: "section-2", label: "How We Use Your Information" },
@@ -209,98 +244,48 @@ function PrivacyPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Google OAuth</td>
-                    <td>Sign-in authentication</td>
-                    <td>Name, email, profile picture</td>
-                  </tr>
-                  <tr>
-                    <td>Google Safe Browsing</td>
-                    <td>URL safety checks</td>
-                    <td>Destination URLs you shorten</td>
-                  </tr>
-                  <tr>
-                    <td>Google AdSense</td>
-                    <td>Ad serving</td>
-                    <td>
-                      Cookies and browsing data (see{" "}
-                      <a
-                        href="https://policies.google.com/technologies/ads"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Google's ad policies
-                      </a>
-                      )
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Google Fonts</td>
-                    <td>Typography</td>
-                    <td>Standard font requests (IP address to Google's CDN)</td>
-                  </tr>
-                  <tr>
-                    <td>Cloud infrastructure provider</td>
-                    <td>Backend &amp; database</td>
-                    <td>All stored data described in this policy</td>
-                  </tr>
-                  <tr>
-                    <td>Vercel</td>
-                    <td>Hosting &amp; analytics</td>
-                    <td>
-                      Page views and web vitals (see{" "}
-                      <a
-                        href="https://vercel.com/docs/analytics/privacy-policy"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Vercel's privacy
-                      </a>
-                      )
-                    </td>
-                  </tr>
+                  {THIRD_PARTY_SERVICES.map((service) => (
+                    <tr key={service.provider}>
+                      <td>{service.provider}</td>
+                      <td>{service.purpose}</td>
+                      <td>
+                        {service.link ? (
+                          <>
+                            {service.data} (see{" "}
+                            <a href={service.link.href} target="_blank" rel="noopener noreferrer">
+                              {service.link.text}
+                            </a>
+                            )
+                          </>
+                        ) : (
+                          service.data
+                        )}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
 
             {/* Mobile stacked cards */}
             <ul className="privacy-service-cards" aria-label="Third-party service providers">
-              {[
-                {
-                  provider: "Google OAuth",
-                  purpose: "Sign-in authentication",
-                  data: "Name, email, profile picture",
-                },
-                {
-                  provider: "Google Safe Browsing",
-                  purpose: "URL safety checks",
-                  data: "Destination URLs you shorten",
-                },
-                {
-                  provider: "Google AdSense",
-                  purpose: "Ad serving",
-                  data: "Cookies and browsing data (see Google's ad policies)",
-                },
-                {
-                  provider: "Google Fonts",
-                  purpose: "Typography",
-                  data: "Standard font requests (IP address to Google's CDN)",
-                },
-                {
-                  provider: "Cloud infrastructure provider",
-                  purpose: "Backend & database",
-                  data: "All stored data described in this policy",
-                },
-                {
-                  provider: "Vercel",
-                  purpose: "Hosting & analytics",
-                  data: "Page views and web vitals (see Vercel's privacy)",
-                },
-              ].map((service) => (
+              {THIRD_PARTY_SERVICES.map((service) => (
                 <li key={service.provider} className="privacy-service-card">
                   <span className="privacy-service-card__provider">{service.provider}</span>
                   <span className="privacy-service-card__purpose">{service.purpose}</span>
-                  <span className="privacy-service-card__data">{service.data}</span>
+                  <span className="privacy-service-card__data">
+                    {service.link ? (
+                      <>
+                        {service.data} (see{" "}
+                        <a href={service.link.href} target="_blank" rel="noopener noreferrer">
+                          {service.link.text}
+                        </a>
+                        )
+                      </>
+                    ) : (
+                      service.data
+                    )}
+                  </span>
                 </li>
               ))}
             </ul>

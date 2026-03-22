@@ -1,12 +1,21 @@
-const ALPHABET =
-  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 export function generateShortCode(length: number = 7): string {
+  if (length === 0) return "";
+  // Rejection sampling eliminates modulo bias.
+  // ALPHABET.length = 62; 256 % 62 = 8, so bytes 248–255 would bias indices
+  // 0–7 by ~25% if kept. We discard them instead.
+  const limit = 256 - (256 % ALPHABET.length); // 248
   let code = "";
-  const array = new Uint8Array(length);
-  crypto.getRandomValues(array);
-  for (let i = 0; i < length; i++) {
-    code += ALPHABET[array[i] % ALPHABET.length];
+  while (code.length < length) {
+    const needed = length - code.length;
+    const array = new Uint8Array(needed + 10); // over-request to reduce loop iterations
+    crypto.getRandomValues(array);
+    for (let i = 0; i < array.length && code.length < length; i++) {
+      if (array[i] < limit) {
+        code += ALPHABET[array[i] % ALPHABET.length];
+      }
+    }
   }
   return code;
 }

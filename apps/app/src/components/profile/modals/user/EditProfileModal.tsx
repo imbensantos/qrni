@@ -58,10 +58,12 @@ function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProps) {
   }
 
   return (
-    <ModalBackdrop isOpen={isOpen} onClose={onClose}>
+    <ModalBackdrop isOpen={isOpen} onClose={onClose} titleId="edit-profile-title">
       <div className="edit-profile-modal">
         <div className="edit-profile-modal-header">
-          <h2 className="edit-profile-modal-title">Edit profile</h2>
+          <h2 id="edit-profile-title" className="edit-profile-modal-title">
+            Edit profile
+          </h2>
           <button
             className="edit-profile-modal-close"
             onClick={() => {

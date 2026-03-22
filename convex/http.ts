@@ -164,7 +164,7 @@ http.route({
     }
 
     if (!link) {
-      return new Response(null, { status: 302, headers: { Location: "/" } });
+      return new Response("Not Found", { status: 404 });
     }
 
     // Security: re-validate protocol before redirecting to prevent open redirect

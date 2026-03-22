@@ -160,10 +160,26 @@ function PreviewPanel({
             </div>
             <button
               className="sl-copy-btn"
-              onClick={() => {
+              onClick={async () => {
                 const shortUrl = buildShortLinkUrl(shortLinkResult.shortCode);
-                navigator.clipboard?.writeText(shortUrl);
-                trigger("success");
+                try {
+                  if (navigator.clipboard) {
+                    await navigator.clipboard.writeText(shortUrl);
+                  } else {
+                    // Legacy fallback for environments without the Clipboard API
+                    const textarea = document.createElement("textarea");
+                    textarea.value = shortUrl;
+                    textarea.style.position = "fixed";
+                    textarea.style.opacity = "0";
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(textarea);
+                  }
+                  trigger("success");
+                } catch {
+                  // Copy failed — don't trigger success
+                }
               }}
             >
               Copy

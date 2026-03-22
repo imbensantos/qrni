@@ -5,6 +5,16 @@ import { logAudit } from "./lib/auditLog";
 import { sanitizeText } from "./lib/validation";
 import { MAX_USER_NAME_LENGTH, ERR } from "./lib/constants";
 
+/** Trusted domains for user avatar URLs (OAuth providers and known CDNs). */
+const ALLOWED_AVATAR_DOMAINS = [
+  "img.clerk.com",
+  "images.clerk.dev",
+  "lh3.googleusercontent.com",
+  "avatars.githubusercontent.com",
+  "secure.gravatar.com",
+  "www.gravatar.com",
+];
+
 export const currentUser = query({
   args: {},
   handler: async (ctx) => {
@@ -35,6 +45,18 @@ export const updateProfile = mutation({
 
     if (args.avatarUrl !== undefined) {
       if (!args.avatarUrl.startsWith("https://")) {
+        throw new Error(ERR.AVATAR_MUST_BE_HTTPS);
+      }
+      let hostname: string;
+      try {
+        hostname = new URL(args.avatarUrl).hostname;
+      } catch {
+        throw new Error(ERR.AVATAR_MUST_BE_HTTPS);
+      }
+      const isTrusted = ALLOWED_AVATAR_DOMAINS.some(
+        (domain) => hostname === domain || hostname.endsWith(`.${domain}`),
+      );
+      if (!isTrusted) {
         throw new Error(ERR.AVATAR_MUST_BE_HTTPS);
       }
       updates.avatarUrl = args.avatarUrl;

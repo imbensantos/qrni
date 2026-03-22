@@ -91,3 +91,109 @@ describe("buildBotHtml", () => {
     expect(html).toContain("Title with &quot;quotes&quot; &amp; &lt;tags&gt;");
   });
 });
+
+// ---------------------------------------------------------------------------
+// S4. Missing Twitter Card meta tags in buildBotHtml
+//
+// WHY THIS FAILS against current code:
+//   buildBotHtml only emits og:* tags and does not include any twitter:* tags.
+//   Twitter/X uses its own card tags (twitter:card, twitter:title,
+//   twitter:description, twitter:image) for link previews. Without them, links
+//   shared on Twitter/X show no rich preview even when OG data is present,
+//   because Twitter stopped reliably falling back to og:* tags.
+//
+// After the fix, buildBotHtml should emit at minimum:
+//   <meta name="twitter:card" content="summary_large_image" />
+//   <meta name="twitter:title" content="..." />
+// and conditionally:
+//   <meta name="twitter:description" content="..." />  (when ogDescription present)
+//   <meta name="twitter:image" content="..." />        (when ogImage present)
+// ---------------------------------------------------------------------------
+describe("buildBotHtml — S4: Twitter Card meta tags", () => {
+  const FULL_OPTS = {
+    destinationUrl: "https://example.com/page",
+    ogTitle: "Page Title",
+    ogDescription: "Page description",
+    ogImage: "https://example.com/img.png",
+    ogSiteName: "Example",
+  };
+
+  it("includes twitter:card meta tag", () => {
+    // FAILS: buildBotHtml does not emit any twitter:* tags
+    const html = buildBotHtml(FULL_OPTS);
+    expect(html).toContain('name="twitter:card"');
+  });
+
+  it("sets twitter:card to summary_large_image when an image is present", () => {
+    // FAILS: buildBotHtml does not emit any twitter:* tags
+    const html = buildBotHtml(FULL_OPTS);
+    expect(html).toContain('content="summary_large_image"');
+  });
+
+  it("sets twitter:card to summary when no image is present", () => {
+    // FAILS: buildBotHtml does not emit any twitter:* tags
+    const html = buildBotHtml({ ...FULL_OPTS, ogImage: "" });
+    expect(html).toContain('name="twitter:card"');
+    expect(html).toContain('content="summary"');
+  });
+
+  it("includes twitter:title meta tag matching the OG title", () => {
+    // FAILS: buildBotHtml does not emit any twitter:* tags
+    const html = buildBotHtml(FULL_OPTS);
+    expect(html).toContain('name="twitter:title"');
+    expect(html).toContain('content="Page Title"');
+  });
+
+  it("includes twitter:description when ogDescription is present", () => {
+    // FAILS: buildBotHtml does not emit any twitter:* tags
+    const html = buildBotHtml(FULL_OPTS);
+    expect(html).toContain('name="twitter:description"');
+    expect(html).toContain('content="Page description"');
+  });
+
+  it("omits twitter:description when ogDescription is empty", () => {
+    // FAILS: buildBotHtml does not emit any twitter:* tags (so this check
+    // would vacuously pass if the tag is simply absent — but the test for
+    // twitter:card will still fail and catch the missing implementation)
+    const html = buildBotHtml({ ...FULL_OPTS, ogDescription: "" });
+    // When no description is provided we should not emit an empty tag
+    const hasEmptyTwitterDesc =
+      html.includes('name="twitter:description"') && html.includes('content=""');
+    expect(hasEmptyTwitterDesc).toBe(false);
+  });
+
+  it("includes twitter:image when ogImage is present", () => {
+    // FAILS: buildBotHtml does not emit any twitter:* tags
+    const html = buildBotHtml(FULL_OPTS);
+    expect(html).toContain('name="twitter:image"');
+    expect(html).toContain('content="https://example.com/img.png"');
+  });
+
+  it("omits twitter:image when ogImage is empty", () => {
+    // FAILS: buildBotHtml does not emit any twitter:* tags (vacuously passes
+    // for the absence check, but twitter:card still causes a failure)
+    const html = buildBotHtml({ ...FULL_OPTS, ogImage: "" });
+    const hasEmptyTwitterImage =
+      html.includes('name="twitter:image"') && html.includes('content=""');
+    expect(hasEmptyTwitterImage).toBe(false);
+  });
+
+  it("escapes HTML entities in twitter:title", () => {
+    // FAILS: buildBotHtml does not emit any twitter:* tags
+    const html = buildBotHtml({
+      ...FULL_OPTS,
+      ogTitle: 'Title with "quotes" & <angle>',
+    });
+    expect(html).toContain('name="twitter:title"');
+    expect(html).toContain("&quot;quotes&quot;");
+    expect(html).toContain("&amp;");
+    expect(html).toContain("&lt;angle&gt;");
+  });
+
+  it("falls back to destination URL as twitter:title when ogTitle is empty", () => {
+    // FAILS: buildBotHtml does not emit any twitter:* tags
+    const html = buildBotHtml({ ...FULL_OPTS, ogTitle: "" });
+    expect(html).toContain('name="twitter:title"');
+    expect(html).toContain('content="https://example.com/page"');
+  });
+});

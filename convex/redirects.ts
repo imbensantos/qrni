@@ -75,3 +75,24 @@ export const getLinkById = internalQuery({
     return await ctx.db.get(args.linkId);
   },
 });
+
+/** Internal query: returns the namespace membership record for a user, or null. */
+export const getNamespaceMembership = internalQuery({
+  args: { namespaceId: v.id("namespaces"), userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const namespace = await ctx.db.get(args.namespaceId);
+    if (!namespace) return null;
+
+    // Owners are not in the namespace_members table but have full access.
+    if (namespace.owner === args.userId) {
+      return { role: "owner" as const };
+    }
+
+    return await ctx.db
+      .query("namespace_members")
+      .withIndex("by_namespace_user", (q) =>
+        q.eq("namespace", args.namespaceId).eq("user", args.userId),
+      )
+      .first();
+  },
+});

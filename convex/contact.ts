@@ -7,8 +7,7 @@ import {
   MAX_CONTACT_NAME_LENGTH,
   ERR,
 } from "./lib/constants";
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { isValidEmail } from "./lib/validation";
 
 export const submitContactForm = mutation({
   args: {
@@ -23,7 +22,7 @@ export const submitContactForm = mutation({
 
     if (!name) throw new Error(ERR.CONTACT_NAME_REQUIRED);
     if (name.length > MAX_CONTACT_NAME_LENGTH) throw new Error(ERR.CONTACT_NAME_TOO_LONG);
-    if (!EMAIL_REGEX.test(email)) throw new Error(ERR.CONTACT_EMAIL_INVALID);
+    if (!isValidEmail(email)) throw new Error(ERR.CONTACT_EMAIL_INVALID);
     if (!message) throw new Error(ERR.CONTACT_MESSAGE_REQUIRED);
     if (message.length > MAX_CONTACT_MESSAGE_LENGTH) throw new Error(ERR.CONTACT_MESSAGE_TOO_LONG);
 

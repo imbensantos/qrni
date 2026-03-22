@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 
 // Short codes: auto-generated (7-char alphanumeric) or custom slugs (letters, numbers, hyphens, underscores)
 const SHORT_CODE_RE = /^\/[a-zA-Z0-9][a-zA-Z0-9_-]{0,59}$/;
-const NAMESPACED_RE = /^\/[a-z][a-z0-9-]{0,29}\/[a-zA-Z0-9_-]{1,60}$/;
+const NAMESPACED_RE = /^\/[a-z][a-z0-9-]{2,29}\/[a-zA-Z0-9_-]{1,60}$/;
 // Reserved slugs that should never be treated as short links.
 // Mirrors RESERVED_SLUGS from convex/lib/constants.ts — keep in sync.
 const RESERVED_SLUGS = new Set([

@@ -45,13 +45,15 @@ function DeleteNamespaceModal({
   }
 
   return (
-    <ModalBackdrop isOpen={isOpen} onClose={onClose}>
+    <ModalBackdrop isOpen={isOpen} onClose={onClose} titleId="delete-ns-title">
       <div className="delete-modal">
         <div className="delete-modal-icon" style={{ color: "#DC2626" }}>
           <IconTrash size={28} />
         </div>
 
-        <h2 className="delete-modal-title">Delete namespace?</h2>
+        <h2 id="delete-ns-title" className="delete-modal-title">
+          Delete namespace?
+        </h2>
 
         <p className="delete-modal-warning">
           This will permanently delete the namespace <strong>{namespaceName}</strong> and all links

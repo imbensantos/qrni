@@ -135,6 +135,26 @@ export const update = mutation({
           .first();
         if (linkConflict) throw new Error(ERR.NAMESPACE_LINK_CONFLICT);
 
+        // Check that recomposed namespace link shortCodes won't collide with
+        // existing top-level links. For each namespace link, the new shortCode
+        // will be `newSlug/namespaceSlug`. We verify none of these collide.
+        const namespacedLinks = await ctx.db
+          .query("links")
+          .withIndex("by_namespace_slug", (q) => q.eq("namespace", args.namespaceId))
+          .collect();
+        for (const link of namespacedLinks) {
+          if (link.namespaceSlug) {
+            const newShortCode = `${slug}/${link.namespaceSlug}`;
+            const collision = await ctx.db
+              .query("links")
+              .withIndex("by_short_code", (q) => q.eq("shortCode", newShortCode))
+              .first();
+            if (collision && collision._id !== link._id) {
+              throw new Error(ERR.NAMESPACE_LINK_CONFLICT);
+            }
+          }
+        }
+
         // Issue #9: Update all links FIRST, then update the namespace slug.
         // This way if a link update fails, the old slug is still valid and
         // the namespace remains in a consistent state.

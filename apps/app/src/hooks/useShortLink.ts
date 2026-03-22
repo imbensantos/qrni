@@ -51,12 +51,12 @@ export function useShortLink(
   const createCustomSlugLink = useAction(api.links.createCustomSlugLink);
   const createNamespacedLink = useAction(api.links.createNamespacedLink);
 
-  const myLinks = useQuery(api.links.listMyLinks) ?? [];
-  const myNamespaces = useQuery(api.namespaces.listMine);
+  const myLinks = useQuery(api.links.listMyLinks, isAuthenticated ? undefined : "skip") ?? [];
+  const myNamespaces = useQuery(api.namespaces.listMine, isAuthenticated ? undefined : "skip");
 
   const flatCustomCount = myLinks.filter((l) => !l.namespace && l.owner && !l.autoSlug).length;
 
-  const ownedNamespaces = myNamespaces?.owned ?? [];
+  const ownedNamespaces = useMemo(() => myNamespaces?.owned ?? [], [myNamespaces?.owned]);
 
   const allNamespaces: Namespace[] = useMemo(
     () => [

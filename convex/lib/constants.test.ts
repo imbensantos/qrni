@@ -12,6 +12,7 @@ import {
   DUPLICATE_WINDOW_MS,
   MAX_SHORT_CODE_ATTEMPTS,
   ERR,
+  RESERVED_SLUGS,
 } from "./constants";
 
 // ---------------------------------------------------------------------------
@@ -126,5 +127,86 @@ describe("ERR error messages", () => {
       expect(typeof value).toBe("string");
       expect(value.length).toBeGreaterThan(0);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// C6: RESERVED_SLUGS parity with vite.config.js
+//
+// vite.config.js maintains its own hardcoded copy of RESERVED_SLUGS.
+// If the two sets drift, the proxy will forward requests for slugs the app
+// treats as reserved routes (or vice versa). This test catches any drift.
+//
+// The expected set below is copied verbatim from apps/app/vite.config.js.
+// When vite.config.js changes, update EXPECTED_VITE_RESERVED_SLUGS here too,
+// OR (better) extract vite.config.js to import from this file directly.
+// ---------------------------------------------------------------------------
+
+describe("C6: RESERVED_SLUGS parity with vite.config.js (catches drift)", () => {
+  // Hardcoded from apps/app/vite.config.js as of the last known good state.
+  // If this diverges from constants.ts, ONE of the two files has drifted.
+  const EXPECTED_VITE_RESERVED_SLUGS = new Set([
+    "admin",
+    "app",
+    "www",
+    "help",
+    "support",
+    "about",
+    "blog",
+    "settings",
+    "dashboard",
+    "profile",
+    "pricing",
+    "docs",
+    "account",
+    "billing",
+    "status",
+    "api-docs",
+    "register",
+    "unsubscribe",
+    "notifications",
+    "analytics",
+    "embed",
+    "link",
+    "links",
+    "redirect",
+    "404",
+    "500",
+    "terms",
+    "privacy",
+    "tos",
+    "terms-and-conditions",
+    "contact",
+    "qrni",
+    "api",
+    "login",
+    "signup",
+    "signin",
+    "signout",
+    "logout",
+    "verify",
+    "reset-password",
+    "forgot-password",
+    "invite",
+    "auth",
+    "oauth",
+    "callback",
+    ".well-known",
+  ]);
+
+  it("convex RESERVED_SLUGS contains every slug in the Vite proxy list", () => {
+    for (const slug of EXPECTED_VITE_RESERVED_SLUGS) {
+      expect(RESERVED_SLUGS.has(slug)).toBe(true);
+    }
+  });
+
+  it("Vite proxy list contains every slug in convex RESERVED_SLUGS", () => {
+    for (const slug of RESERVED_SLUGS) {
+      expect(EXPECTED_VITE_RESERVED_SLUGS.has(slug)).toBe(true);
+    }
+  });
+
+  it("both sets have the same size (no silent additions)", () => {
+    expect(RESERVED_SLUGS.size).toBe(EXPECTED_VITE_RESERVED_SLUGS.size);
   });
 });

@@ -1,4 +1,4 @@
-import { action } from "./_generated/server";
+import { internalAction } from "./_generated/server";
 import { v } from "convex/values";
 
 export async function checkUrlSafety(url: string): Promise<{ safe: boolean; unchecked?: boolean }> {
@@ -41,7 +41,7 @@ export async function checkUrlSafety(url: string): Promise<{ safe: boolean; unch
   return { safe: !data.matches || data.matches.length === 0 };
 }
 
-export const checkUrl = action({
+export const checkUrl = internalAction({
   args: { url: v.string() },
   handler: async (_ctx, args) => {
     return checkUrlSafety(args.url);

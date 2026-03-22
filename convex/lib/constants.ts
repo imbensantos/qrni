@@ -98,7 +98,7 @@ export const ERR = {
   INVITE_REVOKED: "This invite has been revoked",
   INVITE_EXPIRED: "This invite has expired",
   INVITE_WRONG_EMAIL: "This invite was sent to a different email address",
-  ALREADY_OWNER: "You already own this namespace",
+  ALREADY_OWNER: "Owner must transfer ownership before leaving this namespace",
   ALREADY_MEMBER: "You are already a member of this namespace",
   INVITE_NOT_IN_NAMESPACE: "Invite does not belong to this namespace",
   MEMBERSHIP_NOT_FOUND: "Membership not found",

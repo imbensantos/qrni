@@ -44,7 +44,7 @@ function createQRCode(QRCodeStyling: any, url: string, options: QrOptions): any 
   });
 }
 
-async function renderToBlob(qr: any, format: ExportFormat): Promise<Blob> {
+export async function renderToBlob(qr: any, format: ExportFormat): Promise<Blob> {
   const container = document.createElement("div");
   qr.append(container);
 
@@ -55,8 +55,19 @@ async function renderToBlob(qr: any, format: ExportFormat): Promise<Blob> {
   }
 
   const canvas = (await waitForElement(container, "canvas")) as HTMLCanvasElement;
-  return new Promise((resolve) => {
-    canvas.toBlob((blob) => resolve(blob!), format === "webp" ? "image/webp" : "image/png");
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          reject(
+            new Error(`canvas.toBlob returned null — canvas may be tainted or format unsupported`),
+          );
+        } else {
+          resolve(blob);
+        }
+      },
+      format === "webp" ? "image/webp" : "image/png",
+    );
   });
 }
 

@@ -127,6 +127,14 @@ export function buildBotHtml(opts: OgData & { destinationUrl: string }): string 
     ? `  <meta property="og:image" content="${escapeHtmlAttr(ogImage)}" />\n`
     : "";
 
+  const twitterCard = ogImage ? "summary_large_image" : "summary";
+  const twitterDescTag = ogDescription
+    ? `  <meta name="twitter:description" content="${escapeHtmlAttr(ogDescription)}" />\n`
+    : "";
+  const twitterImageTag = ogImage
+    ? `  <meta name="twitter:image" content="${escapeHtmlAttr(ogImage)}" />\n`
+    : "";
+
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -136,7 +144,9 @@ export function buildBotHtml(opts: OgData & { destinationUrl: string }): string 
   <meta property="og:url" content="${escapeHtmlAttr(destinationUrl)}" />
   <meta property="og:title" content="${escapeHtmlAttr(title)}" />
   <meta property="og:site_name" content="${escapeHtmlAttr(siteName)}" />
-${descriptionTag}${imageTag}</head>
+${descriptionTag}${imageTag}  <meta name="twitter:card" content="${twitterCard}" />
+  <meta name="twitter:title" content="${escapeHtmlAttr(title)}" />
+${twitterDescTag}${twitterImageTag}</head>
 <body></body>
 </html>
 `;

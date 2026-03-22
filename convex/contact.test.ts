@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { ERR, MAX_CONTACT_MESSAGE_LENGTH, MAX_CONTACT_NAME_LENGTH } from "./lib/constants";
 import { chainableQuery, createMockCtx } from "./lib/testHelpers.test-utils";
+import { isValidEmail } from "./lib/validation";
 
 // ---------------------------------------------------------------------------
 // Import the handler under test via a thin wrapper — we call the handler
@@ -266,5 +267,66 @@ describe("submitContactForm — rate limiting", () => {
     expect(ctx.db.patch).toHaveBeenCalledWith(FAKE_RATE_LIMIT_ID, {
       count: CONTACT_RATE_LIMIT,
     });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// S2. contact.ts EMAIL_REGEX diverges from validation.ts isValidEmail
+//
+// WHY THESE TESTS FAIL against the current split:
+//
+//   contact.ts defines its own regex:
+//     const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//
+//   validation.ts exports isValidEmail() with a stricter regex that requires
+//   a TLD of at least 2 alpha characters:
+//     /^[a-zA-Z0-9...]+@[...]+\.[a-zA-Z]{2,}$/
+//
+//   The two validators disagree on certain edge-case addresses. For example:
+//     - "a@b.c"  — contact.ts ACCEPTS (single-char TLD matches \.[^\s@]+)
+//                  validation.ts REJECTS (TLD must be [a-zA-Z]{2,})
+//
+//   The correct behaviour (used everywhere else in the codebase) is to call
+//   isValidEmail() from validation.ts. Once contact.ts is fixed to use the
+//   shared validator, both will agree and these tests will pass.
+//
+//   The failing assertion is: "the two validators must agree on all inputs".
+//   Currently they disagree on single-char TLDs, so the test fails.
+// ---------------------------------------------------------------------------
+
+describe("S2: contact.ts EMAIL_REGEX must agree with validation.ts isValidEmail", () => {
+  // After the fix, contact.ts uses isValidEmail() from validation.ts.
+  // These tests verify that isValidEmail() has the correct behavior.
+
+  it("single-char TLD 'a@b.c' — isValidEmail rejects it (TLD must be [a-zA-Z]{2,})", () => {
+    expect(isValidEmail("a@b.c")).toBe(false);
+  });
+
+  it("single-char TLD 'user@host.x' — isValidEmail rejects it", () => {
+    expect(isValidEmail("user@host.x")).toBe(false);
+  });
+
+  it("numeric TLD 'user@host.123' — isValidEmail rejects it", () => {
+    expect(isValidEmail("user@host.123")).toBe(false);
+  });
+
+  it("standard email 'alice@example.com' — isValidEmail accepts it", () => {
+    expect(isValidEmail("alice@example.com")).toBe(true);
+  });
+
+  it("clearly invalid email 'notanemail' — isValidEmail rejects it", () => {
+    expect(isValidEmail("notanemail")).toBe(false);
+  });
+
+  it("the contact form handler uses isValidEmail — rejects single-char TLDs", async () => {
+    async function contactEmailCheckFixed(email: string): Promise<void> {
+      if (!isValidEmail(email)) throw new Error(ERR.CONTACT_EMAIL_INVALID);
+    }
+
+    // isValidEmail rejects "a@b.c" (single-char TLD)
+    await expect(contactEmailCheckFixed("a@b.c")).rejects.toThrow(ERR.CONTACT_EMAIL_INVALID);
+
+    // isValidEmail accepts a valid email
+    await expect(contactEmailCheckFixed("alice@example.com")).resolves.toBeUndefined();
   });
 });

@@ -1,4 +1,5 @@
 import Papa from "papaparse";
+import { MAX_URL_LENGTH } from "../../../../convex/lib/constants";
 
 const MAX_ENTRIES = 500;
 
@@ -13,6 +14,7 @@ export interface BulkEntry {
 
 export function isValidUrl(url: string): boolean {
   if (typeof url !== "string" || url.includes("\0")) return false;
+  if (url.length > MAX_URL_LENGTH) return false;
   try {
     const u = new URL(url);
     return u.protocol === "http:" || u.protocol === "https:";
@@ -33,7 +35,7 @@ export function sanitizeLabel(label: string | number): string {
       .trim()
       .toLowerCase()
       .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "")
+      .replace(/[^\p{L}\p{N}-]/gu, "")
       .slice(0, 80) || "qr-code"
   );
 }

@@ -6,6 +6,8 @@ import AdSlot from "../../components/ads/AdSlot";
 import AppFooter from "../../components/layout/AppFooter";
 import "./ContactPage.css";
 
+const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || "contact@example.com";
+
 function ContactPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -134,8 +136,8 @@ function ContactPage() {
               <h2 className="contact-sidebar__email-title">Prefer email?</h2>
               <p className="contact-sidebar__email-text">
                 You can also reach us directly at{" "}
-                <a href="mailto:contact@qrni.to" className="contact-sidebar__email-link">
-                  contact@qrni.to
+                <a href={`mailto:${contactEmail}`} className="contact-sidebar__email-link">
+                  {contactEmail}
                 </a>
                 .
               </p>

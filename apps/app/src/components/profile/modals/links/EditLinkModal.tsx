@@ -60,8 +60,8 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
       return;
     }
 
-    if (!/^[a-zA-Z0-9-]+$/.test(trimmedSlug)) {
-      setError("Only letters, numbers, and hyphens are allowed");
+    if (!/^[a-zA-Z0-9_-]{1,60}$/.test(trimmedSlug)) {
+      setError("Only letters, numbers, hyphens, and underscores allowed (max 60 characters)");
       return;
     }
 
@@ -132,7 +132,9 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
                 autoComplete="off"
               />
             </div>
-            <span className="edit-link-hint">Only letters, numbers, and hyphens allowed</span>
+            <span className="edit-link-hint">
+              Only letters, numbers, hyphens, and underscores allowed
+            </span>
           </div>
 
           <div className="edit-link-field">

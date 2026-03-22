@@ -102,6 +102,59 @@ describe("sanitizeLabel", () => {
     const long = "a".repeat(100);
     expect(sanitizeLabel(long).length).toBe(80);
   });
+
+  // ── S16: Unicode / non-ASCII character preservation ─────────────────────────
+  //
+  // Audit finding: the regex `[^a-z0-9-]` strips ALL characters outside the
+  // ASCII alphanumeric range, including accented Latin letters and CJK script.
+  // This breaks labels written in Filipino (Tagalog uses Latin with some diacritics),
+  // Japanese, Korean, or any other non-ASCII script. The fix should change the
+  // regex to `[^\p{L}\p{N}-]` with the `u` flag so that Unicode word characters
+  // are preserved.
+  //
+  // These tests FAIL against the current implementation because the regex
+  // `[^a-z0-9-]` strips every non-ASCII byte.
+
+  it("preserves accented Latin characters (café → café)", () => {
+    // WHY THIS FAILS: "é" (\u00e9) is stripped by [^a-z0-9-], leaving "caf".
+    // After the fix the regex should keep Unicode letters so the result is "café".
+    expect(sanitizeLabel("café")).toBe("café");
+  });
+
+  it("preserves Japanese characters (マイリンク → マイリンク)", () => {
+    // WHY THIS FAILS: every Katakana character is outside [a-z0-9-] so the
+    // current code strips them all, leaving an empty string and returning the
+    // fallback "qr-code".
+    expect(sanitizeLabel("マイリンク")).toBe("マイリンク");
+  });
+
+  it("preserves Filipino/Tagalog diacritics (Pagbabago → pagbabago)", () => {
+    // This input is pure ASCII so it already passes — included to document
+    // intent and catch regressions.
+    expect(sanitizeLabel("Pagbabago")).toBe("pagbabago");
+  });
+
+  it("preserves Korean characters (나의링크 → 나의링크)", () => {
+    // WHY THIS FAILS: Hangul syllables are outside [a-z0-9-] and are stripped,
+    // leaving an empty string that falls back to "qr-code".
+    expect(sanitizeLabel("나의링크")).toBe("나의링크");
+  });
+
+  it("preserves mixed ASCII and non-ASCII (mi enlace → mi-enlace)", () => {
+    // Pure ASCII — should pass before and after the fix.
+    expect(sanitizeLabel("mi enlace")).toBe("mi-enlace");
+  });
+
+  it("preserves mixed script label with spaces (kumusta mundo → kumusta-mundo)", () => {
+    // Pure ASCII — should pass before and after the fix.
+    expect(sanitizeLabel("Kumusta Mundo")).toBe("kumusta-mundo");
+  });
+
+  it("preserves Arabic characters (رابطتي → رابطتي)", () => {
+    // WHY THIS FAILS: Arabic script characters are outside [a-z0-9-] and are
+    // stripped entirely, leaving the fallback "qr-code".
+    expect(sanitizeLabel("رابطتي")).toBe("رابطتي");
+  });
 });
 
 // ---------------------------------------------------------------------------

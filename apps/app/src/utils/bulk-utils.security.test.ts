@@ -80,8 +80,8 @@ describe("bulk parsing — malicious input handling", () => {
     const result = parseCSV(csv);
     expect(result).toHaveLength(1);
     expect(result[0].url).toBe(longUrl);
-    // The URL is technically valid even if absurdly long
-    expect(result[0].valid).toBe(true);
+    // URLs exceeding MAX_URL_LENGTH are rejected to match backend validation
+    expect(result[0].valid).toBe(false);
   });
 
   it("handles CSV with script tags in labels (sanitized in filename)", () => {
