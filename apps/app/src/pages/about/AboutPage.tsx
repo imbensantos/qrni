@@ -26,9 +26,7 @@ function AboutPage() {
         <section className="about-cards">
           <div className="about-card">
             <div className="about-card__icon about-card__icon--sage">
-              <span role="img" aria-label="QR code">
-                &#128279;
-              </span>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="2" y="2" width="8" height="8" rx="1" /><rect x="14" y="2" width="8" height="8" rx="1" /><rect x="2" y="14" width="8" height="8" rx="1" /><rect x="14" y="14" width="4" height="4" rx="0.5" /><path d="M22 14h-2v4h-4v4h4a2 2 0 0 0 2-2z" /></svg>
             </div>
             <h2 className="about-card__title">What is QRni?</h2>
             <p className="about-card__body">
@@ -41,9 +39,7 @@ function AboutPage() {
 
           <div className="about-card">
             <div className="about-card__icon about-card__icon--terracotta">
-              <span role="img" aria-label="Heart">
-                &#10084;&#65039;
-              </span>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></svg>
             </div>
             <h2 className="about-card__title">Why we built it</h2>
             <p className="about-card__body">
@@ -88,7 +84,7 @@ function AboutPage() {
                   rel="noopener noreferrer"
                   className="about-maker__link-chip"
                 >
-                  <span aria-hidden="true">&#127760;</span> Website
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></svg> Website
                 </a>
                 <a
                   href="https://github.com/imbensantos"
@@ -96,7 +92,7 @@ function AboutPage() {
                   rel="noopener noreferrer"
                   className="about-maker__link-chip"
                 >
-                  <span aria-hidden="true">&#128728;</span> GitHub
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg> GitHub
                 </a>
                 <a
                   href="https://linkedin.com/in/imbensantos"
@@ -104,7 +100,7 @@ function AboutPage() {
                   rel="noopener noreferrer"
                   className="about-maker__link-chip"
                 >
-                  <span aria-hidden="true">&#128101;</span> LinkedIn
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></svg> LinkedIn
                 </a>
               </div>
             </div>

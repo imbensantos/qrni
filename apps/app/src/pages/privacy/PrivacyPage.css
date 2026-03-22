@@ -1,6 +1,54 @@
 @import "../shared/StaticPage.css";
 
+/* ─── Animations ─────────────────────────────────────────────────────────── */
+
+@keyframes targetHighlight {
+  0%   { background-color: transparent; }
+  20%  { background-color: #f0d4c420; }
+  100% { background-color: transparent; }
+}
+
+@keyframes badgePing {
+  0%   { box-shadow: 0 0 0 0 currentColor; }
+  40%  { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: none; }
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlideLeft {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scalePop {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeScaleUp {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes growWidth {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 /* ─── Page shell ─────────────────────────────────────────────────────────── */
+
+.privacy-page {
+  scroll-behavior: smooth;
+}
 
 .privacy-page__inner {
   width: 100%;
@@ -38,6 +86,7 @@
   font-weight: 700;
   color: #2d2a26;
   margin-bottom: 12px;
+  animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .privacy-hero__subtitle {
@@ -45,6 +94,7 @@
   font-size: 20px;
   color: #6b6560;
   margin-bottom: 24px;
+  animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 
 .privacy-hero__doodle-bar {
@@ -52,6 +102,7 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
+  animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 
 .privacy-hero__doodle-tilde {
@@ -78,6 +129,7 @@
   padding: 32px;
   box-shadow: 0 4px 20px #2d2a260a;
   margin-bottom: 32px;
+  animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 
 .privacy-toc__header {
@@ -125,13 +177,15 @@
   font-weight: 500;
   color: #d89575;
   text-decoration: none;
-  transition: opacity 0.15s;
+  display: inline-block;
+  transition: opacity 0.15s, transform 0.15s ease-out;
 }
 
 .privacy-toc__link:hover {
   opacity: 0.75;
   text-decoration: underline;
   text-underline-offset: 2px;
+  transform: translateX(3px);
 }
 
 /* ─── Main content card ──────────────────────────────────────────────────── */
@@ -143,6 +197,7 @@
   padding: 48px;
   box-shadow: 0 4px 20px #2d2a260a;
   margin-bottom: 32px;
+  animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
 }
 
 .privacy-content__intro {
@@ -157,6 +212,19 @@
 
 .privacy-section {
   margin: 0;
+  scroll-margin-top: 24px;
+  border-radius: 12px;
+  padding: 4px 8px;
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
+.privacy-section:target {
+  animation: targetHighlight 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.privacy-section:target .privacy-section__badge {
+  animation: badgePing 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
 }
 
 .privacy-section__heading {
@@ -349,12 +417,73 @@
   font-weight: 600;
   border-radius: 999px;
   text-decoration: none;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, transform 0.15s ease-out;
 }
 
 .privacy-cta__button:hover {
   opacity: 0.85;
   text-decoration: none;
+  transform: scale(1.03);
+}
+
+/* ─── Scroll-driven animations (modern browsers) ────────────────────────── */
+
+@supports (animation-timeline: view()) {
+  .privacy-section__heading {
+    animation: fadeSlideLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+
+  .privacy-section__badge {
+    animation: scalePop 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+
+  .privacy-cta {
+    animation: fadeScaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+
+  .privacy-divider {
+    animation: growWidth 0.5s ease-out both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+}
+
+/* ─── Table row stagger ──────────────────────────────────────────────────── */
+
+.privacy-table tbody tr {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+.privacy-table tbody tr:nth-child(1) { animation-delay: 0.5s; }
+.privacy-table tbody tr:nth-child(2) { animation-delay: 0.55s; }
+.privacy-table tbody tr:nth-child(3) { animation-delay: 0.6s; }
+.privacy-table tbody tr:nth-child(4) { animation-delay: 0.65s; }
+.privacy-table tbody tr:nth-child(5) { animation-delay: 0.7s; }
+.privacy-table tbody tr:nth-child(6) { animation-delay: 0.75s; }
+.privacy-table tbody tr:nth-child(7) { animation-delay: 0.8s; }
+.privacy-table tbody tr:nth-child(8) { animation-delay: 0.85s; }
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .privacy-page,
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ─── Mobile ─────────────────────────────────────────────────────────────── */

@@ -63,7 +63,7 @@ function ContactPage() {
             {status === "sent" ? (
               <div className="contact-success">
                 <div className="contact-success__icon" aria-hidden="true">
-                  &#10003;
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg>
                 </div>
                 <h3 className="contact-success__heading">Message sent!</h3>
                 <p className="contact-success__text">
@@ -120,7 +120,7 @@ function ContactPage() {
                 {status === "error" && <p className="contact-error">{errorMsg}</p>}
 
                 <button type="submit" className="contact-submit" disabled={status === "sending"}>
-                  <span aria-hidden="true">&#9993;</span>
+                  <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
                   {status === "sending" ? "Sending..." : "Send Message"}
                 </button>
               </form>
@@ -131,7 +131,7 @@ function ContactPage() {
           <aside className="contact-sidebar">
             <div className="contact-sidebar__email-card">
               <div className="contact-sidebar__icon-badge" aria-hidden="true">
-                &#9993;
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
               </div>
               <h2 className="contact-sidebar__email-title">Prefer email?</h2>
               <p className="contact-sidebar__email-text">
@@ -145,7 +145,7 @@ function ContactPage() {
 
             <div className="contact-sidebar__note-card">
               <div className="contact-sidebar__note-icon" aria-hidden="true">
-                &#128075;
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" /><path d="M20 3v4" /><path d="M22 5h-4" /></svg>
               </div>
               <h2 className="contact-sidebar__note-title">We actually read these!</h2>
               <p className="contact-sidebar__note-text">

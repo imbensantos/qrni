@@ -267,30 +267,60 @@
 
   .about-cards {
     grid-template-columns: 1fr;
-    padding: 0 20px;
+    padding: 0;
+    gap: 16px;
+  }
+
+  .about-card {
+    width: 100%;
   }
 
   .about-maker {
-    padding: 32px 20px;
+    padding: 32px 0;
+  }
+
+  .about-maker__heading {
+    font-size: 22px;
+    margin-bottom: 16px;
   }
 
   .about-maker__card {
     flex-direction: column;
     text-align: center;
+    width: 100%;
+    max-width: none;
   }
 
   .about-maker__card-left {
     width: 100%;
-    padding: 32px 20px 48px;
+    flex-shrink: 1;
+    padding: 24px 20px 32px;
     flex-direction: column;
+  }
+
+  .about-maker__avatar {
+    width: 96px;
+    height: 96px;
   }
 
   .about-maker__card-right {
     padding: 24px 20px 32px;
   }
 
+  .about-maker__name {
+    font-size: 20px;
+  }
+
   .about-maker__role {
+    display: inline-flex;
     justify-content: center;
+    font-size: 13px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .about-maker__bio {
+    font-size: 14px;
   }
 
   .about-maker__links {
