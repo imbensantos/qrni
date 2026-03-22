@@ -267,16 +267,22 @@
 
   .about-cards {
     grid-template-columns: 1fr;
-    padding: 0 20px;
+    padding: 0;
+    gap: 16px;
+  }
+
+  .about-card {
+    width: 100%;
   }
 
   .about-maker {
-    padding: 32px 20px;
+    padding: 32px 0;
   }
 
   .about-maker__card {
     flex-direction: column;
     text-align: center;
+    width: 100%;
   }
 
   .about-maker__card-left {
