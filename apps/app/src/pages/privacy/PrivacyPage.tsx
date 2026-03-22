@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import AdSlot from "../../components/ads/AdSlot";
 import AppFooter from "../../components/layout/AppFooter";
@@ -88,6 +89,15 @@ function SectionHeading({ number, title }: { number: number; title: string }) {
 }
 
 function PrivacyPage() {
+  // On mobile the document (html) is the scroll container, not .privacy-page.
+  // Set scroll-behavior on html so smooth-scroll works for anchor links.
+  useEffect(() => {
+    document.documentElement.style.scrollBehavior = "smooth";
+    return () => {
+      document.documentElement.style.scrollBehavior = "";
+    };
+  }, []);
+
   return (
     <main id="main-content" className="privacy-page static-page">
       <div className="privacy-page__inner">

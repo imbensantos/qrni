@@ -472,7 +472,8 @@
 /* ─── Reduced motion ─────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-  .privacy-page {
+  .privacy-page,
+  html {
     scroll-behavior: auto !important;
   }
 
