@@ -339,10 +339,37 @@
 
   .contact-content {
     flex-direction: column;
-    padding: 0 20px;
+    padding: 0;
+  }
+
+  .contact-form-card {
+    padding: 24px 20px;
+  }
+
+  .contact-input,
+  .contact-textarea {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+
+  .contact-submit {
+    height: 52px;
+  }
+
+  .contact-form {
+    gap: 16px;
   }
 
   .contact-sidebar {
     width: 100%;
+  }
+
+  .contact-sidebar__email-card,
+  .contact-sidebar__note-card {
+    padding: 20px;
+  }
+
+  .contact-success {
+    padding: 32px 16px;
   }
 }
