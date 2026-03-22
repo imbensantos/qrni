@@ -343,13 +343,9 @@
   }
 
   .contact-form-card {
+    width: 100%;
     padding: 24px 20px;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    margin-left: -20px;
-    margin-right: -20px;
-    box-shadow: none;
+    border-radius: 12px;
   }
 
   .contact-input,
