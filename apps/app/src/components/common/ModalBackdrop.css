@@ -21,9 +21,18 @@
 }
 
 @media (max-width: 768px) {
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
   .modal-content {
     max-width: 100%;
-    border-radius: var(--radius-md);
+    max-height: 90vh;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     padding: 24px;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
 }

@@ -51,13 +51,41 @@ function ModalBackdrop({ isOpen, onClose, children, titleId }: ModalBackdropProp
     [onClose],
   );
 
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const scrollYRef = useRef(0);
+
   useEffect(() => {
     if (!isOpen) return;
     document.addEventListener("keydown", handleKeyDown);
+
+    // Save scroll position and lock body scrolling
+    const scrollY = window.scrollY;
+    scrollYRef.current = scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
     document.body.style.overflow = "hidden";
+
+    // Prevent touch scroll passthrough on the backdrop
+    const backdrop = backdropRef.current;
+    const handleTouchMove = (e: TouchEvent) => {
+      // Only prevent default when touching the backdrop itself, not modal content
+      if (e.target === backdrop) {
+        e.preventDefault();
+      }
+    };
+    backdrop?.addEventListener("touchmove", handleTouchMove, { passive: false });
+
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      backdrop?.removeEventListener("touchmove", handleTouchMove);
+
+      // Restore body styles and scroll position
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
       document.body.style.overflow = "";
+      window.scrollTo(0, scrollYRef.current);
     };
   }, [isOpen, handleKeyDown]);
 
@@ -65,6 +93,7 @@ function ModalBackdrop({ isOpen, onClose, children, titleId }: ModalBackdropProp
 
   return (
     <div
+      ref={backdropRef}
       className="modal-backdrop"
       onMouseDown={(e) => {
         mouseDownTarget.current = e.target;
