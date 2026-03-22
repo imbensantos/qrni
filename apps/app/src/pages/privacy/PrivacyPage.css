@@ -2,6 +2,18 @@
 
 /* ─── Animations ─────────────────────────────────────────────────────────── */
 
+@keyframes targetHighlight {
+  0%   { background-color: transparent; }
+  20%  { background-color: #f0d4c420; }
+  100% { background-color: transparent; }
+}
+
+@keyframes badgePing {
+  0%   { box-shadow: 0 0 0 0 currentColor; }
+  40%  { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: none; }
+}
+
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -33,6 +45,10 @@
 }
 
 /* ─── Page shell ─────────────────────────────────────────────────────────── */
+
+.privacy-page {
+  scroll-behavior: smooth;
+}
 
 .privacy-page__inner {
   width: 100%;
@@ -196,6 +212,19 @@
 
 .privacy-section {
   margin: 0;
+  scroll-margin-top: 24px;
+  border-radius: 12px;
+  padding: 4px 8px;
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
+.privacy-section:target {
+  animation: targetHighlight 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.privacy-section:target .privacy-section__badge {
+  animation: badgePing 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
 }
 
 .privacy-section__heading {
@@ -443,6 +472,10 @@
 /* ─── Reduced motion ─────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
+  .privacy-page {
+    scroll-behavior: auto !important;
+  }
+
   *,
   *::before,
   *::after {
