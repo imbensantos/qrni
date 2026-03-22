@@ -58,33 +58,60 @@ function ModalBackdrop({ isOpen, onClose, children, titleId }: ModalBackdropProp
     if (!isOpen) return;
     document.addEventListener("keydown", handleKeyDown);
 
-    // Save scroll position and lock body scrolling
+    // Save scroll position and lock body + html scrolling
     const scrollY = window.scrollY;
     scrollYRef.current = scrollY;
     document.body.style.position = "fixed";
     document.body.style.top = `-${scrollY}px`;
     document.body.style.width = "100%";
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
 
-    // Prevent touch scroll passthrough on the backdrop
-    const backdrop = backdropRef.current;
-    const handleTouchMove = (e: TouchEvent) => {
-      // Only prevent default when touching the backdrop itself, not modal content
-      if (e.target === backdrop) {
+    // Document-level touchmove handler to prevent scroll passthrough on iOS Safari
+    const content = contentRef.current;
+    const handleDocumentTouchMove = (e: TouchEvent) => {
+      const target = e.target as Node | null;
+      // Walk up from touch target to check if it's inside modal content
+      let isInsideContent = false;
+      if (content && target) {
+        isInsideContent = content.contains(target);
+      }
+
+      if (isInsideContent && content) {
+        // Allow touch scrolling only if modal content is actually scrollable
+        const isScrollable = content.scrollHeight > content.clientHeight;
+        if (!isScrollable) {
+          e.preventDefault();
+        }
+      } else {
+        // Touch is outside modal content — always block
         e.preventDefault();
       }
     };
-    backdrop?.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchmove", handleDocumentTouchMove, { passive: false });
+
+    // Re-apply scroll lock when iOS virtual keyboard opens/closes
+    const handleViewportResize = () => {
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollYRef.current}px`;
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      window.scrollTo(0, 0);
+    };
+    window.visualViewport?.addEventListener("resize", handleViewportResize);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      backdrop?.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchmove", handleDocumentTouchMove);
+      window.visualViewport?.removeEventListener("resize", handleViewportResize);
 
-      // Restore body styles and scroll position
+      // Restore body + html styles and scroll position
       document.body.style.position = "";
       document.body.style.top = "";
       document.body.style.width = "";
       document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
       window.scrollTo(0, scrollYRef.current);
     };
   }, [isOpen, handleKeyDown]);

@@ -25,6 +25,7 @@
     align-items: flex-end;
     padding: 0;
     padding-bottom: env(safe-area-inset-bottom, 0px);
+    touch-action: none;
   }
 
   .modal-content {
@@ -34,5 +35,6 @@
     padding: 24px;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
 }
