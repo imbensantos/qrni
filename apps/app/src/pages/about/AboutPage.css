@@ -312,8 +312,11 @@
   }
 
   .about-maker__role {
+    display: inline-flex;
     justify-content: center;
     font-size: 13px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .about-maker__bio {
