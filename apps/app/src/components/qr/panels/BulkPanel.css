@@ -56,7 +56,7 @@
 /* File upload drop zone */
 .file-upload-btn {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 8px;
@@ -77,8 +77,8 @@
 }
 
 .file-upload-btn svg {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   opacity: 0.5;
   transition: opacity 0.2s;
 }
