@@ -1060,28 +1060,7 @@
 }
 
 /* Select button — outlined secondary, sits next to Add */
-/* ─── Bulk Delete Microanimation Keyframes ───────────────────────────────────── */
-
-@keyframes bulk-checkbox-pop {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.15);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes bulk-checkmark-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+/* ─── Bulk Delete Microanimation ──────────────────────────────────────────────── */
 
 @keyframes bulk-toolbar-slide-down {
   from {
@@ -1091,26 +1070,6 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes bulk-delete-btn-in {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes bulk-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }
 
@@ -1131,12 +1090,7 @@
   transition:
     border-color 0.15s ease,
     color 0.15s ease,
-    background 0.15s ease,
-    transform 0.1s ease;
-}
-
-.pp-select-btn:active {
-  transform: scale(0.95);
+    background 0.15s ease;
 }
 
 .pp-select-btn:hover {
@@ -1161,12 +1115,7 @@
   cursor: pointer;
   transition:
     border-color 0.15s ease,
-    color 0.15s ease,
-    transform 0.1s ease;
-}
-
-.pp-cancel-select-btn:active {
-  transform: scale(0.95);
+    color 0.15s ease;
 }
 
 .pp-cancel-select-btn:hover {
@@ -1207,14 +1156,12 @@
   position: relative;
   transition:
     background 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.15s ease;
+    border-color 0.15s ease;
 }
 
 .bulk-select-all-checkbox:checked {
   background: var(--accent-primary);
   border-color: var(--accent-primary);
-  animation: bulk-checkbox-pop 0.2s ease-out;
 }
 
 .bulk-select-all-checkbox:checked::after {
@@ -1228,7 +1175,6 @@
   border-top: none;
   border-left: none;
   transform: rotate(45deg);
-  animation: bulk-checkmark-in 0.15s ease-out;
 }
 
 .bulk-select-all-label {
@@ -1247,7 +1193,6 @@
   font-size: 12px;
   color: var(--text-secondary);
   font-weight: 600;
-  animation: bulk-fade-in 0.2s ease-out;
 }
 
 .bulk-delete-btn {
@@ -1266,9 +1211,7 @@
   cursor: pointer;
   transition:
     background 0.15s ease,
-    transform 0.1s ease,
     opacity 0.15s ease;
-  animation: bulk-delete-btn-in 0.2s ease-out;
 }
 
 .bulk-delete-btn:hover:not(:disabled) {
@@ -1276,8 +1219,7 @@
 }
 
 .bulk-delete-btn:active:not(:disabled) {
-  transform: scale(0.94);
-  transition: transform 0.08s ease;
+  opacity: 0.8;
 }
 
 .bulk-delete-btn:disabled {
@@ -1299,14 +1241,12 @@
   position: relative;
   transition:
     background 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.15s ease;
+    border-color 0.15s ease;
 }
 
 .link-select-checkbox:checked {
   background: var(--accent-primary);
   border-color: var(--accent-primary);
-  animation: bulk-checkbox-pop 0.2s ease-out;
 }
 
 .link-select-checkbox:checked::after {
@@ -1320,7 +1260,6 @@
   border-top: none;
   border-left: none;
   transform: rotate(45deg);
-  animation: bulk-checkmark-in 0.15s ease-out;
 }
 
 /* Selected row highlight */
