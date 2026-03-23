@@ -403,6 +403,51 @@ export const deleteLink = mutation({
   },
 });
 
+export const deleteLinks = mutation({
+  args: { linkIds: v.array(v.id("links")) },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
+
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error(ERR.USER_NOT_FOUND);
+
+    const links = await Promise.all(
+      args.linkIds.map(async (linkId) => {
+        const link = await ctx.db.get(linkId);
+        if (!link) throw new Error(`Link not found: ${linkId}`);
+        return link;
+      }),
+    );
+
+    for (const link of links) {
+      if (link.owner !== user._id) {
+        if (link.namespace) {
+          try {
+            await checkPermission(ctx, link.namespace, user._id, "editor");
+          } catch {
+            throw new Error(`Permission denied for link: ${link.shortCode}`);
+          }
+        } else {
+          throw new Error(`Permission denied for link: ${link.shortCode}`);
+        }
+      }
+    }
+
+    await Promise.all(
+      links.map(async (link) => {
+        await ctx.db.delete(link._id);
+        await logAudit(ctx, {
+          userId: user._id,
+          action: "link.delete",
+          resourceType: "link",
+          resourceId: String(link._id),
+        });
+      }),
+    );
+  },
+});
+
 export const updateLinkInternal = internalMutation({
   args: {
     linkId: v.id("links"),
