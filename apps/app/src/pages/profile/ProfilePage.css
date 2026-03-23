@@ -1059,62 +1059,206 @@
   background: var(--accent-warm);
 }
 
+/* Select button — outlined secondary, sits next to Add */
+.pp-select-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
+}
+
+.pp-select-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  background: var(--accent-warm);
+}
+
+/* Cancel button — outlined, appears on right when selection mode is active */
+.pp-cancel-select-btn {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.pp-cancel-select-btn:hover {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+/* Bulk toolbar — warm strip below the card divider */
 .bulk-toolbar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
-  padding: 8px 12px;
-  background: var(--accent-warm);
-  border-radius: var(--radius-md);
-  margin-bottom: 8px;
-  flex-wrap: wrap;
+  padding: 10px 20px;
+  background: #fff8f5;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .bulk-select-all {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.bulk-select-all-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border-strong);
+  background: var(--bg-card);
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.bulk-select-all-checkbox:checked {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.bulk-select-all-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 5px;
+  height: 9px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.bulk-select-all-label {
   font-size: 13px;
   font-weight: 500;
   color: var(--text-secondary);
-  cursor: pointer;
-  user-select: none;
+  font-family: "Outfit", sans-serif;
+}
+
+.bulk-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .bulk-count {
   font-size: 13px;
   color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .bulk-delete-btn {
-  background: var(--color-error);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #e54d4d;
   color: #fff;
   border: none;
-  border-radius: var(--radius-md);
-  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
   font-size: 13px;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   transition:
     background 0.15s,
-    transform 0.1s;
+    transform 0.1s,
+    opacity 0.15s;
 }
 
-.bulk-delete-btn:hover {
-  background: var(--color-error-hover, #c0392b);
+.bulk-delete-btn:hover:not(:disabled) {
+  background: #cc3a3a;
 }
 
-.bulk-delete-btn:active {
+.bulk-delete-btn:active:not(:disabled) {
   transform: scale(0.97);
 }
 
+.bulk-delete-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Per-row checkbox */
 .link-select-checkbox {
-  width: 16px;
-  height: 16px;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border-strong);
+  background: var(--bg-card);
   cursor: pointer;
-  accent-color: var(--accent-primary);
   flex-shrink: 0;
+  position: relative;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.link-select-checkbox:checked {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.link-select-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  width: 5px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+/* Selected row highlight */
+.pp-link-row--selected {
+  background: #fff8f5;
+}
+
+/* Selectable row — pointer cursor and hover state in selection mode */
+.pp-link-row--selectable {
+  cursor: pointer;
+}
+
+.pp-link-row--selectable:hover {
+  background: #fff8f5;
 }
 
 .pagination {

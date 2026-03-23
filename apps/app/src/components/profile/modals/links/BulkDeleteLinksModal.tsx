@@ -3,7 +3,7 @@ import { useWebHaptics } from "web-haptics/react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../../../convex/_generated/api";
 import ModalBackdrop from "../../../common/ModalBackdrop";
-import { IconTrash } from "../../../common/Icons";
+import { IconTrash, IconLink } from "../../../common/Icons";
 import { buildShortLinkUrl } from "../../../../utils/url-utils";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
 import "./DeleteLinkConfirmModal.css";
@@ -51,7 +51,7 @@ function BulkDeleteLinksModal({ isOpen, onClose, onSuccess, links }: BulkDeleteL
     <ModalBackdrop isOpen={isOpen} onClose={onClose} titleId="bulk-delete-modal-title">
       <div className="delete-modal">
         <div className="delete-modal-icon">
-          <IconTrash size={28} />
+          <IconTrash size={24} />
         </div>
 
         <div className="delete-modal-body">
@@ -60,7 +60,8 @@ function BulkDeleteLinksModal({ isOpen, onClose, onSuccess, links }: BulkDeleteL
           </h2>
 
           <p className="delete-modal-warning">
-            This action is permanent. Anyone with these links will get a 404.
+            This will permanently delete {count} short link{plural} and their QR codes. Anyone using
+            these links will get a 404 error. This action cannot be undone.
           </p>
         </div>
 
@@ -69,6 +70,9 @@ function BulkDeleteLinksModal({ isOpen, onClose, onSuccess, links }: BulkDeleteL
             const shortUrl = buildShortLinkUrl(link.shortCode, link.namespaceSlug);
             return (
               <div key={link._id} className="bulk-delete-link-item">
+                <span className="bulk-delete-link-icon">
+                  <IconLink size={13} />
+                </span>
                 <span className="bulk-delete-link-short">{shortUrl}</span>
                 <span className="bulk-delete-link-dest">{link.destinationUrl}</span>
               </div>
@@ -101,6 +105,7 @@ function BulkDeleteLinksModal({ isOpen, onClose, onSuccess, links }: BulkDeleteL
             }}
             disabled={submitting}
           >
+            <IconTrash size={14} />
             {submitting ? "Deleting..." : `Delete ${count} link${plural}`}
           </button>
         </div>

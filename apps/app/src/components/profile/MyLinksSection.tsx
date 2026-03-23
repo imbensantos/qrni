@@ -11,6 +11,7 @@ import {
   IconTrash,
   IconChevronDown,
   IconRefresh,
+  IconCheckSquare,
 } from "../common/Icons";
 import CopyButton from "./CopyButton";
 import { api } from "../../../../../convex/_generated/api";
@@ -112,26 +113,37 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
             {customSlugCount} of {MAX_CUSTOM_LINKS} custom slugs used
           </span>
           <div className="pp-card-actions-group">
-            {personalLinks.length > 0 && (
+            {personalLinks.length > 0 && !selectionMode && (
               <button
-                className="pp-text-btn"
-                onClick={() => (selectionMode ? exitSelectionMode() : setSelectionMode(true))}
-                title={selectionMode ? "Cancel selection" : "Select links"}
+                className="pp-select-btn"
+                onClick={() => setSelectionMode(true)}
+                title="Select links"
               >
-                {selectionMode ? "Cancel" : "Select"}
+                <IconCheckSquare size={14} />
+                Select
               </button>
             )}
-            <button
-              className="pp-add-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                trigger("nudge");
-                onAdd(null, null);
-              }}
-            >
-              <IconPlus size={12} />
-              Add
-            </button>
+            {selectionMode ? (
+              <button
+                className="pp-cancel-select-btn"
+                onClick={exitSelectionMode}
+                title="Cancel selection"
+              >
+                Cancel
+              </button>
+            ) : (
+              <button
+                className="pp-add-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  trigger("nudge");
+                  onAdd(null, null);
+                }}
+              >
+                <IconPlus size={12} />
+                Add
+              </button>
+            )}
             <button
               className={`pp-icon-btn pp-chevron-toggle${expanded ? " pp-chevron-toggle--open" : ""}`}
               onClick={() => {
@@ -155,19 +167,25 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
               <label className="bulk-select-all">
                 <input
                   type="checkbox"
+                  className="bulk-select-all-checkbox"
                   checked={selectedIds.size === personalLinks.length && personalLinks.length > 0}
                   onChange={toggleSelectAll}
                 />
-                Select all
+                <span className="bulk-select-all-label">Select all</span>
               </label>
-              {selectedIds.size > 0 && (
-                <>
+              <div className="bulk-toolbar-right">
+                {selectedIds.size > 0 && (
                   <span className="bulk-count">{selectedIds.size} selected</span>
-                  <button className="bulk-delete-btn" onClick={handleBulkDelete}>
-                    Delete
-                  </button>
-                </>
-              )}
+                )}
+                <button
+                  className="bulk-delete-btn"
+                  onClick={handleBulkDelete}
+                  disabled={selectedIds.size === 0}
+                >
+                  <IconTrash size={13} />
+                  Delete
+                </button>
+              </div>
             </div>
           )}
 
@@ -181,13 +199,17 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
                   : `${getAppHost()}/${link.shortCode}`;
                 return (
                   <div key={link._id}>
-                    <div className="pp-link-row">
+                    <div
+                      className={`pp-link-row${selectionMode ? " pp-link-row--selectable" : ""}${selectedIds.has(String(link._id)) ? " pp-link-row--selected" : ""}`}
+                      onClick={selectionMode ? () => toggleSelect(String(link._id)) : undefined}
+                    >
                       {selectionMode && (
                         <input
                           type="checkbox"
                           className="link-select-checkbox"
                           checked={selectedIds.has(String(link._id))}
                           onChange={() => toggleSelect(String(link._id))}
+                          onClick={(e) => e.stopPropagation()}
                         />
                       )}
                       <div className="pp-link-info">
@@ -197,41 +219,46 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
                             target="_blank"
                             rel="noopener noreferrer"
                             className="pp-link-short-url"
+                            onClick={selectionMode ? (e) => e.preventDefault() : undefined}
                           >
                             {shortUrl}
                           </a>
                           {!link.autoSlug && <span className="pp-custom-badge">custom</span>}
-                          <CopyButton text={`${getAppOrigin()}/${link.shortCode}`} />
+                          {!selectionMode && (
+                            <CopyButton text={`${getAppOrigin()}/${link.shortCode}`} />
+                          )}
                         </div>
                         <div className="pp-link-destination">{link.destinationUrl}</div>
                       </div>
-                      <div className="pp-link-meta">
-                        <span className="pp-clicks">
-                          <IconClick size={12} />
-                          <span className="pp-clicks-count">{link.clickCount}</span>
-                        </span>
-                        <RefreshPreviewButton linkId={link._id} />
-                        <button
-                          className="pp-icon-btn"
-                          onClick={() => {
-                            trigger("nudge");
-                            onEdit(link);
-                          }}
-                          title="Edit link"
-                        >
-                          <IconPencil size={14} />
-                        </button>
-                        <button
-                          className="pp-icon-btn pp-icon-btn--delete"
-                          onClick={() => {
-                            trigger("nudge");
-                            onDelete(link);
-                          }}
-                          title="Delete link"
-                        >
-                          <IconTrash size={14} />
-                        </button>
-                      </div>
+                      {!selectionMode && (
+                        <div className="pp-link-meta">
+                          <span className="pp-clicks">
+                            <IconClick size={12} />
+                            <span className="pp-clicks-count">{link.clickCount}</span>
+                          </span>
+                          <RefreshPreviewButton linkId={link._id} />
+                          <button
+                            className="pp-icon-btn"
+                            onClick={() => {
+                              trigger("nudge");
+                              onEdit(link);
+                            }}
+                            title="Edit link"
+                          >
+                            <IconPencil size={14} />
+                          </button>
+                          <button
+                            className="pp-icon-btn pp-icon-btn--delete"
+                            onClick={() => {
+                              trigger("nudge");
+                              onDelete(link);
+                            }}
+                            title="Delete link"
+                          >
+                            <IconTrash size={14} />
+                          </button>
+                        </div>
+                      )}
                     </div>
                     {i < personalLinks.length - 1 && <div className="pp-row-divider" />}
                   </div>

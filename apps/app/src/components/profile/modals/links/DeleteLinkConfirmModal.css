@@ -6,11 +6,11 @@
 }
 
 .delete-modal-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-pill);
-  background: var(--color-error-bg);
-  color: var(--color-error);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #fdeaea;
+  color: #e54d4d;
   display: flex;
   align-items: center;
   justify-content: center;
