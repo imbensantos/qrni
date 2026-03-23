@@ -109,41 +109,44 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
           <span className="pp-count-badge">{personalLinks.length}</span>
         </div>
         <div className="pp-card-header-right">
-          <span className={`pp-slug-info${selectionMode ? " pp-action-hidden" : ""}`}>
-            {customSlugCount} of {MAX_CUSTOM_LINKS} custom slugs used
-          </span>
+          {!selectionMode && (
+            <span className="pp-slug-info">
+              {customSlugCount} of {MAX_CUSTOM_LINKS} custom slugs used
+            </span>
+          )}
           <div className="pp-card-actions-group">
-            {personalLinks.length > 0 && (
+            {!selectionMode && personalLinks.length > 0 && (
               <button
-                className={`pp-select-btn${selectionMode ? " pp-action-hidden" : ""}`}
+                className="pp-select-btn pp-action-enter"
                 onClick={() => setSelectionMode(true)}
                 title="Select links"
-                tabIndex={selectionMode ? -1 : 0}
               >
                 <IconCheckSquare size={14} />
                 Select
               </button>
             )}
-            <button
-              className={`pp-add-btn${selectionMode ? " pp-action-hidden" : ""}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                trigger("nudge");
-                onAdd(null, null);
-              }}
-              tabIndex={selectionMode ? -1 : 0}
-            >
-              <IconPlus size={12} />
-              Add
-            </button>
-            <button
-              className={`pp-cancel-select-btn${!selectionMode ? " pp-action-hidden" : ""}`}
-              onClick={exitSelectionMode}
-              title="Cancel selection"
-              tabIndex={!selectionMode ? -1 : 0}
-            >
-              Cancel
-            </button>
+            {!selectionMode && (
+              <button
+                className="pp-add-btn pp-action-enter"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  trigger("nudge");
+                  onAdd(null, null);
+                }}
+              >
+                <IconPlus size={12} />
+                Add
+              </button>
+            )}
+            {selectionMode && (
+              <button
+                className="pp-cancel-select-btn pp-action-enter"
+                onClick={exitSelectionMode}
+                title="Cancel selection"
+              >
+                Cancel
+              </button>
+            )}
             <button
               className={`pp-icon-btn pp-chevron-toggle${expanded ? " pp-chevron-toggle--open" : ""}`}
               onClick={() => {
