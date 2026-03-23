@@ -132,14 +132,14 @@ function ModalBackdrop({ isOpen, onClose, children, titleId }: ModalBackdropProp
         }
       }}
     >
-      <div
-        ref={contentRef}
-        className="modal-content"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-      >
-        {children}
+      <div className="modal-content" role="dialog" aria-modal="true" aria-labelledby={titleId}>
+        {/* Inner div is the actual scroll container — keeps the scrollbar gutter
+            away from the outer border-radius so both top corners stay visually
+            rounded on mobile. contentRef points here so touch-scroll logic
+            correctly reads scrollHeight / clientHeight on the scroll container. */}
+        <div ref={contentRef} className="modal-content-inner">
+          {children}
+        </div>
       </div>
     </div>
   );

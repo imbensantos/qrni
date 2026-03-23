@@ -48,14 +48,16 @@ function DeleteLinkConfirmModal({ isOpen, onClose, link }: DeleteLinkConfirmModa
           <IconTrash size={28} />
         </div>
 
-        <h2 id="delete-modal-title" className="delete-modal-title">
-          Delete this link?
-        </h2>
+        <div className="delete-modal-body">
+          <h2 id="delete-modal-title" className="delete-modal-title">
+            Delete this link?
+          </h2>
 
-        <p className="delete-modal-warning">
-          This will permanently delete the short link <strong>{shortUrl}</strong> and its QR code.
-          Anyone using this link will get a 404 error. This action cannot be undone.
-        </p>
+          <p className="delete-modal-warning">
+            This will permanently delete the short link <strong>{shortUrl}</strong> and its QR code.
+            Anyone using this link will get a 404 error. This action cannot be undone.
+          </p>
+        </div>
 
         <div className="delete-modal-preview">
           <div className="delete-modal-preview-short">{shortUrl}</div>

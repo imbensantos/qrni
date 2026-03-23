@@ -108,7 +108,7 @@ function InviteMemberModal({
             <div className="imm-icon">
               <IconUserPlus size={20} />
             </div>
-            <div>
+            <div className="imm-title-group">
               <h2 className="imm-title">Invite to {namespaceName}</h2>
               <p className="imm-subtitle">Add collaborators to this namespace</p>
             </div>

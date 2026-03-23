@@ -3,6 +3,7 @@ import { useWebHaptics } from "web-haptics/react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../../../convex/_generated/api";
 import ModalBackdrop from "../../../common/ModalBackdrop";
+import { IconPencil, IconClose } from "../../../common/Icons";
 import "./EditProfileModal.css";
 
 interface ProfileUser {
@@ -61,9 +62,17 @@ function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProps) {
     <ModalBackdrop isOpen={isOpen} onClose={onClose} titleId="edit-profile-title">
       <div className="edit-profile-modal">
         <div className="edit-profile-modal-header">
-          <h2 id="edit-profile-title" className="edit-profile-modal-title">
-            Edit profile
-          </h2>
+          <div className="edit-profile-modal-header-left">
+            <div className="edit-profile-modal-icon">
+              <IconPencil size={18} />
+            </div>
+            <div className="edit-profile-modal-title-group">
+              <h2 id="edit-profile-title" className="edit-profile-modal-title">
+                Edit profile
+              </h2>
+              <p className="edit-profile-modal-subtitle">Update your display name</p>
+            </div>
+          </div>
           <button
             className="edit-profile-modal-close"
             onClick={() => {
@@ -71,20 +80,9 @@ function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProps) {
               onClose();
             }}
             type="button"
+            aria-label="Close"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <IconClose size={18} />
           </button>
         </div>
 

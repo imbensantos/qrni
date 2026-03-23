@@ -182,7 +182,7 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
           <div className="edit-link-actions">
             <button
               type="button"
-              className="edit-link-btn cancel"
+              className="edit-link-btn-cancel"
               onClick={() => {
                 trigger("nudge");
                 onClose();
@@ -192,7 +192,7 @@ function EditLinkModal({ isOpen, onClose, link }: EditLinkModalProps) {
             </button>
             <button
               type="submit"
-              className="edit-link-btn save"
+              className="edit-link-btn-save"
               disabled={submitting}
               onClick={() => trigger("nudge")}
             >

@@ -21,13 +21,19 @@
 .imm-icon {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: var(--radius-pill);
   background: var(--accent-warm);
   color: var(--accent-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+.imm-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .imm-title {
@@ -42,24 +48,29 @@
 .imm-subtitle {
   font-size: 13px;
   color: var(--text-secondary);
-  margin: 2px 0 0;
+  margin: 0;
 }
 
 .imm-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
   border-radius: var(--radius-sm);
   transition:
     color 0.15s,
     background 0.15s;
+  flex-shrink: 0;
 }
 
 .imm-close:hover {
   color: var(--text-primary);
-  background: var(--border-subtle);
+  background: var(--bg-muted);
 }
 
 /* Invite form */
