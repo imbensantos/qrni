@@ -336,6 +336,10 @@
   font-size: 12px;
   font-weight: 500;
   color: var(--text-tertiary);
+  transition:
+    opacity 0.2s ease,
+    width 0.2s ease,
+    margin 0.2s ease;
 }
 
 /* Add button (terracotta) */

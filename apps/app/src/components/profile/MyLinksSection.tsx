@@ -109,10 +109,18 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
           <span className="pp-count-badge">{personalLinks.length}</span>
         </div>
         <div className="pp-card-header-right">
-          <span className="pp-slug-info">
+          <span className={`pp-slug-info${selectionMode ? " pp-action-hidden" : ""}`}>
             {customSlugCount} of {MAX_CUSTOM_LINKS} custom slugs used
           </span>
           <div className="pp-card-actions-group">
+            <button
+              className={`pp-cancel-select-btn${!selectionMode ? " pp-action-hidden" : ""}`}
+              onClick={exitSelectionMode}
+              title="Cancel selection"
+              tabIndex={!selectionMode ? -1 : 0}
+            >
+              Cancel
+            </button>
             {personalLinks.length > 0 && (
               <button
                 className={`pp-select-btn${selectionMode ? " pp-action-hidden" : ""}`}
@@ -135,14 +143,6 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
             >
               <IconPlus size={12} />
               Add
-            </button>
-            <button
-              className={`pp-cancel-select-btn${!selectionMode ? " pp-action-hidden" : ""}`}
-              onClick={exitSelectionMode}
-              title="Cancel selection"
-              tabIndex={!selectionMode ? -1 : 0}
-            >
-              Cancel
             </button>
             <button
               className={`pp-icon-btn pp-chevron-toggle${expanded ? " pp-chevron-toggle--open" : ""}`}
