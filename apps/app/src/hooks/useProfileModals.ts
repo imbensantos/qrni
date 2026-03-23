@@ -19,6 +19,11 @@ export interface DeleteLinkModalState {
   link: ShortLink | null;
 }
 
+export interface BulkDeleteLinksModalState {
+  open: boolean;
+  links: ShortLink[];
+}
+
 export interface InviteModalState {
   open: boolean;
   namespaceId: Id<"namespaces"> | null;
@@ -64,6 +69,10 @@ export function useProfileModals() {
     open: false,
     link: null,
   });
+  const [bulkDeleteLinksModal, setBulkDeleteLinksModal] = useState<BulkDeleteLinksModalState>({
+    open: false,
+    links: [],
+  });
   const [createNamespaceModal, setCreateNamespaceModal] = useState(false);
   const [inviteModal, setInviteModal] = useState<InviteModalState>({
     open: false,
@@ -106,6 +115,11 @@ export function useProfileModals() {
   const openDeleteLink = (link: ShortLink) => setDeleteLinkModal({ open: true, link });
 
   const closeDeleteLink = () => setDeleteLinkModal({ open: false, link: null });
+
+  const openBulkDeleteLinks = (links: ShortLink[]) =>
+    setBulkDeleteLinksModal({ open: true, links });
+
+  const closeBulkDeleteLinks = () => setBulkDeleteLinksModal({ open: false, links: [] });
 
   const openCreateNamespace = () => setCreateNamespaceModal(true);
   const closeCreateNamespace = () => setCreateNamespaceModal(false);
@@ -157,6 +171,7 @@ export function useProfileModals() {
     addLinkModal,
     editLinkModal,
     deleteLinkModal,
+    bulkDeleteLinksModal,
     createNamespaceModal,
     inviteModal,
     editProfileModal,
@@ -172,6 +187,8 @@ export function useProfileModals() {
     closeEditLink,
     openDeleteLink,
     closeDeleteLink,
+    openBulkDeleteLinks,
+    closeBulkDeleteLinks,
     openCreateNamespace,
     closeCreateNamespace,
     openInvite,
