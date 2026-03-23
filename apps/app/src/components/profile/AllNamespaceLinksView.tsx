@@ -45,6 +45,7 @@ interface AllNamespaceLinksViewProps {
   onDelete: (link: Link) => void;
   onAdd: (namespaceId: Id<"namespaces">, namespaceName: string) => void;
   onInvite: (namespaceId: Id<"namespaces">, namespaceName: string) => void;
+  onBulkDelete: (links: Link[]) => void;
 }
 
 const LINKS_PER_PAGE = 5;
@@ -57,9 +58,12 @@ function AllNamespaceLinksView({
   onDelete,
   onAdd,
   onInvite,
+  onBulkDelete,
 }: AllNamespaceLinksViewProps) {
   const { trigger } = useWebHaptics();
   const [page, setPage] = useState(0);
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   // TODO: This fetches all links client-side then slices for pagination.
   // Should be replaced with server-side pagination (offset/cursor-based query)
@@ -72,6 +76,33 @@ function AllNamespaceLinksView({
   const totalPages = Math.max(1, Math.ceil(totalLinks / LINKS_PER_PAGE));
   const pagedLinks = nsLinks.slice(page * LINKS_PER_PAGE, (page + 1) * LINKS_PER_PAGE);
   const memberCount = members ? members.length : 0;
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (pagedLinks.every((l) => selectedIds.has(String(l._id)))) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(pagedLinks.map((l) => String(l._id))));
+    }
+  };
+
+  const exitSelectionMode = () => {
+    setSelectionMode(false);
+    setSelectedIds(new Set());
+  };
+
+  const handleBulkDelete = () => {
+    const selected = nsLinks.filter((l) => selectedIds.has(String(l._id)));
+    onBulkDelete(selected);
+  };
 
   const currentMember = members?.find((m) => m.user?._id === currentUser?._id);
   const role = currentMember?.role ?? "viewer";
@@ -99,6 +130,14 @@ function AllNamespaceLinksView({
           {memberCount !== 1 ? "s" : ""} &middot; {roleLabel}
         </span>
         <div className="all-links-header-actions">
+          {nsLinks.length > 0 && (
+            <button
+              className="pp-text-btn"
+              onClick={() => (selectionMode ? exitSelectionMode() : setSelectionMode(true))}
+            >
+              {selectionMode ? "Cancel" : "Select"}
+            </button>
+          )}
           <button
             className="namespace-invite-btn"
             onClick={() => {
@@ -124,9 +163,33 @@ function AllNamespaceLinksView({
         <div className="pp-empty">No links in this namespace yet.</div>
       ) : (
         <>
+          {selectionMode && (
+            <div className="bulk-toolbar">
+              <label className="bulk-select-all">
+                <input
+                  type="checkbox"
+                  checked={
+                    pagedLinks.length > 0 && pagedLinks.every((l) => selectedIds.has(String(l._id)))
+                  }
+                  onChange={toggleSelectAll}
+                />
+                Select all
+              </label>
+              {selectedIds.size > 0 && (
+                <>
+                  <span className="bulk-count">{selectedIds.size} selected</span>
+                  <button className="bulk-delete-btn" onClick={handleBulkDelete}>
+                    Delete
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
           <table className="all-links-table">
             <thead>
               <tr>
+                {selectionMode && <th style={{ width: "32px" }}></th>}
                 <th scope="col">Link</th>
                 <th scope="col">Clicks</th>
                 <th scope="col">Created</th>
@@ -137,6 +200,16 @@ function AllNamespaceLinksView({
               {pagedLinks.map((link) => {
                 return (
                   <tr key={link._id}>
+                    {selectionMode && (
+                      <td>
+                        <input
+                          type="checkbox"
+                          className="link-select-checkbox"
+                          checked={selectedIds.has(String(link._id))}
+                          onChange={() => toggleSelect(String(link._id))}
+                        />
+                      </td>
+                    )}
                     <td>
                       <div className="pp-link-short-row">
                         <a

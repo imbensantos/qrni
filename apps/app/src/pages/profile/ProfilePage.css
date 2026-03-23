@@ -1037,6 +1037,86 @@
   gap: 4px;
 }
 
+/* ─── Bulk Selection (shared: MyLinksSection + AllNamespaceLinksView) ─────────── */
+
+.pp-text-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+
+.pp-text-btn:hover {
+  color: var(--accent-primary);
+  background: var(--accent-warm);
+}
+
+.bulk-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--accent-warm);
+  border-radius: var(--radius-md);
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.bulk-select-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.bulk-count {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.bulk-delete-btn {
+  background: var(--color-error);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    transform 0.1s;
+}
+
+.bulk-delete-btn:hover {
+  background: var(--color-error-hover, #c0392b);
+}
+
+.bulk-delete-btn:active {
+  transform: scale(0.97);
+}
+
+.link-select-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
 .pagination {
   display: flex;
   gap: 4px;
@@ -1243,4 +1323,55 @@
     max-height: none;
     overflow-y: visible;
   }
+}
+
+/* ── Bulk selection toolbar ─────────────────────────────────────────────── */
+
+.bulk-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--bg-muted);
+  border-radius: var(--radius-md);
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.bulk-select-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.bulk-count {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.bulk-delete-btn {
+  margin-left: auto;
+  padding: 4px 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--danger, #d64545);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.bulk-delete-btn:hover {
+  opacity: 0.85;
+}
+
+.link-select-checkbox {
+  accent-color: var(--accent-primary, #d89575);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
 }

@@ -118,6 +118,7 @@ function ProfilePage() {
           onDelete={modalHandlers.onDelete}
           onAdd={modalHandlers.onAdd}
           onInvite={modalHandlers.onInvite}
+          onBulkDelete={modalHandlers.onBulkDelete}
         />
       ) : (
         <>
@@ -194,6 +195,7 @@ function ProfilePage() {
               onAdd={modalHandlers.onAdd}
               onEdit={modalHandlers.onEdit}
               onDelete={modalHandlers.onDelete}
+              onBulkDelete={modalHandlers.onBulkDelete}
             />
 
             {/* Namespace header */}

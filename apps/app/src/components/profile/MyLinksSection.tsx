@@ -50,13 +50,43 @@ interface MyLinksSectionProps {
   onAdd: (namespaceId: null, namespaceSlug: null) => void;
   onEdit: (link: Link) => void;
   onDelete: (link: Link) => void;
+  onBulkDelete: (links: Link[]) => void;
 }
 
-function MyLinksSection({ links, onAdd, onEdit, onDelete }: MyLinksSectionProps) {
+function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLinksSectionProps) {
   const { trigger } = useWebHaptics();
   const [expanded, setExpanded] = useState(true);
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const personalLinks = links ? links.filter((l) => !l.namespace) : [];
   const customSlugCount = personalLinks.filter((l) => !l.autoSlug).length;
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === personalLinks.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(personalLinks.map((l) => String(l._id))));
+    }
+  };
+
+  const exitSelectionMode = () => {
+    setSelectionMode(false);
+    setSelectedIds(new Set());
+  };
+
+  const handleBulkDelete = () => {
+    const selected = personalLinks.filter((l) => selectedIds.has(String(l._id)));
+    onBulkDelete(selected);
+  };
 
   return (
     <div className="pp-card">
@@ -73,6 +103,15 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete }: MyLinksSectionProps)
             {customSlugCount} of {MAX_CUSTOM_LINKS} custom slugs used
           </span>
           <div className="pp-card-actions-group">
+            {personalLinks.length > 0 && (
+              <button
+                className="pp-icon-btn"
+                onClick={() => (selectionMode ? exitSelectionMode() : setSelectionMode(true))}
+                title={selectionMode ? "Cancel selection" : "Select links"}
+              >
+                {selectionMode ? "Cancel" : "Select"}
+              </button>
+            )}
             <button
               className="pp-add-btn"
               onClick={(e) => {
@@ -102,6 +141,27 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete }: MyLinksSectionProps)
         <div className="pp-collapse-inner">
           <div className="pp-divider" />
 
+          {selectionMode && (
+            <div className="bulk-toolbar">
+              <label className="bulk-select-all">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.size === personalLinks.length && personalLinks.length > 0}
+                  onChange={toggleSelectAll}
+                />
+                Select all
+              </label>
+              {selectedIds.size > 0 && (
+                <>
+                  <span className="bulk-count">{selectedIds.size} selected</span>
+                  <button className="bulk-delete-btn" onClick={handleBulkDelete}>
+                    Delete
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
           <div className="pp-link-list">
             {personalLinks.length === 0 ? (
               <div className="pp-empty">No links yet. Create your first short link!</div>
@@ -113,6 +173,14 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete }: MyLinksSectionProps)
                 return (
                   <div key={link._id}>
                     <div className="pp-link-row">
+                      {selectionMode && (
+                        <input
+                          type="checkbox"
+                          className="link-select-checkbox"
+                          checked={selectedIds.has(String(link._id))}
+                          onChange={() => toggleSelect(String(link._id))}
+                        />
+                      )}
                       <div className="pp-link-info">
                         <div className="pp-link-short-row">
                           <a
