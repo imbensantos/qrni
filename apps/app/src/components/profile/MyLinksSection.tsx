@@ -125,14 +125,6 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
               </button>
             )}
             <button
-              className={`pp-cancel-select-btn${!selectionMode ? " pp-action-hidden" : ""}`}
-              onClick={exitSelectionMode}
-              title="Cancel selection"
-              tabIndex={!selectionMode ? -1 : 0}
-            >
-              Cancel
-            </button>
-            <button
               className={`pp-add-btn${selectionMode ? " pp-action-hidden" : ""}`}
               onClick={(e) => {
                 e.stopPropagation();
@@ -143,6 +135,14 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
             >
               <IconPlus size={12} />
               Add
+            </button>
+            <button
+              className={`pp-cancel-select-btn${!selectionMode ? " pp-action-hidden" : ""}`}
+              onClick={exitSelectionMode}
+              title="Cancel selection"
+              tabIndex={!selectionMode ? -1 : 0}
+            >
+              Cancel
             </button>
             <button
               className={`pp-icon-btn pp-chevron-toggle${expanded ? " pp-chevron-toggle--open" : ""}`}
