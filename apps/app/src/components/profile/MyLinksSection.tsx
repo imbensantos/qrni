@@ -113,37 +113,37 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
             {customSlugCount} of {MAX_CUSTOM_LINKS} custom slugs used
           </span>
           <div className="pp-card-actions-group">
-            {personalLinks.length > 0 && !selectionMode && (
+            {personalLinks.length > 0 && (
               <button
-                className="pp-select-btn"
+                className={`pp-select-btn${selectionMode ? " pp-action-hidden" : ""}`}
                 onClick={() => setSelectionMode(true)}
                 title="Select links"
+                tabIndex={selectionMode ? -1 : 0}
               >
                 <IconCheckSquare size={14} />
                 Select
               </button>
             )}
-            {selectionMode ? (
-              <button
-                className="pp-cancel-select-btn"
-                onClick={exitSelectionMode}
-                title="Cancel selection"
-              >
-                Cancel
-              </button>
-            ) : (
-              <button
-                className="pp-add-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  trigger("nudge");
-                  onAdd(null, null);
-                }}
-              >
-                <IconPlus size={12} />
-                Add
-              </button>
-            )}
+            <button
+              className={`pp-cancel-select-btn${!selectionMode ? " pp-action-hidden" : ""}`}
+              onClick={exitSelectionMode}
+              title="Cancel selection"
+              tabIndex={!selectionMode ? -1 : 0}
+            >
+              Cancel
+            </button>
+            <button
+              className={`pp-add-btn${selectionMode ? " pp-action-hidden" : ""}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                trigger("nudge");
+                onAdd(null, null);
+              }}
+              tabIndex={selectionMode ? -1 : 0}
+            >
+              <IconPlus size={12} />
+              Add
+            </button>
             <button
               className={`pp-icon-btn pp-chevron-toggle${expanded ? " pp-chevron-toggle--open" : ""}`}
               onClick={() => {
