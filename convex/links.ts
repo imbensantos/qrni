@@ -406,6 +406,8 @@ export const deleteLink = mutation({
 export const deleteLinks = mutation({
   args: { linkIds: v.array(v.id("links")) },
   handler: async (ctx, args) => {
+    if (args.linkIds.length === 0) return;
+
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error(ERR.MUST_BE_SIGNED_IN);
 

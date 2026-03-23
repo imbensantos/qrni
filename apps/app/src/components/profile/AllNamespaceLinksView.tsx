@@ -104,6 +104,15 @@ function AllNamespaceLinksView({
     onBulkDelete(selected);
   };
 
+  // Auto-exit selection mode when all selected links have been deleted (derived state)
+  if (selectionMode && selectedIds.size > 0) {
+    const remaining = nsLinks.filter((l) => selectedIds.has(String(l._id)));
+    if (remaining.length === 0) {
+      setSelectionMode(false);
+      setSelectedIds(new Set());
+    }
+  }
+
   const currentMember = members?.find((m) => m.user?._id === currentUser?._id);
   const role = currentMember?.role ?? "viewer";
   const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);

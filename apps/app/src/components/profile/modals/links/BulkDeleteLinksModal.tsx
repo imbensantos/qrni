@@ -21,8 +21,15 @@ interface BulkDeleteLinksModalProps {
 function BulkDeleteLinksModal({ isOpen, onClose, onSuccess, links }: BulkDeleteLinksModalProps) {
   const { trigger } = useWebHaptics();
   const [error, setError] = useState<string | null>(null);
+  const [prevLinks, setPrevLinks] = useState(links);
   const [submitting, setSubmitting] = useState(false);
   const deleteLinks = useMutation(api.links.deleteLinks);
+
+  // Clear stale error whenever the modal opens with a new set of links (derived state)
+  if (links !== prevLinks) {
+    setPrevLinks(links);
+    setError(null);
+  }
 
   const count = links.length;
   const plural = count !== 1 ? "s" : "";

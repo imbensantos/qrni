@@ -88,6 +88,15 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
     onBulkDelete(selected);
   };
 
+  // Auto-exit selection mode when all selected links have been deleted (derived state)
+  if (selectionMode && selectedIds.size > 0) {
+    const remaining = personalLinks.filter((l) => selectedIds.has(String(l._id)));
+    if (remaining.length === 0) {
+      setSelectionMode(false);
+      setSelectedIds(new Set());
+    }
+  }
+
   return (
     <div className="pp-card">
       <div className="pp-card-header">
@@ -105,7 +114,7 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
           <div className="pp-card-actions-group">
             {personalLinks.length > 0 && (
               <button
-                className="pp-icon-btn"
+                className="pp-text-btn"
                 onClick={() => (selectionMode ? exitSelectionMode() : setSelectionMode(true))}
                 title={selectionMode ? "Cancel selection" : "Select links"}
               >
