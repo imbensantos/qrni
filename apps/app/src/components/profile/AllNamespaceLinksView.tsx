@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { useQuery, useAction } from "convex/react";
+import { useSelectionMode } from "../../hooks/useSelectionMode";
 import { getAppOrigin } from "../../utils/url-utils";
 import { api } from "../../../../../convex/_generated/api";
 import { IconPlus, IconPencil, IconTrash, IconRefresh } from "../common/Icons";
@@ -62,8 +63,6 @@ function AllNamespaceLinksView({
 }: AllNamespaceLinksViewProps) {
   const { trigger } = useWebHaptics();
   const [page, setPage] = useState(0);
-  const [selectionMode, setSelectionMode] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   // TODO: This fetches all links client-side then slices for pagination.
   // Should be replaced with server-side pagination (offset/cursor-based query)
@@ -77,41 +76,15 @@ function AllNamespaceLinksView({
   const pagedLinks = nsLinks.slice(page * LINKS_PER_PAGE, (page + 1) * LINKS_PER_PAGE);
   const memberCount = members ? members.length : 0;
 
-  const toggleSelect = (id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const toggleSelectAll = () => {
-    if (pagedLinks.every((l) => selectedIds.has(String(l._id)))) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(pagedLinks.map((l) => String(l._id))));
-    }
-  };
-
-  const exitSelectionMode = () => {
-    setSelectionMode(false);
-    setSelectedIds(new Set());
-  };
-
-  const handleBulkDelete = () => {
-    const selected = nsLinks.filter((l) => selectedIds.has(String(l._id)));
-    onBulkDelete(selected);
-  };
-
-  // Auto-exit selection mode when all selected links have been deleted (derived state)
-  if (selectionMode && selectedIds.size > 0) {
-    const remaining = nsLinks.filter((l) => selectedIds.has(String(l._id)));
-    if (remaining.length === 0) {
-      setSelectionMode(false);
-      setSelectedIds(new Set());
-    }
-  }
+  const {
+    selectionMode,
+    selectedIds,
+    enterSelectionMode,
+    toggleSelect,
+    toggleSelectAll,
+    exitSelectionMode,
+    handleBulkDelete,
+  } = useSelectionMode({ items: nsLinks, selectableItems: pagedLinks, onBulkDelete });
 
   const currentMember = members?.find((m) => m.user?._id === currentUser?._id);
   const role = currentMember?.role ?? "viewer";
@@ -142,7 +115,7 @@ function AllNamespaceLinksView({
           {nsLinks.length > 0 && (
             <button
               className="pp-text-btn"
-              onClick={() => (selectionMode ? exitSelectionMode() : setSelectionMode(true))}
+              onClick={() => (selectionMode ? exitSelectionMode() : enterSelectionMode())}
             >
               {selectionMode ? "Cancel" : "Select"}
             </button>

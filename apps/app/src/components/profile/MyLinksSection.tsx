@@ -3,6 +3,7 @@ import { useAction } from "convex/react";
 import { useWebHaptics } from "web-haptics/react";
 import { MAX_CUSTOM_LINKS } from "../../utils/constants";
 import { getAppOrigin, getAppHost } from "../../utils/url-utils";
+import { useSelectionMode } from "../../hooks/useSelectionMode";
 import {
   IconLink,
   IconPlus,
@@ -57,46 +58,18 @@ interface MyLinksSectionProps {
 function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLinksSectionProps) {
   const { trigger } = useWebHaptics();
   const [expanded, setExpanded] = useState(true);
-  const [selectionMode, setSelectionMode] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const personalLinks = links ? links.filter((l) => !l.namespace) : [];
   const customSlugCount = personalLinks.filter((l) => !l.autoSlug).length;
 
-  const toggleSelect = (id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const toggleSelectAll = () => {
-    if (selectedIds.size === personalLinks.length) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(personalLinks.map((l) => String(l._id))));
-    }
-  };
-
-  const exitSelectionMode = () => {
-    setSelectionMode(false);
-    setSelectedIds(new Set());
-  };
-
-  const handleBulkDelete = () => {
-    const selected = personalLinks.filter((l) => selectedIds.has(String(l._id)));
-    onBulkDelete(selected);
-  };
-
-  // Auto-exit selection mode when all selected links have been deleted (derived state)
-  if (selectionMode && selectedIds.size > 0) {
-    const remaining = personalLinks.filter((l) => selectedIds.has(String(l._id)));
-    if (remaining.length === 0) {
-      setSelectionMode(false);
-      setSelectedIds(new Set());
-    }
-  }
+  const {
+    selectionMode,
+    selectedIds,
+    enterSelectionMode,
+    toggleSelect,
+    toggleSelectAll,
+    exitSelectionMode,
+    handleBulkDelete,
+  } = useSelectionMode({ items: personalLinks, onBulkDelete });
 
   return (
     <div className="pp-card">
@@ -118,7 +91,7 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
             {!selectionMode && personalLinks.length > 0 && (
               <button
                 className="pp-select-btn pp-action-enter"
-                onClick={() => setSelectionMode(true)}
+                onClick={enterSelectionMode}
                 title="Select links"
               >
                 <IconCheckSquare size={14} />
@@ -171,7 +144,10 @@ function MyLinksSection({ links, onAdd, onEdit, onDelete, onBulkDelete }: MyLink
                 <input
                   type="checkbox"
                   className="bulk-select-all-checkbox"
-                  checked={selectedIds.size === personalLinks.length && personalLinks.length > 0}
+                  checked={
+                    personalLinks.length > 0 &&
+                    personalLinks.every((l) => selectedIds.has(String(l._id)))
+                  }
                   onChange={toggleSelectAll}
                 />
                 <span className="bulk-select-all-label">Select all</span>
