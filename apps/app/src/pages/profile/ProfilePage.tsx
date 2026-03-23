@@ -5,6 +5,7 @@ import { Doc } from "../../../../../convex/_generated/dataModel";
 import AddLinkModal from "../../components/profile/modals/links/AddLinkModal";
 import EditLinkModal from "../../components/profile/modals/links/EditLinkModal";
 import DeleteLinkConfirmModal from "../../components/profile/modals/links/DeleteLinkConfirmModal";
+import BulkDeleteLinksModal from "../../components/profile/modals/links/BulkDeleteLinksModal";
 import CreateNamespaceModal from "../../components/profile/modals/namespaces/CreateNamespaceModal";
 import InviteMemberModal from "../../components/profile/modals/namespaces/InviteMemberModal";
 import EditProfileModal from "../../components/profile/modals/user/EditProfileModal";
@@ -63,6 +64,7 @@ function ProfilePage() {
     onAdd: modals.openAddLink,
     onEdit: modals.openEditLink,
     onDelete: modals.openDeleteLink,
+    onBulkDelete: modals.openBulkDeleteLinks,
     onInvite: modals.openInvite,
     onLeave: modals.openLeaveNs,
   };
@@ -254,6 +256,12 @@ function ProfilePage() {
         isOpen={modals.deleteLinkModal.open}
         onClose={modals.closeDeleteLink}
         link={modals.deleteLinkModal.link}
+      />
+      <BulkDeleteLinksModal
+        isOpen={modals.bulkDeleteLinksModal.open}
+        onClose={modals.closeBulkDeleteLinks}
+        onSuccess={modals.closeBulkDeleteLinks}
+        links={modals.bulkDeleteLinksModal.links}
       />
       <CreateNamespaceModal
         isOpen={modals.createNamespaceModal}
