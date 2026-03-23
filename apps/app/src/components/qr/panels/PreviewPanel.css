@@ -498,6 +498,7 @@
 }
 
 .sl-copy-btn {
+  position: relative;
   padding: 4px 12px;
   border: none;
   border-radius: var(--radius-sm);
@@ -507,6 +508,12 @@
   font-weight: 600;
   color: var(--text-secondary);
   cursor: pointer;
+  /* Reserve enough width for "Copied!" so the button doesn't resize on state change */
+  min-width: 56px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease;
 }
 
 .sl-copy-btn:hover {
@@ -516,4 +523,78 @@
 .sl-copy-btn:focus-visible {
   outline: 2px solid var(--accent-secondary);
   outline-offset: 2px;
+}
+
+.sl-copy-btn.copied {
+  background: color-mix(in srgb, #3d8a5a 12%, transparent);
+  color: #3d8a5a;
+  animation: copyPulse 0.3s ease-out;
+}
+
+@keyframes copyPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Crossfade spans inside the copy button */
+.sl-copy-btn__text {
+  display: block;
+  transition: opacity 0.15s ease;
+}
+
+.sl-copy-btn__text--copy {
+  /* Sits in normal flow; --copied is layered on top */
+}
+
+.sl-copy-btn__text--copied {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+}
+
+.sl-copy-btn.copied .sl-copy-btn__text--copy {
+  opacity: 0;
+}
+
+.sl-copy-btn.copied .sl-copy-btn__text--copied {
+  opacity: 1;
+}
+
+/* Short link inline notification */
+.sl-notification {
+  font-size: 12px;
+  font-weight: 600;
+  color: #3d8a5a;
+  margin: 0;
+  /* Start clipped above, collapsed to zero height */
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    max-height 0.25s ease,
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.sl-notification--visible {
+  max-height: 24px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.sl-notification--hidden {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-4px);
 }

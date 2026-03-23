@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useEffect, useMemo, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import AppFooter from "../../layout/AppFooter";
 import QRCodeStyling from "qr-code-styling";
@@ -31,6 +31,33 @@ interface PreviewPanelProps {
   shortLinkResult: ShortLinkResult | null;
 }
 
+/** Self-dismissing inline notification — mounts visible, fades out, then unmounts. */
+function ShortLinkNotification({ message }: { message: string }) {
+  const [visible, setVisible] = useState(true);
+  const [mounted, setMounted] = useState(true);
+
+  useEffect(() => {
+    const fadeTimer = setTimeout(() => setVisible(false), 2700);
+    const clearTimer = setTimeout(() => setMounted(false), 3200);
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(clearTimer);
+    };
+  }, []);
+
+  if (!mounted) return null;
+
+  return (
+    <p
+      className={`sl-notification${visible ? " sl-notification--visible" : " sl-notification--hidden"}`}
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      {message}
+    </p>
+  );
+}
+
 function PreviewPanel({
   url,
   isValidUrl,
@@ -46,6 +73,18 @@ function PreviewPanel({
 }: PreviewPanelProps) {
   const qrContainerRef = useRef<HTMLDivElement>(null);
   const { trigger } = useWebHaptics();
+  const [copyState, setCopyState] = useState<"idle" | "copied">("idle");
+  const [prevShortLink, setPrevShortLink] = useState(shortLinkResult);
+  const [shortLinkCount, setShortLinkCount] = useState(0);
+
+  // React-recommended pattern: derive state from props during render
+  // https://react.dev/reference/react/useState#storing-information-from-previous-renders
+  if (shortLinkResult !== prevShortLink) {
+    setPrevShortLink(shortLinkResult);
+    if (shortLinkResult) {
+      setShortLinkCount((c) => c + 1);
+    }
+  }
 
   const qrCode = useMemo(
     () =>
@@ -87,12 +126,13 @@ function PreviewPanel({
     qrCode.update({
       width: size,
       height: size,
+      data: isValidUrl ? url : "",
       dotsOptions: { color: fgColor, type: dotStyle as any },
       backgroundOptions: { color: bgColor === "transparent" ? "rgba(0,0,0,0)" : bgColor },
       image: logo || undefined,
     });
     await qrCode.download({ name: DOWNLOAD_FILENAME_SINGLE, extension: format });
-    qrCode.update({ width: 200, height: 200 });
+    qrCode.update({ width: 200, height: 200, data: isValidUrl ? url : "" });
   };
 
   return (
@@ -140,51 +180,73 @@ function PreviewPanel({
         </p>
 
         {shortenLink && isValidUrl && shortLinkResult && (
-          <div className="short-link-card">
-            <div className="sl-left">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#3D8A5A"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-              </svg>
-              <span className="sl-url">{buildShortLinkUrl(shortLinkResult.shortCode)}</span>
-            </div>
-            <button
-              className="sl-copy-btn"
-              onClick={async () => {
-                const shortUrl = buildShortLinkUrl(shortLinkResult.shortCode);
-                try {
-                  if (navigator.clipboard) {
-                    await navigator.clipboard.writeText(shortUrl);
-                  } else {
-                    // Legacy fallback for environments without the Clipboard API
-                    const textarea = document.createElement("textarea");
-                    textarea.value = shortUrl;
-                    textarea.style.position = "fixed";
-                    textarea.style.opacity = "0";
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    document.execCommand("copy");
-                    document.body.removeChild(textarea);
+          <>
+            <div className="short-link-card">
+              <div className="sl-left">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#3D8A5A"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                </svg>
+                <span className="sl-url">{buildShortLinkUrl(shortLinkResult.shortCode)}</span>
+              </div>
+              <button
+                className={`sl-copy-btn${copyState === "copied" ? " copied" : ""}`}
+                aria-label={copyState === "copied" ? "Copied to clipboard" : "Copy short link"}
+                onClick={async () => {
+                  const shortUrl = buildShortLinkUrl(shortLinkResult.shortCode);
+                  try {
+                    if (navigator.clipboard) {
+                      await navigator.clipboard.writeText(shortUrl);
+                    } else {
+                      // Legacy fallback for environments without the Clipboard API
+                      const textarea = document.createElement("textarea");
+                      textarea.value = shortUrl;
+                      textarea.style.position = "fixed";
+                      textarea.style.opacity = "0";
+                      document.body.appendChild(textarea);
+                      textarea.select();
+                      document.execCommand("copy");
+                      document.body.removeChild(textarea);
+                    }
+                    trigger("success");
+                    setCopyState("copied");
+                    setTimeout(() => setCopyState("idle"), 2000);
+                  } catch {
+                    // Copy failed — don't trigger success
                   }
-                  trigger("success");
-                } catch {
-                  // Copy failed — don't trigger success
-                }
-              }}
-            >
-              Copy
-            </button>
-          </div>
+                }}
+              >
+                <span
+                  className="sl-copy-btn__text sl-copy-btn__text--copy"
+                  aria-hidden={copyState === "copied"}
+                >
+                  Copy
+                </span>
+                <span
+                  className="sl-copy-btn__text sl-copy-btn__text--copied"
+                  aria-hidden={copyState !== "copied"}
+                >
+                  Copied!
+                </span>
+              </button>
+            </div>
+            {shortLinkCount > 0 && (
+              <ShortLinkNotification
+                key={shortLinkCount}
+                message={shortLinkCount > 1 ? "Short link updated!" : "Short link created!"}
+              />
+            )}
+          </>
         )}
 
         <div className="export-bar">
