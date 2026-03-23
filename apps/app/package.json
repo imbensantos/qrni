@@ -19,6 +19,7 @@
     "convex": "^1.33.0",
     "jspdf": "^4.2.0",
     "jszip": "^3.10.1",
+    "lucide-react": "^0.577.0",
     "papaparse": "^5.5.3",
     "qr-code-styling": "^1.9.2",
     "react": "^19.2.0",
