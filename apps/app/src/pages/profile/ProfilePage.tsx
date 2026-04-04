@@ -17,7 +17,6 @@ import { IconPencil, IconPlus } from "../../components/common/Icons";
 import MyLinksSection from "../../components/profile/MyLinksSection";
 import AllNamespaceLinksView from "../../components/profile/AllNamespaceLinksView";
 import NamespaceSection from "../../components/profile/NamespaceSection";
-import AdSlot from "../../components/ads/AdSlot";
 import AppFooter from "../../components/layout/AppFooter";
 import { formatMemberSince } from "../../utils/ui-utils";
 import { MAX_NAMESPACES_PER_USER } from "../../../../../convex/lib/constants";
@@ -102,11 +101,6 @@ function ProfilePage() {
 
   return (
     <main className="profile-page">
-      <AdSlot
-        slot="PROFILE_INFEED_SLOT_ID"
-        format="horizontal"
-        className="ad-slot--profile-infeed"
-      />
       {modals.allLinksView.active &&
       modals.allLinksView.namespaceId &&
       modals.allLinksView.namespaceName ? (
@@ -122,18 +116,6 @@ function ProfilePage() {
         />
       ) : (
         <>
-          <AdSlot
-            slot="PROFILE_PILLAR_LEFT_SLOT_ID"
-            format="vertical"
-            responsive={false}
-            className="ad-slot--pillar ad-slot--pillar-left"
-          />
-          <AdSlot
-            slot="PROFILE_PILLAR_RIGHT_SLOT_ID"
-            format="vertical"
-            responsive={false}
-            className="ad-slot--pillar ad-slot--pillar-right"
-          />
           <div className="pp-body">
             {/* Profile Hero */}
             <div className="pp-hero">
@@ -301,11 +283,6 @@ function ProfilePage() {
       />
 
       <div className="profile-page-bottom">
-        <AdSlot
-          slot="PROFILE_FOOTER_SLOT_ID"
-          format="horizontal"
-          className="ad-slot--profile-footer"
-        />
         <AppFooter className="profile-page-footer" />
       </div>
     </main>

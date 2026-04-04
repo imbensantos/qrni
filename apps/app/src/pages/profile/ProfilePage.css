@@ -5,14 +5,6 @@
   background: var(--bg-page);
   display: flex;
   flex-direction: column;
-  /*
-   * AdSense injects height:auto !important on ancestor elements of ad slots,
-   * which breaks margin-top:auto on .profile-page-bottom.
-   * min-height + max-height together are not overridden by AdSense — they act
-   * as a fixed height that forces the flex column to have distributable space.
-   * overflow-y:auto allows the page to scroll when content is taller than the
-   * viewport minus the 65px header.
-   */
   min-height: calc(100vh - 65px);
   min-height: calc(100dvh - 65px);
   max-height: calc(100vh - 65px);
@@ -1330,36 +1322,6 @@
   background: var(--accent-primary);
   color: white;
   border-color: var(--accent-primary);
-}
-
-/* ─── Ad Slots ───────────────────────────────────────────────────────────────── */
-
-.ad-slot--pillar {
-  position: fixed;
-  top: 80px;
-  width: 160px;
-  height: 600px;
-  z-index: 10;
-}
-
-.ad-slot--pillar-left {
-  left: 16px;
-}
-
-.ad-slot--pillar-right {
-  right: 16px;
-}
-
-.ad-slot--profile-infeed {
-  margin: 16px auto 0;
-  max-width: 609px;
-}
-
-/* Hide pillar ads on smaller screens */
-@media (max-width: 1200px) {
-  .ad-slot--pillar {
-    display: none;
-  }
 }
 
 /* ─── Mobile Responsive ──────────────────────────────────────────────────────── */

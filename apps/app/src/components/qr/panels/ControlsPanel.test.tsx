@@ -59,10 +59,6 @@ vi.mock("../../layout/AppFooter", () => ({
   default: () => <footer data-testid="app-footer" />,
 }));
 
-vi.mock("../../ads/AdSlot", () => ({
-  default: () => null,
-}));
-
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 const defaultProps = {

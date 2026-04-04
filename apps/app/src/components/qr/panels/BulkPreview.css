@@ -1,11 +1,4 @@
 .bulk-preview {
-  /*
-   * The AdSlot is nested inside a position:relative child (.bulk-empty or
-   * .bulk-preview-content), so AdSense's ancestor walk stops there and does
-   * NOT inject height:auto or min-height:0 inline styles on .bulk-preview.
-   * This lets min-height + max-height work correctly (same pattern as
-   * .preview-panel) to fill the full viewport height on desktop.
-   */
   flex: 1;
   position: sticky;
   top: 0;
@@ -261,19 +254,6 @@
   box-shadow: var(--shadow-button-secondary-hover);
 }
 
-/* Ad slot — absolutely positioned inside the containing block (.bulk-empty or
-   .bulk-preview-content) so AdSense cannot walk up to .bulk-preview */
-.ad-slot--bulk-preview {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 468px;
-  max-height: 90px;
-  overflow: hidden;
-  z-index: 1;
-}
-
 /* Mobile */
 @media (max-width: 768px) {
   .bulk-preview {
@@ -303,15 +283,4 @@
     width: 100%;
   }
 
-  .ad-slot--bulk-preview {
-    /* Take the ad out of absolute positioning so it flows below content on mobile */
-    position: static;
-    transform: none;
-    left: auto;
-    bottom: auto;
-    width: 100%;
-    max-width: 100%;
-    max-height: none;
-    padding: 8px 16px 16px;
-  }
 }

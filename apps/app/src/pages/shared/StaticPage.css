@@ -12,12 +12,6 @@
     sans-serif;
   display: flex;
   flex-direction: column;
-  /*
-   * AdSense injects height:auto !important on ancestor elements of ad slots,
-   * which breaks scrolling. min-height + max-height together resist that
-   * override and act as a fixed height, while overflow-y:auto enables scrolling
-   * when the content is taller than the viewport.
-   */
   min-height: calc(100vh - 65px);
   min-height: calc(100dvh - 65px);
   max-height: calc(100vh - 65px);

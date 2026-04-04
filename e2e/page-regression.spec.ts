@@ -152,7 +152,6 @@ test.describe("Page Regression — /privacy", () => {
     await expect(table).toBeVisible();
     await expect(table).toContainText("Google OAuth");
     await expect(table).toContainText("Google Safe Browsing");
-    await expect(table).toContainText("Google AdSense");
     await expect(table).toContainText("Google Fonts");
     await expect(table).toContainText("Vercel");
   });
@@ -166,7 +165,6 @@ test.describe("Page Regression — /privacy", () => {
     await expect(cards).toBeAttached();
     await expect(cards).toContainText("Google OAuth");
     await expect(cards).toContainText("Google Safe Browsing");
-    await expect(cards).toContainText("Google AdSense");
     await expect(cards).toContainText("Google Fonts");
     await expect(cards).toContainText("Vercel");
   });

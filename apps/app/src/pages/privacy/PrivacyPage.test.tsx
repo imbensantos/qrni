@@ -6,24 +6,15 @@
  * Because the data lives in two separate hardcoded structures, they can (and
  * already do) diverge in ways tests can catch:
  *
- *   1. The desktop table renders external links for the AdSense and Vercel
- *      rows. The mobile cards render the same rows as plain text only. This
- *      means a user who reads the mobile version cannot follow those links.
- *
- *   2. Having two independent lists means a provider can be added to one
+ *   1. Having two independent lists means a provider can be added to one
  *      and forgotten in the other. These tests enforce parity between both
  *      views so any future divergence is caught immediately.
  *
- * Tests that FAIL against the current implementation:
- *   - S8-3: The mobile cards must also contain anchor elements for any
- *     service whose desktop table cell contains a link (e.g. Google AdSense,
- *     Vercel). Currently the cards render no links, so this fails.
- *
- * Tests that will PASS after the fix (single source of truth with links):
- *   - S8-1: provider count matches (already passes — both sides have 6 rows)
- *   - S8-2: provider names match (already passes — same names in both lists)
+ * Tests:
+ *   - S8-1: provider count matches
+ *   - S8-2: provider names match
  *   - S8-3: links are present in mobile cards for rows that have them in
- *     the table (FAILS now — mobile cards have no <a> elements)
+ *     the table
  */
 
 import { describe, it, expect, vi } from "vitest";
@@ -46,10 +37,6 @@ vi.mock("@tanstack/react-router", () => ({
       {children}
     </a>
   ),
-}));
-
-vi.mock("../../components/ads/AdSlot", () => ({
-  default: () => null,
 }));
 
 vi.mock("../../components/layout/AppFooter", () => ({
@@ -107,14 +94,6 @@ describe("PrivacyPage — S8: third-party service data consistency", () => {
   });
 
   it("mobile service cards contain anchor links for every row that has links in the desktop table", () => {
-    // WHY THIS FAILS: The desktop table includes <a> elements in the AdSense
-    // row (linking to Google's ad policies) and the Vercel row (linking to
-    // Vercel's privacy page). The mobile cards render those same cells as plain
-    // text with no anchors. A user on mobile has no way to follow those links.
-    //
-    // After the fix both views should be generated from the same data structure
-    // that includes the link href and text for each row — so mobile cards will
-    // also render the anchors.
     const { container } = render(<PrivacyPage />);
 
     const tableRows = getTableRows(container);
@@ -126,7 +105,7 @@ describe("PrivacyPage — S8: third-party service data consistency", () => {
       return dataCell && dataCell.querySelectorAll("a").length > 0;
     });
 
-    // There must be at least one such row (AdSense and Vercel both have links).
+    // There must be at least one such row (e.g. Vercel has a link).
     expect(tableRowsWithLinks.length).toBeGreaterThan(0);
 
     // For each table row that has a link, find the matching mobile card by
@@ -147,8 +126,7 @@ describe("PrivacyPage — S8: third-party service data consistency", () => {
   });
 
   it("the number of external links is the same in the table and in all mobile cards combined", () => {
-    // WHY THIS FAILS: the table has 2 external links (AdSense, Vercel) inside
-    // the tbody data cells. The mobile cards currently have 0 external links.
+    // Both views should have the same number of external links.
     const { container } = render(<PrivacyPage />);
 
     // Links inside table data cells only (exclude header links if any).
