@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useWebHaptics } from "web-haptics/react";
-import { Outlet, Link, useRouterState } from "@tanstack/react-router";
+import { Outlet, Link } from "@tanstack/react-router";
 import { api } from "../../../convex/_generated/api";
 import { useAuth } from "./hooks/useAuth";
 import { getCachedUser, cacheUser, clearCachedUser } from "./utils/cached-user";
@@ -16,12 +16,6 @@ function App() {
   const { isLoading } = useAuth();
   const user = useQuery(api.users.currentUser);
   const cachedUser = getCachedUser();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-
-  // Scroll to top on route changes (fixes mobile footer links opening pages scrolled down)
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
 
   // Keep cache in sync with real auth state
   useEffect(() => {
