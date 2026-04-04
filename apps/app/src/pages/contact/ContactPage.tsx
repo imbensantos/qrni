@@ -2,7 +2,6 @@ import { useState, type FormEvent } from "react";
 import { useMutation } from "convex/react";
 import { Link } from "@tanstack/react-router";
 import { api } from "../../../../../convex/_generated/api";
-import AdSlot from "../../components/ads/AdSlot";
 import AppFooter from "../../components/layout/AppFooter";
 import "./ContactPage.css";
 
@@ -156,25 +155,6 @@ function ContactPage() {
           </aside>
         </div>
       </div>
-
-      <AdSlot
-        slot="CONTACT_PILLAR_LEFT_SLOT_ID"
-        format="vertical"
-        responsive={false}
-        className="ad-slot--pillar ad-slot--pillar-left"
-      />
-      <AdSlot
-        slot="CONTACT_PILLAR_RIGHT_SLOT_ID"
-        format="vertical"
-        responsive={false}
-        className="ad-slot--pillar ad-slot--pillar-right"
-      />
-      <AdSlot
-        slot="CONTACT_SLOT_ID"
-        format="horizontal"
-        className="ad-slot--static-page"
-        style={{ maxWidth: 728, margin: "24px auto" }}
-      />
 
       <AppFooter className="static-page-footer" />
     </main>

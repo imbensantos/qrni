@@ -3,8 +3,6 @@
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
-  /* White left column background at the app level so it persists even if
-     AdSense overrides min-height on .sidebar-panel or .body */
   background: linear-gradient(to right, #ffffff 380px, var(--bg-page) 380px);
 }
 
@@ -212,17 +210,3 @@
   color: var(--accent-primary);
 }
 
-.ad-slot--mobile-infeed {
-  display: none;
-  padding: 12px 16px;
-}
-
-@media (max-width: 768px) {
-  .ad-slot--mobile-infeed {
-    display: block;
-    /* Remove top padding so the ad visually connects to the sidebar panel above it */
-    padding-top: 0;
-    background: var(--bg-card);
-    padding-bottom: 20px;
-  }
-}

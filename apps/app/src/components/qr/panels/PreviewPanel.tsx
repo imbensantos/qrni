@@ -3,7 +3,6 @@ import { useWebHaptics } from "web-haptics/react";
 import AppFooter from "../../layout/AppFooter";
 import QRCodeStyling from "qr-code-styling";
 import Doodles from "./Doodles";
-import AdSlot from "../../ads/AdSlot";
 import { buildShortLinkUrl } from "../../../utils/url-utils";
 import { DOWNLOAD_FILENAME_SINGLE } from "../../../utils/constants";
 import type { Id } from "../../../../../../convex/_generated/dataModel";
@@ -294,14 +293,7 @@ function PreviewPanel({
             Download
           </button>
         </div>
-        <AppFooter
-          adSlot={{
-            slot: "PREVIEW_PANEL_SLOT_ID",
-            format: "horizontal",
-            className: "ad-slot--preview",
-          }}
-          className="panel-footer-mobile"
-        />
+        <AppFooter className="panel-footer-mobile" />
       </div>
     </section>
   );

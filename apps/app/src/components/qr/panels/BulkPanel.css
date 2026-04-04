@@ -102,12 +102,6 @@
   outline-offset: 2px;
 }
 
-/* Compact ad for bulk sidebar — banner height only */
-.ad-slot--sidebar-compact {
-  max-height: 90px;
-  overflow: hidden;
-}
-
 @media (max-width: 768px) {
   .data-input {
     font-size: 16px;

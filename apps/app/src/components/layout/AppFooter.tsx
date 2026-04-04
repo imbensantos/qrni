@@ -1,16 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import AdSlot from "../ads/AdSlot";
 
 interface AppFooterProps {
   className?: string;
-  adSlot?: { slot: string; format: string; className: string };
   variant?: "default" | "privacy";
 }
 
-function AppFooter({ className = "", adSlot, variant = "default" }: AppFooterProps) {
+function AppFooter({ className = "", variant = "default" }: AppFooterProps) {
   return (
     <footer className={`panel-footer ${className}`}>
-      {adSlot && <AdSlot slot={adSlot.slot} format={adSlot.format} className={adSlot.className} />}
       <p className="copyright-footer">
         &copy; QRni {new Date().getFullYear()}
         {variant === "privacy" ? (

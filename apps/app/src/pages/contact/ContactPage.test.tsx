@@ -42,10 +42,6 @@ vi.mock("web-haptics/react", () => ({
   useWebHaptics: () => ({ trigger: vi.fn() }),
 }));
 
-vi.mock("../../components/ads/AdSlot", () => ({
-  default: () => null,
-}));
-
 vi.mock("../../components/layout/AppFooter", () => ({
   default: () => null,
 }));

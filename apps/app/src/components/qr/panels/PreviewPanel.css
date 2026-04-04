@@ -3,16 +3,6 @@
   position: sticky;
   top: 0;
   align-self: flex-start;
-  /*
-   * AdSense injects height:auto !important and min-height:0 !important on
-   * ancestor elements of ad slots. Using min-height + max-height together
-   * is not overridden by AdSense — they act as a fixed height.
-   *
-   * display:flex + flex-direction:column lets .preview-content use flex:1
-   * to fill the panel height, which resolves the justify-content:center
-   * centering. height:100% on a child does not resolve from min-height/max-height
-   * alone without a flex or grid formatting context on the parent.
-   */
   min-height: calc(100vh - 65px);
   max-height: calc(100vh - 65px);
   display: flex;
@@ -418,16 +408,6 @@
   }
 }
 
-/* Ad slot — desktop: absolute-positioned over the preview panel */
-.ad-slot--preview {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 468px;
-  z-index: 1;
-}
-
 /* Mobile */
 @media (max-width: 768px) {
   .preview-panel {
@@ -437,7 +417,6 @@
     align-self: auto;
     min-height: 0;
     max-height: none;
-    /* Establish a flex column so .ad-slot--preview can flow below .preview-content */
     display: flex;
     flex-direction: column;
     overflow: visible;
@@ -454,16 +433,6 @@
     display: none;
   }
 
-  .ad-slot--preview {
-    /* Take the ad out of absolute positioning so it flows below preview-content */
-    position: static;
-    transform: none;
-    left: auto;
-    bottom: auto;
-    width: 100%;
-    max-width: 100%;
-    padding: 8px 16px 16px;
-  }
 }
 
 /* Short Link Card */

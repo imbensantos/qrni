@@ -260,14 +260,7 @@ function BulkPanel({
       </section>
       <div className="panel-spacer" />
 
-      <AppFooter
-        className="panel-footer-desktop"
-        adSlot={{
-          slot: "SIDEBAR_SLOT_ID",
-          format: "horizontal",
-          className: "ad-slot--sidebar-compact",
-        }}
-      />
+      <AppFooter className="panel-footer-desktop" />
     </>
   );
 }

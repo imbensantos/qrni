@@ -264,10 +264,7 @@ function ControlsPanel({
 
       <div className="panel-spacer" />
 
-      <AppFooter
-        className="panel-footer-desktop"
-        adSlot={{ slot: "SIDEBAR_SLOT_ID", format: "rectangle", className: "ad-slot--sidebar" }}
-      />
+      <AppFooter className="panel-footer-desktop" />
     </>
   );
 }

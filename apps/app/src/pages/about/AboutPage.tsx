@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import AdSlot from "../../components/ads/AdSlot";
 import AppFooter from "../../components/layout/AppFooter";
 import "./AboutPage.css";
 
@@ -107,25 +106,6 @@ function AboutPage() {
           </div>
         </section>
       </div>
-
-      <AdSlot
-        slot="ABOUT_PILLAR_LEFT_SLOT_ID"
-        format="vertical"
-        responsive={false}
-        className="ad-slot--pillar ad-slot--pillar-left"
-      />
-      <AdSlot
-        slot="ABOUT_PILLAR_RIGHT_SLOT_ID"
-        format="vertical"
-        responsive={false}
-        className="ad-slot--pillar ad-slot--pillar-right"
-      />
-      <AdSlot
-        slot="ABOUT_SLOT_ID"
-        format="horizontal"
-        className="ad-slot--static-page"
-        style={{ maxWidth: 728, margin: "24px auto" }}
-      />
 
       <AppFooter className="static-page-footer" />
     </main>

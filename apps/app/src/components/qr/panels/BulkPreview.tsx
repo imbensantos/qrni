@@ -9,7 +9,6 @@ import {
   type BulkEntry,
 } from "../../../utils/bulk-utils";
 import Doodles from "./Doodles";
-import AdSlot from "../../ads/AdSlot";
 import "./BulkPreview.css";
 
 interface BulkPreviewProps {
@@ -147,13 +146,6 @@ function BulkPreview({
           <p className="bulk-empty-hint">
             Format: each row needs a <strong>label</strong> and a <strong>url</strong>
           </p>
-          {/* Ad is absolutely positioned inside this positioned container so AdSense
-              does not walk up past .bulk-empty to inject inline styles on .bulk-preview */}
-          <AdSlot
-            slot="PREVIEW_PANEL_SLOT_ID"
-            format="horizontal"
-            className="ad-slot--bulk-preview"
-          />
         </div>
         <AppFooter className="panel-footer-mobile" />
       </section>
@@ -315,13 +307,6 @@ function BulkPreview({
           </div>
         )}
 
-        {/* Ad is absolutely positioned inside this positioned container so AdSense
-            does not walk up past .bulk-preview-content to inject inline styles on .bulk-preview */}
-        <AdSlot
-          slot="PREVIEW_PANEL_SLOT_ID"
-          format="horizontal"
-          className="ad-slot--bulk-preview"
-        />
       </div>
     </section>
   );

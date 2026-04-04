@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
-import AdSlot from "../../components/ads/AdSlot";
 import AppFooter from "../../components/layout/AppFooter";
 import "./PrivacyPage.css";
 
@@ -15,13 +14,7 @@ const THIRD_PARTY_SERVICES = [
     purpose: "URL safety checks",
     data: "Destination URLs you shorten",
   },
-  {
-    provider: "Google AdSense",
-    purpose: "Ad serving",
-    data: "Cookies and browsing data",
-    link: { href: "https://policies.google.com/technologies/ads", text: "Google's ad policies" },
-  },
-  {
+{
     provider: "Google Fonts",
     purpose: "Typography",
     data: "Standard font requests (IP address to Google's CDN)",
@@ -224,7 +217,6 @@ function PrivacyPage() {
                 threats
               </li>
               <li>Prevent abuse and enforce rate limits</li>
-              <li>Display contextual ads via Google AdSense</li>
             </ul>
             <p className="privacy-section__body privacy-section__body--note">
               <em>
@@ -307,18 +299,8 @@ function PrivacyPage() {
           <section id="section-4" className="privacy-section">
             <SectionHeading number={4} title="Cookies & Local Storage" />
             <p className="privacy-section__body">
-              QRni itself does not set tracking cookies. However, Google AdSense may set cookies to
-              serve personalized ads. You can manage cookie preferences through your browser
-              settings or opt out of personalized advertising at{" "}
-              <a
-                href="https://www.google.com/settings/ads"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="privacy-section__link"
-              >
-                Google's Ad Settings
-              </a>{" "}
-              page.
+              QRni itself does not set tracking cookies. You can manage cookie preferences through
+              your browser settings.
             </p>
             <p className="privacy-section__body">
               We use browser localStorage to save your preferences (such as whether to automatically
@@ -379,18 +361,6 @@ function PrivacyPage() {
               </li>
               <li>
                 <strong>Request a data export</strong> by contacting us at the email below.
-              </li>
-              <li>
-                <strong>Opt out</strong> of personalized advertising via{" "}
-                <a
-                  href="https://www.google.com/settings/ads"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="privacy-section__link"
-                >
-                  Google Ad Settings
-                </a>
-                .
               </li>
             </ul>
             <p className="privacy-section__body">
@@ -506,25 +476,6 @@ function PrivacyPage() {
           </Link>
         </div>
       </div>
-
-      <AdSlot
-        slot="PRIVACY_PILLAR_LEFT_SLOT_ID"
-        format="vertical"
-        responsive={false}
-        className="ad-slot--pillar ad-slot--pillar-left"
-      />
-      <AdSlot
-        slot="PRIVACY_PILLAR_RIGHT_SLOT_ID"
-        format="vertical"
-        responsive={false}
-        className="ad-slot--pillar ad-slot--pillar-right"
-      />
-      <AdSlot
-        slot="PRIVACY_SLOT_ID"
-        format="horizontal"
-        className="ad-slot--static-page"
-        style={{ maxWidth: 728, margin: "24px auto" }}
-      />
 
       <AppFooter className="static-page-footer" />
     </main>
